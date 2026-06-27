@@ -26,15 +26,15 @@ export function Projects() {
           {featuredProjects.map((p, i) => (
             <motion.div
               key={p.id}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50, y: 30 }}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative grid md:grid-cols-[1fr_auto] gap-8 items-end hairline rounded-3xl bg-background p-6 sm:p-10 overflow-hidden hover:border-[color:var(--neon)]/40 transition-colors"
+              transition={{ duration: 0.8, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative grid md:grid-cols-[1fr_auto] gap-8 items-end hairline rounded-3xl bg-background p-6 sm:p-10 overflow-hidden hover:border-[color:var(--neon)]/60 hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.1)] hover:-translate-y-1 transition-all duration-500"
             >
               <div
                 aria-hidden
-                className="absolute -right-32 -top-32 h-80 w-80 rounded-full blur-3xl opacity-25 group-hover:opacity-50 transition-opacity"
+                className="absolute -right-32 -top-32 h-80 w-80 rounded-full blur-3xl opacity-25 group-hover:opacity-70 group-hover:scale-125 transition-all duration-700"
                 style={{
                   background:
                     p.accent === "amber"
@@ -48,7 +48,7 @@ export function Projects() {
                   <span className="h-px w-6 bg-border" />
                   <span>{p.role}</span>
                 </div>
-                <h3 className="mt-4 font-display text-3xl sm:text-5xl tracking-[-0.02em]">
+                <h3 className="mt-4 font-display text-3xl sm:text-5xl tracking-[-0.02em] group-hover:text-foreground transition-colors">
                   {p.name}
                 </h3>
                 <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
@@ -57,18 +57,18 @@ export function Projects() {
                 <Link
                   to="/projects/$slug"
                   params={{ slug: p.id }}
-                  className="mt-6 inline-flex items-center gap-2 text-sm text-foreground group-hover:gap-3 transition-all"
+                  className="mt-6 inline-flex items-center gap-2 text-sm text-foreground group-hover:gap-4 group-hover:text-[color:var(--neon)] transition-all duration-300"
                 >
                   Case study
                   <span className="font-mono">→</span>
                 </Link>
               </div>
-              <div className="relative h-56 sm:h-64 w-full md:w-72 overflow-hidden rounded-2xl hairline">
+              <div className="relative h-56 sm:h-64 w-full md:w-72 overflow-hidden rounded-2xl hairline shadow-2xl">
                 <img
                   src={p.cover}
                   alt={p.name}
                   loading="lazy"
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="h-full w-full object-cover group-hover:scale-110 group-hover:rotate-2 transition-transform duration-700 ease-out"
                 />
               </div>
             </motion.div>

@@ -10,6 +10,8 @@ import { Reviews } from "@/components/site/reviews";
 import { Certificates } from "@/components/site/certificates";
 import { Volunteering } from "@/components/site/volunteering";
 import { ContactFooter } from "@/components/site/contact-footer";
+import { ScrollProgress } from "@/components/site/scroll-progress";
+import { SectionReveal } from "@/components/site/section-reveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,16 +39,23 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="relative">
+      <ScrollProgress />
       <SiteNav />
       <Hero />
       <Marquee />
-      <Projects />
+      <SectionReveal>
+        <Projects />
+      </SectionReveal>
       <Organizations />
-      <Experience />
+      <SectionReveal>
+        <Experience />
+      </SectionReveal>
       <Skills />
       <Reviews />
       <Certificates />
-      <Volunteering />
+      <SectionReveal>
+        <Volunteering />
+      </SectionReveal>
       <ContactFooter />
     </main>
   );

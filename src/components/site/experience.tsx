@@ -81,11 +81,12 @@ export function Experience() {
             {currentTab.data.map((exp, i) => (
               <motion.li
                 key={exp.company + exp.period}
-                initial={{ opacity: 0, x: 24 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: 40, filter: "blur(4px)" }}
+                whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                viewport={{ once: true, margin: "-100px" }}
                 transition={{
-                  duration: 0.6,
-                  delay: i * 0.08,
+                  duration: 0.7,
+                  delay: Math.min(i * 0.1, 0.5),
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 className="relative pl-12 pb-12 last:pb-0 cursor-pointer group"

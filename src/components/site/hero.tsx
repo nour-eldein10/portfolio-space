@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Particles } from "./particles";
@@ -12,6 +12,11 @@ export function Hero() {
   const rootRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const [idx, setIdx] = useState(0);
+
+  const { scrollY } = useScroll();
+  const yHeroText = useTransform(scrollY, [0, 600], [0, 150]);
+  const yHeroImage = useTransform(scrollY, [0, 600], [0, 250]);
+  const opacityHero = useTransform(scrollY, [0, 500], [1, 0]);
 
   // Cycle rotating roles
   useEffect(() => {
@@ -72,7 +77,7 @@ export function Hero() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 pt-44 pb-24 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
-        <div>
+        <motion.div style={{ y: yHeroText, opacity: opacityHero }}>
           <p
             data-hero-meta
             className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-6"
@@ -168,11 +173,12 @@ export function Hero() {
               Contact Me
             </Link>
           </div>
-        </div>
+        </motion.div>
 
         {/* Portrait */}
-        <div
+        <motion.div
           data-hero-portrait
+          style={{ y: yHeroImage, opacity: opacityHero }}
           className="relative aspect-[4/5] w-full max-w-[36rem] justify-self-center lg:justify-self-end"
         >
           <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-[color:var(--neon)]/30 via-transparent to-[color:var(--amber)]/30 blur-2xl opacity-60" />
@@ -195,13 +201,60 @@ export function Hero() {
               <span>Mansoura / Remote</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Scroll cue */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground flex items-center gap-2">
-        <span className="h-px w-8 bg-current" /> scroll
-      </div>
+      {/* Floating doodle shapes */}
+      <motion.div
+        aria-hidden
+        className="absolute top-1/4 left-[8%] w-20 h-20 border border-[color:var(--neon)]/20 rounded-full -z-[5]"
+        animate={{ y: [0, -20, 0], rotate: [0, 90, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute top-[60%] right-[12%] w-12 h-12 border border-[color:var(--amber)]/20 -z-[5]"
+        style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%" }}
+        animate={{ y: [0, 15, 0], rotate: [0, -120, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute bottom-[25%] left-[15%] w-3 h-3 bg-[color:var(--neon)]/30 rounded-full -z-[5]"
+        animate={{ y: [0, -30, 0], x: [0, 10, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute top-[35%] right-[25%] w-2 h-2 bg-[color:var(--amber)]/30 rounded-full -z-[5]"
+        animate={{ y: [0, 20, 0], x: [0, -15, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      />
+
+      {/* Scroll cue — animated bounce */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">scroll</span>
+        <motion.svg
+          width="20"
+          height="30"
+          viewBox="0 0 20 30"
+          className="text-muted-foreground"
+        >
+          <rect x="6" y="0" width="8" height="20" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <motion.circle
+            cx="10"
+            cy="8"
+            r="2"
+            fill="currentColor"
+            animate={{ cy: [6, 14, 6] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.svg>
+      </motion.div>
     </section>
   );
 }

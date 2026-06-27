@@ -61,11 +61,12 @@ export function Certificates() {
                   className="pl-6 min-w-0 flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_30%]"
                 >
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, scale: 0.9, rotateY: 8 }}
+                    whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.5, delay: i * 0.05 }}
-                    className="group relative flex flex-col hairline rounded-3xl bg-surface/40 overflow-hidden hover:bg-surface/70 transition-colors h-full"
+                    transition={{ duration: 0.6, delay: i * 0.08 }}
+                    whileHover={{ y: -6, scale: 1.02 }}
+                    className="group relative flex flex-col hairline rounded-3xl bg-surface/40 overflow-hidden hover:bg-surface/70 hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.08)] transition-colors duration-500 h-full"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-surface-2 p-2">
                       <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--neon)]/10 to-transparent mix-blend-overlay z-10" />

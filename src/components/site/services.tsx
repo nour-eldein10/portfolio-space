@@ -32,11 +32,11 @@ export function Services() {
           {services.map((s, i) => (
             <motion.div
               key={s.n}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40, y: 20 }}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.7, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative flex flex-col p-8 sm:p-10 hairline rounded-3xl bg-surface/30 hover:bg-surface/60 transition-colors"
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative flex flex-col p-8 sm:p-10 hairline rounded-3xl bg-surface/30 hover:bg-surface/60 hover:-translate-y-1 hover:shadow-[0_0_40px_-12px_rgba(255,255,255,0.06)] transition-all duration-500"
             >
               <div className="flex items-start justify-between gap-6 mb-6">
                 <span className="font-mono text-xs text-muted-foreground tracking-widest bg-surface px-3 py-1 rounded-full hairline">
