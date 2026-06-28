@@ -1,9 +1,10 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { sanityClient, urlFor } from "@/lib/sanity";
-import { DetailShell } from "@/components/site/detail-shell";
 import { apps } from "@/lib/portfolio-data";
-import { appsQuery } from "@/lib/cms";
+import { SiteNav } from "@/components/site/nav";
+import { ContactFooter } from "@/components/site/contact-footer";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -37,16 +38,25 @@ export const Route = createFileRoute("/apps/$slug")({
     }
     return doc;
   },
-  errorComponent: () => <DetailShell eyebrow="Error" title="Could not load this app" />,
+  errorComponent: () => (
+    <main>
+      <SiteNav />
+      <div className="py-40 text-center">Could not load this app</div>
+    </main>
+  ),
   notFoundComponent: () => (
-    <DetailShell eyebrow="404" title="App not found">
-      <Link to="/apps" className="text-sm underline">
-        Back to marketplace
-      </Link>
-    </DetailShell>
+    <main>
+      <SiteNav />
+      <div className="py-40 text-center">
+        <h1 className="text-4xl font-display mb-4">App not found</h1>
+        <Link to="/apps" className="underline">Back to marketplace</Link>
+      </div>
+    </main>
   ),
   component: AppDetail,
 });
+
+import { DetailShell } from "@/components/site/detail-shell";
 
 function AppDetail() {
   const initial: any = Route.useLoaderData();
@@ -64,17 +74,28 @@ function AppDetail() {
     },
     initialData: initial,
   });
-  const cover = a?.cover?.asset ? urlFor(a.cover).width(1600).url() : null;
-  const meta = [a.category, a.downloads && `${a.downloads} downloads`, a.rating && `★ ${a.rating}`]
-    .filter(Boolean)
-    .join(" · ");
+
+  const coverUrl = a?.cover?.asset ? urlFor(a.cover).width(512).url() : initial.cover;
+  const gallery = Array.isArray(a.gallery) ? a.gallery : [];
+
   return (
     <DetailShell
-      eyebrow={`App · ${a.category ?? ""}`}
       title={a.name}
-      meta={meta}
-      cover={cover}
+      eyebrow="Nour Eldein"
+      meta={a.tagline}
+      cover={coverUrl}
       body={a.description ?? a.tagline}
+      gallery={gallery}
+      stats={{
+        rating: a.rating,
+        reviews: a.reviews,
+        downloads: a.downloads,
+        category: a.category,
+      }}
+      actions={[
+        { label: "Install", variant: "primary" },
+        { label: "Order your product", variant: "secondary" }
+      ]}
     />
   );
 }

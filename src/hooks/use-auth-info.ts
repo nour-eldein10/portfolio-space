@@ -17,8 +17,9 @@ export function useAuthInfo(): AuthInfo {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (cancelled) return;
       if (user) {
-        // Assume logged in user is admin for portfolio
-        setState({ loading: false, userId: user.uid, isAdmin: true });
+        // Restrict admin to specific email
+        const isAdminUser = user.email === "noureldein1100@gmail.com";
+        setState({ loading: false, userId: user.uid, isAdmin: isAdminUser });
       } else {
         setState({ loading: false, userId: null, isAdmin: false });
       }

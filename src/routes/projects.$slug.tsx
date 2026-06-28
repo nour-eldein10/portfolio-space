@@ -71,7 +71,17 @@ function ProjectDetail() {
       title={p.name}
       meta={meta}
       cover={cover}
+      gallery={p.gallery}
       body={p.description ?? p.summary}
+      stats={{
+        rating: p.rating,
+        reviews: p.reviews,
+        downloads: p.downloads,
+        category: p.role,
+      }}
+      actions={[
+        { label: "Order your product", variant: "primary" }
+      ]}
     />
   );
 }

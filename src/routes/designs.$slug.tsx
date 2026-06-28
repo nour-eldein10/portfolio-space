@@ -69,7 +69,18 @@ function DesignDetail() {
       eyebrow={`Design · ${d.category ?? ""}`}
       title={d.title}
       cover={cover}
+      gallery={d.gallery}
       body={d.description}
+      stats={{
+        rating: d.rating,
+        reviews: d.reviews,
+        downloads: d.downloads,
+        category: d.category,
+      }}
+      actions={[
+        { label: "Download", variant: "primary" },
+        { label: "Order your product", variant: "secondary" }
+      ]}
     />
   );
 }

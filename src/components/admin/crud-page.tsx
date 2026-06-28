@@ -220,8 +220,8 @@ function CrudForm({
     const v: Record<string, any> = {};
     for (const f of def.fields) {
       const raw = initial[f.name];
-      if (f.kind === "tags" || f.kind === "highlights") {
-        v[f.name] = Array.isArray(raw) ? raw.join(f.kind === "highlights" ? "\n" : ", ") : "";
+      if (f.kind === "tags" || f.kind === "highlights" || f.kind === "medialist") {
+        v[f.name] = Array.isArray(raw) ? raw.join(f.kind === "tags" ? ", " : "\n") : "";
       } else if (f.name === "slug" && raw && typeof raw === "object") {
         v[f.name] = raw.current ?? "";
       } else if (f.kind === "boolean") {
@@ -251,7 +251,7 @@ function CrudForm({
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean);
-      } else if (f.kind === "highlights") {
+      } else if (f.kind === "highlights" || f.kind === "medialist") {
         out[f.name] = String(v ?? "")
           .split("\n")
           .map((s) => s.trim())
@@ -322,7 +322,7 @@ function FieldInput({
           placeholder="tag1, tag2, tag3"
         />
       )}
-      {f.kind === "highlights" && (
+      {(f.kind === "highlights" || f.kind === "medialist") && (
         <Textarea
           rows={4}
           value={value ?? ""}

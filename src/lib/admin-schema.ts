@@ -11,7 +11,8 @@ export type FieldKind =
   | "tags"
   | "image"
   | "highlights"
-  | "select";
+  | "select"
+  | "medialist";
 
 export interface FieldDef {
   name: string;
@@ -127,6 +128,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "category", label: "Category", kind: "text" },
       { name: "accent", label: "Accent", kind: "select", options: ["neon", "amber"] },
       { name: "cover", label: "Cover image", kind: "image" },
+      { name: "gallery", label: "Media Gallery URLs", kind: "medialist", helper: "One URL per line (.mp4, youtube, images)" },
       { name: "order", label: "Order", kind: "number" },
     ],
   },

@@ -147,10 +147,15 @@ export const projectsQuery = queryOptions({
         summary?: string;
         accent?: "neon" | "amber";
         cover?: unknown;
+        description?: string;
+        rating?: number;
+        reviews?: string;
+        downloads?: string;
+        gallery?: string[];
         order?: number;
       }[]
     >(
-      `*[_type=="project"] | order(order asc){ name, slug, year, role, summary, accent, cover, order }`,
+      `*[_type=="project"] | order(order asc){ name, slug, year, role, summary, accent, cover, description, rating, reviews, downloads, gallery, order }`,
     );
     if (!docs?.length) return projectsFallback;
     return docs.map((d, i) => {
@@ -163,6 +168,11 @@ export const projectsQuery = queryOptions({
         summary: d.summary ?? "",
         accent: (d.accent ?? "neon") as "neon" | "amber",
         cover: resolveImage(d.cover, id, projectsFallback[i % projectsFallback.length].cover),
+        description: d.description ?? "",
+        rating: d.rating,
+        reviews: d.reviews,
+        downloads: d.downloads,
+        gallery: d.gallery ?? [],
       };
     });
   },
@@ -187,10 +197,12 @@ export const appsQuery = queryOptions({
         category?: string;
         accent?: "neon" | "amber";
         cover?: unknown;
+        description?: string;
+        gallery?: string[];
         order?: number;
       }[]
     >(
-      `*[_type=="app"] | order(order asc){ name, slug, tagline, icon, rating, reviews, downloads, category, accent, cover, order }`,
+      `*[_type=="app"] | order(order asc){ name, slug, tagline, icon, rating, reviews, downloads, category, accent, cover, description, gallery, order }`,
     );
     if (!docs?.length) return appsFallback;
     return docs.map((d, i) => {
@@ -206,6 +218,8 @@ export const appsQuery = queryOptions({
         category: d.category ?? "",
         accent: (d.accent ?? "neon") as "neon" | "amber",
         cover: resolveImage(d.cover, id, appsFallback[i % appsFallback.length].cover),
+        description: d.description ?? "",
+        gallery: d.gallery ?? [],
       };
     });
   },
@@ -219,8 +233,8 @@ export const designsQuery = queryOptions({
   queryKey: ["cms", "designs"],
   queryFn: async () => {
     const docs = await sanityClient.fetch<
-      { title: string; category?: string; cover?: unknown; order?: number }[]
-    >(`*[_type=="design"] | order(order asc){ title, category, cover, order }`);
+      { title: string; category?: string; description?: string; rating?: number; reviews?: string; downloads?: string; cover?: unknown; gallery?: string[]; order?: number }[]
+    >(`*[_type=="design"] | order(order asc){ title, category, description, rating, reviews, downloads, cover, gallery, order }`);
     if (!docs?.length) return designsFallback;
     return docs.map((d, i) => {
       const id = slugify(d.title);
@@ -228,7 +242,12 @@ export const designsQuery = queryOptions({
         id,
         title: d.title,
         category: d.category ?? "",
+        description: d.description ?? "",
+        rating: d.rating,
+        reviews: d.reviews,
+        downloads: d.downloads,
         cover: resolveImage(d.cover, id, designsFallback[i % designsFallback.length].cover),
+        gallery: d.gallery ?? [],
       };
     });
   },
