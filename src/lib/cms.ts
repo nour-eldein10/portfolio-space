@@ -29,14 +29,12 @@ const imageFallback: Record<string, string> = {
   "lanture-logo-suite": design3,
 };
 
-function resolveImage(
-  source: unknown,
-  fallbackKey: string,
-  defaultUrl: string,
-): string {
+function resolveImage(source: unknown, fallbackKey: string, defaultUrl: string): string {
   if (source && typeof source === "object" && "asset" in (source as object)) {
     try {
-      return urlFor(source as Parameters<typeof urlFor>[0]).width(1200).url();
+      return urlFor(source as Parameters<typeof urlFor>[0])
+        .width(1200)
+        .url();
     } catch {
       /* noop */
     }
@@ -99,9 +97,7 @@ export const statsQuery = queryOptions({
     if (!docs?.length) return statsFallback;
     return docs.map((d) => ({
       label: d.label,
-      value: typeof d.value === "string" && /^\d+$/.test(d.value)
-        ? Number(d.value)
-        : d.value,
+      value: typeof d.value === "string" && /^\d+$/.test(d.value) ? Number(d.value) : d.value,
     }));
   },
   initialData: statsFallback,
@@ -297,8 +293,12 @@ export const liveStatsQuery = queryOptions({
   queryKey: ["public", "stats", "live"],
   queryFn: async () => {
     const result = await sanityClient.fetch<{
-      apps: number; projects: number; designs: number; experiences: number;
-      yearsBuilding?: number; automationFlows?: number;
+      apps: number;
+      projects: number;
+      designs: number;
+      experiences: number;
+      yearsBuilding?: number;
+      automationFlows?: number;
     }>(`{
       "apps": count(*[_type=="app"]),
       "projects": count(*[_type=="project"]),

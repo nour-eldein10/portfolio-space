@@ -3,7 +3,12 @@ import { SiteNav } from "./nav";
 import { ContactFooter } from "./contact-footer";
 
 export function DetailShell({
-  eyebrow, title, meta, cover, body, children,
+  eyebrow,
+  title,
+  meta,
+  cover,
+  body,
+  children,
 }: {
   eyebrow: string;
   title: string;
@@ -17,7 +22,10 @@ export function DetailShell({
       <SiteNav />
       <section className="pt-36 pb-12">
         <div className="mx-auto max-w-5xl px-6">
-          <Link to="/" className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground">
+          <Link
+            to="/"
+            className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground"
+          >
             ← back
           </Link>
           <p className="mt-8 font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
@@ -41,7 +49,11 @@ export function DetailShell({
       {(body || children) && (
         <section className="pb-28">
           <div className="mx-auto max-w-3xl px-6">
-            {body && <div className="prose prose-invert max-w-none whitespace-pre-wrap text-[15px] leading-relaxed text-foreground/90">{body}</div>}
+            {body && (
+              <div className="prose prose-invert max-w-none whitespace-pre-wrap text-[15px] leading-relaxed text-foreground/90">
+                {body}
+              </div>
+            )}
             {children}
           </div>
         </section>

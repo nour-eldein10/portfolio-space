@@ -31,7 +31,9 @@ function AdminReviews() {
         qc.invalidateQueries({ queryKey: ["public", "reviews"] });
       })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [qc]);
 
   const setStatusMut = useMutation({
@@ -66,13 +68,22 @@ function AdminReviews() {
       <Section title={`Pending (${groups.pending.length})`}>
         {groups.pending.length === 0 && <Empty>No pending reviews.</Empty>}
         {groups.pending.map((r: any) => (
-          <ReviewRow key={r.id} r={r}
+          <ReviewRow
+            key={r.id}
+            r={r}
             actions={
               <>
-                <Button size="sm" onClick={() => setStatusMut.mutate({ id: r.id, status: "approved" })}>
+                <Button
+                  size="sm"
+                  onClick={() => setStatusMut.mutate({ id: r.id, status: "approved" })}
+                >
                   <Check className="h-4 w-4 mr-1" /> Approve
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, status: "rejected" })}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setStatusMut.mutate({ id: r.id, status: "rejected" })}
+                >
                   <X className="h-4 w-4 mr-1" /> Reject
                 </Button>
               </>
@@ -84,13 +95,25 @@ function AdminReviews() {
       <Section title={`Approved (${groups.approved.length})`}>
         {groups.approved.length === 0 && <Empty>No approved reviews yet.</Empty>}
         {groups.approved.map((r: any) => (
-          <ReviewRow key={r.id} r={r}
+          <ReviewRow
+            key={r.id}
+            r={r}
             actions={
               <>
-                <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, status: "pending" })}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setStatusMut.mutate({ id: r.id, status: "pending" })}
+                >
                   <RotateCcw className="h-4 w-4 mr-1" /> Unpublish
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => { if (confirm("Delete?")) delMut.mutate(r.id); }}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    if (confirm("Delete?")) delMut.mutate(r.id);
+                  }}
+                >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </>
@@ -102,9 +125,17 @@ function AdminReviews() {
       <Section title={`Rejected (${groups.rejected.length})`}>
         {groups.rejected.length === 0 && <Empty>None.</Empty>}
         {groups.rejected.map((r: any) => (
-          <ReviewRow key={r.id} r={r}
+          <ReviewRow
+            key={r.id}
+            r={r}
             actions={
-              <Button size="sm" variant="ghost" onClick={() => { if (confirm("Delete?")) delMut.mutate(r.id); }}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  if (confirm("Delete?")) delMut.mutate(r.id);
+                }}
+              >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             }
@@ -118,7 +149,9 @@ function AdminReviews() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-10">
-      <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{title}</h2>
+      <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        {title}
+      </h2>
       <div className="mt-3 space-y-2">{children}</div>
     </section>
   );

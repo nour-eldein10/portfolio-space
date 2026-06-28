@@ -26,9 +26,7 @@ export function Skills() {
           title={
             <>
               Skills &{" "}
-              <span className="font-serif-italic text-[color:var(--neon)]">
-                expertise.
-              </span>
+              <span className="font-serif-italic text-[color:var(--neon)]">expertise.</span>
             </>
           }
           subtitle="A multidisciplinary skillset built across development, design, automation and leadership."

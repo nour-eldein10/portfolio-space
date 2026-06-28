@@ -9,7 +9,7 @@ export function Services() {
   const { data: services } = useQuery(servicesQuery);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
-  const activeService = services?.find(s => s.n === selectedService);
+  const activeService = services?.find((s) => s.n === selectedService);
 
   return (
     <section id="services" className="py-28 sm:py-36">
@@ -44,15 +44,13 @@ export function Services() {
                 </span>
                 <span className="h-2 w-2 rounded-full bg-[color:var(--neon)] opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              
-              <h3 className="font-display text-2xl sm:text-3xl tracking-tight mb-4">
-                {s.title}
-              </h3>
-              
+
+              <h3 className="font-display text-2xl sm:text-3xl tracking-tight mb-4">{s.title}</h3>
+
               <p className="text-[15px] text-muted-foreground leading-relaxed mb-8 flex-1">
                 {s.body}
               </p>
-              
+
               <div className="space-y-6">
                 <div>
                   <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-3 flex items-center gap-2">
@@ -72,7 +70,7 @@ export function Services() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 pt-6 border-t hairline">
-                  <button 
+                  <button
                     onClick={() => setSelectedService(s.n)}
                     className="flex-1 text-center bg-foreground text-background py-2.5 px-4 rounded-full text-sm font-medium hover:bg-[color:var(--amber)] transition-colors"
                   >
@@ -110,7 +108,7 @@ export function Services() {
             >
               <div className="bg-surface rounded-3xl hairline p-8 sm:p-10 relative overflow-hidden">
                 <div className="absolute -top-32 -right-32 w-64 h-64 bg-[color:var(--amber)]/20 rounded-full blur-3xl" />
-                
+
                 <button
                   onClick={() => setSelectedService(null)}
                   className="absolute top-6 right-6 h-10 w-10 rounded-full hairline flex items-center justify-center hover:bg-surface-2 transition-colors z-10"
@@ -122,11 +120,11 @@ export function Services() {
                   <span className="font-mono text-xs text-muted-foreground tracking-widest bg-background/50 px-3 py-1 rounded-full hairline inline-block mb-6">
                     Service {activeService.n}
                   </span>
-                  
+
                   <h2 className="font-display text-3xl sm:text-4xl tracking-tight mb-4">
                     {activeService.title}
                   </h2>
-                  
+
                   <p className="text-[15px] leading-relaxed text-foreground/90 mb-8">
                     {activeService.body}
                   </p>
@@ -137,33 +135,38 @@ export function Services() {
                         <span className="h-px flex-1 bg-border" />
                         Timeline
                       </h4>
-                      <p className="font-display text-xl">{(activeService as any).timeline || "Varies by scope"}</p>
+                      <p className="font-display text-xl">
+                        {(activeService as any).timeline || "Varies by scope"}
+                      </p>
                     </div>
                     <div className="bg-background/50 p-6 rounded-2xl hairline">
                       <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-4 flex items-center gap-2">
                         <span className="h-px flex-1 bg-border" />
                         Pricing
                       </h4>
-                      <p className="font-display text-xl text-[color:var(--neon)]">{(activeService as any).pricing || "Custom quote"}</p>
+                      <p className="font-display text-xl text-[color:var(--neon)]">
+                        {(activeService as any).pricing || "Custom quote"}
+                      </p>
                     </div>
                   </div>
 
-                  {(activeService as any).features && (activeService as any).features.length > 0 && (
-                    <div className="mb-10">
-                      <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-4 flex items-center gap-2">
-                        <span className="h-px flex-1 bg-border" />
-                        What's Included
-                      </h4>
-                      <ul className="grid sm:grid-cols-2 gap-3">
-                        {(activeService as any).features.map((feature: string, idx: number) => (
-                          <li key={idx} className="flex items-start gap-3 text-sm">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--amber)] shrink-0" />
-                            <span className="text-foreground/80">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  {(activeService as any).features &&
+                    (activeService as any).features.length > 0 && (
+                      <div className="mb-10">
+                        <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-4 flex items-center gap-2">
+                          <span className="h-px flex-1 bg-border" />
+                          What's Included
+                        </h4>
+                        <ul className="grid sm:grid-cols-2 gap-3">
+                          {(activeService as any).features.map((feature: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-3 text-sm">
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--amber)] shrink-0" />
+                              <span className="text-foreground/80">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
                   <div className="pt-8 border-t hairline flex flex-col sm:flex-row gap-4">
                     <Link

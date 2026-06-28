@@ -15,11 +15,7 @@ export function SectionHeader({
   align?: "left" | "center";
 }) {
   return (
-    <div
-      className={`flex flex-col gap-6 ${
-        align === "center" ? "items-center text-center" : ""
-      }`}
-    >
+    <div className={`flex flex-col gap-6 ${align === "center" ? "items-center text-center" : ""}`}>
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}

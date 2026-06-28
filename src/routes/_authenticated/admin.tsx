@@ -27,10 +27,16 @@ function AdminLayout() {
           <p className="mt-2 text-sm text-muted-foreground">
             You're signed in, but you don't have admin access to this site.
           </p>
-          <Button asChild className="mt-6"><Link to="/">Back to site</Link></Button>
+          <Button asChild className="mt-6">
+            <Link to="/">Back to site</Link>
+          </Button>
         </div>
       </main>
     );
   }
-  return <AdminShell><Outlet /></AdminShell>;
+  return (
+    <AdminShell>
+      <Outlet />
+    </AdminShell>
+  );
 }

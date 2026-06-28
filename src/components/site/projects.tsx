@@ -15,9 +15,7 @@ export function Projects() {
           title={
             <>
               Things I built that I'd{" "}
-              <span className="font-serif-italic text-[color:var(--neon)]">
-                still ship today.
-              </span>
+              <span className="font-serif-italic text-[color:var(--neon)]">still ship today.</span>
             </>
           }
         />
@@ -36,10 +34,7 @@ export function Projects() {
                 aria-hidden
                 className="absolute -right-32 -top-32 h-80 w-80 rounded-full blur-3xl opacity-25 group-hover:opacity-70 group-hover:scale-125 transition-all duration-700"
                 style={{
-                  background:
-                    p.accent === "amber"
-                      ? "var(--amber)"
-                      : "var(--neon)",
+                  background: p.accent === "amber" ? "var(--amber)" : "var(--neon)",
                 }}
               />
               <div className="relative">

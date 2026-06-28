@@ -220,28 +220,44 @@ export const workExperience = [
     company: "8shiver",
     period: "2024 — Present",
     location: "Remote",
-    highlights: ["Building cross-platform mobile app from 0 to 1", "Owns product roadmap + design system", "Flutter, Firebase, Riverpod"],
+    highlights: [
+      "Building cross-platform mobile app from 0 to 1",
+      "Owns product roadmap + design system",
+      "Flutter, Firebase, Riverpod",
+    ],
   },
   {
     role: "Automation Engineer",
     company: "Freelance",
     period: "2022 — Present",
     location: "Remote",
-    highlights: ["60+ automation flows shipped", "n8n / Make / Python pipelines", "Saved clients 200+ hrs / month"],
+    highlights: [
+      "60+ automation flows shipped",
+      "n8n / Make / Python pipelines",
+      "Saved clients 200+ hrs / month",
+    ],
   },
   {
     role: "Graphic Designer",
     company: "Self-employed",
     period: "2020 — Present",
     location: "Mansoura, EG",
-    highlights: ["Brand systems for 20+ startups", "App icons, posters, motion", "Figma / Illustrator / After Effects"],
+    highlights: [
+      "Brand systems for 20+ startups",
+      "App icons, posters, motion",
+      "Figma / Illustrator / After Effects",
+    ],
   },
   {
     role: "Product Engineer",
     company: "Ledger Black",
     period: "2023 — 2024",
     location: "Remote",
-    highlights: ["Led mobile + automation stack", "Bank reconciliation pipeline", "24k+ downloads in 6 months"],
+    highlights: [
+      "Led mobile + automation stack",
+      "Bank reconciliation pipeline",
+      "24k+ downloads in 6 months",
+    ],
   },
 ];
 
@@ -251,14 +267,22 @@ export const volunteerExperience = [
     company: "Refqaa",
     period: "2023 — Present",
     location: "Mansoura, EG",
-    highlights: ["Led technical team of 8 members", "Built internal management tools", "Organized tech workshops"],
+    highlights: [
+      "Led technical team of 8 members",
+      "Built internal management tools",
+      "Organized tech workshops",
+    ],
   },
   {
     role: "Design Lead",
     company: "Bionic Team",
     period: "2022 — 2023",
     location: "Mansoura, EG",
-    highlights: ["Designed all team branding materials", "Created social media campaigns", "Mentored junior designers"],
+    highlights: [
+      "Designed all team branding materials",
+      "Created social media campaigns",
+      "Mentored junior designers",
+    ],
   },
 ];
 
@@ -268,14 +292,22 @@ export const internships = [
     company: "Sonaa IT",
     period: "2022",
     location: "Remote",
-    highlights: ["Built 3 production features", "Learned enterprise Flutter patterns", "Contributed to CI/CD pipeline"],
+    highlights: [
+      "Built 3 production features",
+      "Learned enterprise Flutter patterns",
+      "Contributed to CI/CD pipeline",
+    ],
   },
   {
     role: "Design Intern",
     company: "Growfet",
     period: "2021",
     location: "Remote",
-    highlights: ["Created UI components library", "Designed onboarding flow", "User research interviews"],
+    highlights: [
+      "Created UI components library",
+      "Designed onboarding flow",
+      "User research interviews",
+    ],
   },
 ];
 
@@ -285,14 +317,22 @@ export const leadership = [
     company: "Mega Team",
     period: "2023 — Present",
     location: "Mansoura, EG",
-    highlights: ["Leading cross-functional team of 12", "Sprint planning and retrospectives", "Delivered 4 successful projects"],
+    highlights: [
+      "Leading cross-functional team of 12",
+      "Sprint planning and retrospectives",
+      "Delivered 4 successful projects",
+    ],
   },
   {
     role: "Co-Founder",
     company: "Matrix Team",
     period: "2022 — 2023",
     location: "Mansoura, EG",
-    highlights: ["Founded competitive programming team", "Organized local hackathons", "Grew community to 50+ members"],
+    highlights: [
+      "Founded competitive programming team",
+      "Organized local hackathons",
+      "Grew community to 50+ members",
+    ],
   },
 ];
 
@@ -393,7 +433,11 @@ export const volunteering = [
     role: "Technical Lead",
     period: "2023 — Present",
     description: "Community-driven organization focused on youth empowerment and tech education.",
-    achievements: ["Led a team of 8 developers", "Built internal tools for 500+ members", "Organized 10+ tech workshops"],
+    achievements: [
+      "Led a team of 8 developers",
+      "Built internal tools for 500+ members",
+      "Organized 10+ tech workshops",
+    ],
     responsibilities: ["Technical strategy", "Team recruitment", "Workshop planning"],
   },
   {
@@ -402,7 +446,11 @@ export const volunteering = [
     role: "Design Lead",
     period: "2022 — 2023",
     description: "Student engineering team building competitive robots and automation systems.",
-    achievements: ["Designed complete brand identity", "Created team website", "Won regional design award"],
+    achievements: [
+      "Designed complete brand identity",
+      "Created team website",
+      "Won regional design award",
+    ],
     responsibilities: ["Brand design", "Social media", "Graphic design"],
   },
   {
@@ -411,7 +459,11 @@ export const volunteering = [
     role: "Team Lead",
     period: "2023 — Present",
     description: "Cross-functional technology team working on innovative software projects.",
-    achievements: ["Delivered 4 successful projects", "Grew team from 5 to 12", "Established agile workflow"],
+    achievements: [
+      "Delivered 4 successful projects",
+      "Grew team from 5 to 12",
+      "Established agile workflow",
+    ],
     responsibilities: ["Sprint management", "Code review", "Architecture decisions"],
   },
   {
@@ -420,7 +472,11 @@ export const volunteering = [
     role: "Co-Founder",
     period: "2022 — 2023",
     description: "Competitive programming community focused on algorithms and problem-solving.",
-    achievements: ["Grew community to 50+ members", "Organized 3 hackathons", "Members placed in ICPC"],
+    achievements: [
+      "Grew community to 50+ members",
+      "Organized 3 hackathons",
+      "Members placed in ICPC",
+    ],
     responsibilities: ["Community building", "Event planning", "Problem setting"],
   },
   {
@@ -429,7 +485,11 @@ export const volunteering = [
     role: "Volunteer Developer",
     period: "2022",
     description: "IT company providing pro-bono development for non-profit organizations.",
-    achievements: ["Built 2 charity apps", "Trained 5 junior developers", "Improved deployment pipeline"],
+    achievements: [
+      "Built 2 charity apps",
+      "Trained 5 junior developers",
+      "Improved deployment pipeline",
+    ],
     responsibilities: ["Mobile development", "Code mentoring", "QA testing"],
   },
 ];
@@ -442,14 +502,12 @@ export const reviews = [
     role: "Founder, Pulse Health",
   },
   {
-    quote:
-      "Half developer, half designer, half operator — and somehow that adds up. Rare hire.",
+    quote: "Half developer, half designer, half operator — and somehow that adds up. Rare hire.",
     author: "Mostafa K.",
     role: "CTO, Ledger Black",
   },
   {
-    quote:
-      "The automation work paid for itself in the first month. He thinks in systems.",
+    quote: "The automation work paid for itself in the first month. He thinks in systems.",
     author: "Sara M.",
     role: "Ops Lead, Still",
   },

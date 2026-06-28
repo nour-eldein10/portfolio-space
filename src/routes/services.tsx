@@ -35,9 +35,7 @@ function ServicesPage() {
           </p>
           <h1 className="mt-6 font-display font-medium text-[clamp(2.4rem,7vw,5.5rem)] leading-[0.95] tracking-[-0.035em] max-w-4xl">
             What I do, and how we'd{" "}
-            <span className="font-serif-italic text-[color:var(--amber)]">
-              work together.
-            </span>
+            <span className="font-serif-italic text-[color:var(--amber)]">work together.</span>
           </h1>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link

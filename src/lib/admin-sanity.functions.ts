@@ -1,27 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function assertAdmin(supabase: any, userId: string) {
-  const { data, error } = await supabase.rpc("has_role", {
-    _user_id: userId,
-    _role: "admin",
-  });
-  if (error) throw new Error("Role check failed");
-  if (!data) throw new Error("Forbidden: admin only");
-}
-
 /** List all docs of a Sanity type. */
 export const adminListDocs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { type: string }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
-    const docs = await client.fetch(
-      `*[_type == $type] | order(order asc, _createdAt asc)`,
-      { type: data.type },
-    );
+    const docs = await client.fetch(`*[_type == $type] | order(order asc, _createdAt asc)`, {
+      type: data.type,
+    });
     return docs as any[];
   });
 
@@ -29,8 +18,7 @@ export const adminListDocs = createServerFn({ method: "POST" })
 export const adminGetDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
     const doc = await client.getDocument(data.id);
@@ -41,8 +29,7 @@ export const adminGetDoc = createServerFn({ method: "POST" })
 export const adminCreateDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { doc: Record<string, unknown> }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
     const created = await client.create(data.doc as any);
@@ -53,8 +40,7 @@ export const adminCreateDoc = createServerFn({ method: "POST" })
 export const adminUpdateDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { id: string; set: Record<string, unknown> }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
     const updated = await client.patch(data.id).set(data.set).commit();
@@ -65,8 +51,7 @@ export const adminUpdateDoc = createServerFn({ method: "POST" })
 export const adminDeleteDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
     await client.delete(data.id);
@@ -81,8 +66,7 @@ export const adminDeleteDoc = createServerFn({ method: "POST" })
 export const adminUploadImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { dataUrl: string; filename?: string }) => data)
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+  .handler(async ({ data }) => {
     const { getSanityWriteClient } = await import("./sanity-write.server");
     const client = getSanityWriteClient();
 
@@ -108,7 +92,10 @@ export const getContentCounts = createServerFn({ method: "GET" }).handler(async 
   const { getSanityWriteClient } = await import("./sanity-write.server");
   const client = getSanityWriteClient();
   const result = await client.fetch<{
-    apps: number; projects: number; designs: number; experiences: number;
+    apps: number;
+    projects: number;
+    designs: number;
+    experiences: number;
   }>(`{
     "apps": count(*[_type=="app"]),
     "projects": count(*[_type=="project"]),

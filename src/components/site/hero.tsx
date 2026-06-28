@@ -20,10 +20,7 @@ export function Hero() {
 
   // Cycle rotating roles
   useEffect(() => {
-    const id = setInterval(
-      () => setIdx((i) => (i + 1) % profile.rotatingRoles.length),
-      2400,
-    );
+    const id = setInterval(() => setIdx((i) => (i + 1) % profile.rotatingRoles.length), 2400);
     return () => clearInterval(id);
   }, []);
 
@@ -37,16 +34,8 @@ export function Hero() {
 
       const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
       tl.to("[data-hero-portrait]", { scale: 1, opacity: 1, duration: 1.6 }, 0)
-        .to(
-          "[data-hero-line]",
-          { yPercent: 0, opacity: 1, duration: 1.1, stagger: 0.09 },
-          0.15,
-        )
-        .to(
-          "[data-hero-meta]",
-          { y: 0, opacity: 1, duration: 0.9, stagger: 0.08 },
-          0.55,
-        );
+        .to("[data-hero-line]", { yPercent: 0, opacity: 1, duration: 1.1, stagger: 0.09 }, 0.15)
+        .to("[data-hero-meta]", { y: 0, opacity: 1, duration: 0.9, stagger: 0.08 }, 0.55);
     }, rootRef);
     return () => ctx.revert();
   }, []);
@@ -82,7 +71,8 @@ export function Hero() {
             data-hero-meta
             className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-6"
           >
-            <span className="text-[color:var(--neon)]">●</span> Currently — Building software that grows businesses
+            <span className="text-[color:var(--neon)]">●</span> Currently — Building software that
+            grows businesses
           </p>
 
           <h1
@@ -92,9 +82,7 @@ export function Hero() {
             <span className="block overflow-hidden">
               <span data-hero-line className="block">
                 Hi, I'm{" "}
-                <span className="font-serif-italic text-[color:var(--amber)]">
-                  Nour Eldein
-                </span>
+                <span className="font-serif-italic text-[color:var(--amber)]">Nour Eldein</span>
               </span>
             </span>
             <span className="block overflow-hidden">
@@ -109,10 +97,7 @@ export function Hero() {
                   style={{ height: "1em" }}
                 >
                   {/* invisible sizer = longest role keeps width stable */}
-                  <span
-                    aria-hidden
-                    className="invisible font-serif-italic whitespace-nowrap"
-                  >
+                  <span aria-hidden className="invisible font-serif-italic whitespace-nowrap">
                     {profile.rotatingRoles
                       .reduce((a, b) => (a.length > b.length ? a : b))
                       .toLowerCase()}
@@ -129,8 +114,7 @@ export function Hero() {
                       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute inset-0 whitespace-nowrap font-serif-italic text-[color:var(--neon)]"
                       style={{
-                        textShadow:
-                          "0 0 30px color-mix(in oklab, var(--neon) 35%, transparent)",
+                        textShadow: "0 0 30px color-mix(in oklab, var(--neon) 35%, transparent)",
                       }}
                     >
                       {r.toLowerCase()}.
@@ -183,11 +167,7 @@ export function Hero() {
         >
           <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-[color:var(--neon)]/30 via-transparent to-[color:var(--amber)]/30 blur-2xl opacity-60" />
           <div className="relative h-full w-full overflow-hidden rounded-[2rem] hairline bg-surface flex items-center justify-center">
-            <img
-              src={logo}
-              alt={profile.name}
-              className="h-full w-full object-contain"
-            />
+            <img src={logo} alt={profile.name} className="h-full w-full object-contain" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div
               className="absolute inset-0"
@@ -237,14 +217,20 @@ export function Hero() {
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">scroll</span>
-        <motion.svg
-          width="20"
-          height="30"
-          viewBox="0 0 20 30"
-          className="text-muted-foreground"
-        >
-          <rect x="6" y="0" width="8" height="20" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+          scroll
+        </span>
+        <motion.svg width="20" height="30" viewBox="0 0 20 30" className="text-muted-foreground">
+          <rect
+            x="6"
+            y="0"
+            width="8"
+            height="20"
+            rx="4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
           <motion.circle
             cx="10"
             cy="8"

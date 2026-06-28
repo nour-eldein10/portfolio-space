@@ -17,7 +17,9 @@ export function Certificates() {
     if (!emblaApi) return;
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
     emblaApi.on("select", onSelect);
-    return () => { emblaApi.off("select", onSelect); };
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi]);
 
   return (
@@ -30,9 +32,7 @@ export function Certificates() {
             title={
               <>
                 Certificates &{" "}
-                <span className="font-serif-italic text-[color:var(--amber)]">
-                  Awards.
-                </span>
+                <span className="font-serif-italic text-[color:var(--amber)]">Awards.</span>
               </>
             }
           />
@@ -88,9 +88,7 @@ export function Certificates() {
                       <h3 className="font-display text-xl tracking-tight mb-2 group-hover:text-[color:var(--amber)] transition-colors">
                         {cert.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-6">
-                        {cert.issuer}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-6">{cert.issuer}</p>
                       <div className="mt-auto pt-4 border-t hairline">
                         <button className="text-sm font-medium flex items-center gap-2 group/btn">
                           View Details

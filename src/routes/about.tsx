@@ -15,8 +15,7 @@ export const Route = createFileRoute("/about")({
       { title: "About Me — Nour Eldein Ahmed" },
       {
         name: "description",
-        content:
-          "The story, skills, and experience behind the software studio.",
+        content: "The story, skills, and experience behind the software studio.",
       },
     ],
   }),
@@ -47,19 +46,24 @@ function AboutPage() {
             </p>
             <h1 className="mt-6 font-display font-medium text-[clamp(2.4rem,7vw,5rem)] leading-[0.95] tracking-[-0.035em] text-balance">
               Half engineer,{" "}
-              <span className="font-serif-italic text-[color:var(--amber)]">
-                half designer.
-              </span>
+              <span className="font-serif-italic text-[color:var(--amber)]">half designer.</span>
             </h1>
             <div className="mt-10 space-y-6 text-[16px] leading-relaxed text-muted-foreground max-w-2xl text-pretty">
               <p>
-                My journey didn't start with a traditional computer science degree. It started with a desire to build things that look good and work seamlessly. Over the past 6 years, I've transitioned from graphic design to mobile app development, and eventually into automation and product engineering.
+                My journey didn't start with a traditional computer science degree. It started with
+                a desire to build things that look good and work seamlessly. Over the past 6 years,
+                I've transitioned from graphic design to mobile app development, and eventually into
+                automation and product engineering.
               </p>
               <p>
-                I believe the best products come from a single cohesive vision. By bridging the gap between design and code, I eliminate handoffs and ensure the final product matches the original intent perfectly.
+                I believe the best products come from a single cohesive vision. By bridging the gap
+                between design and code, I eliminate handoffs and ensure the final product matches
+                the original intent perfectly.
               </p>
               <p>
-                Whether I'm writing Flutter UI, configuring n8n automation workflows, or designing brand identities in Figma, my goal remains the same: building systems that help businesses grow and innovate.
+                Whether I'm writing Flutter UI, configuring n8n automation workflows, or designing
+                brand identities in Figma, my goal remains the same: building systems that help
+                businesses grow and innovate.
               </p>
             </div>
           </div>
@@ -106,7 +110,7 @@ function AboutPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex-1">
               <h3 className="font-display text-3xl mb-8 flex items-center gap-4">
                 Selected Courses
@@ -119,7 +123,10 @@ function AboutPage() {
                   "Google UX Design Professional Certificate",
                   "Advanced Growth Strategy & Product Marketing",
                 ].map((course, i) => (
-                  <li key={i} className="flex items-center justify-between p-4 rounded-xl hairline bg-surface/30">
+                  <li
+                    key={i}
+                    className="flex items-center justify-between p-4 rounded-xl hairline bg-surface/30"
+                  >
                     <span className="text-sm">{course}</span>
                     <span className="text-[color:var(--neon)] text-xs">✓</span>
                   </li>

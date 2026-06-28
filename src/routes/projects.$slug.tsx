@@ -12,19 +12,25 @@ export const Route = createFileRoute("/projects/$slug")({
     const og = p?.cover?.asset ? urlFor(p.cover).width(1200).height(630).url() : undefined;
     return {
       meta: [
-        { title }, { name: "description", content: desc },
-        { property: "og:title", content: title }, { property: "og:description", content: desc },
-        ...(og ? [{ property: "og:image", content: og }, { name: "twitter:image", content: og }] : []),
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        ...(og
+          ? [
+              { property: "og:image", content: og },
+              { name: "twitter:image", content: og },
+            ]
+          : []),
       ],
     };
   },
   loader: async ({ params }) => {
-    const doc = await sanityClient.fetch(
-      `*[_type=="project" && slug.current==$slug][0]`,
-      { slug: params.slug },
-    );
+    const doc = await sanityClient.fetch(`*[_type=="project" && slug.current==$slug][0]`, {
+      slug: params.slug,
+    });
     if (!doc) {
-      const fallbackDoc = featuredProjects.find(p => p.id === params.slug);
+      const fallbackDoc = featuredProjects.find((p) => p.id === params.slug);
       if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
       throw notFound();
     }
@@ -33,7 +39,9 @@ export const Route = createFileRoute("/projects/$slug")({
   errorComponent: () => <DetailShell eyebrow="Error" title="Could not load this project" />,
   notFoundComponent: () => (
     <DetailShell eyebrow="404" title="Project not found">
-      <Link to="/" className="text-sm underline">Back home</Link>
+      <Link to="/" className="text-sm underline">
+        Back home
+      </Link>
     </DetailShell>
   ),
   component: ProjectDetail,
@@ -44,9 +52,11 @@ function ProjectDetail() {
   const { data: p } = useQuery({
     queryKey: ["cms", "project", initial.slug?.current],
     queryFn: async () => {
-      const doc = await sanityClient.fetch(`*[_type=="project" && slug.current==$slug][0]`, { slug: initial.slug?.current });
+      const doc = await sanityClient.fetch(`*[_type=="project" && slug.current==$slug][0]`, {
+        slug: initial.slug?.current,
+      });
       if (!doc) {
-        const fallbackDoc = featuredProjects.find(f => f.id === initial.slug?.current);
+        const fallbackDoc = featuredProjects.find((f) => f.id === initial.slug?.current);
         if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
       }
       return doc;

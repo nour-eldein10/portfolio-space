@@ -10,7 +10,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { Splash } from "@/components/site/splash";
 import { Toaster } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 import appCss from "../styles.css?url";
 
@@ -48,9 +49,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-
-  }, [error]);
+  useEffect(() => {}, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -98,8 +97,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "creative flutter developer and product engineer" },
       { property: "og:description", content: "creative flutter developer and product engineer" },
       { name: "twitter:description", content: "creative flutter developer and product engineer" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5490f6b9-b991-4ae0-afcc-f3877cd65066" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5490f6b9-b991-4ae0-afcc-f3877cd65066" },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5490f6b9-b991-4ae0-afcc-f3877cd65066",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5490f6b9-b991-4ae0-afcc-f3877cd65066",
+      },
     ],
     links: [
       {
@@ -133,12 +140,11 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (user) queryClient.invalidateQueries();
     });
-    return () => { data.subscription.unsubscribe(); };
+    return () => unsubscribe();
   }, [router, queryClient]);
 
   return (

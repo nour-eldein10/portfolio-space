@@ -3,7 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitReview } from "@/lib/reviews.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,16 +23,18 @@ export function ReviewForm() {
   const [quote, setQuote] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
-    const { data: sub } = supabase.auth.onAuthStateChange((_, s) => setSignedIn(!!s));
-    return () => { sub.subscription.unsubscribe(); };
+    setSignedIn(!!auth.currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => setSignedIn(!!user));
+    return () => unsubscribe();
   }, []);
 
   const mut = useMutation({
     mutationFn: () => submit({ data: { author, role: role || undefined, quote } }),
     onSuccess: () => {
       toast.success("Thanks — your review is pending approval.");
-      setAuthor(""); setRole(""); setQuote("");
+      setAuthor("");
+      setRole("");
+      setQuote("");
       qc.invalidateQueries({ queryKey: ["public", "reviews"] });
     },
     onError: (e: any) => toast.error(e?.message ?? "Could not submit"),
@@ -42,10 +45,13 @@ export function ReviewForm() {
       <div className="mt-12 hairline rounded-3xl p-8 bg-background text-center">
         <p className="text-sm text-muted-foreground">
           Want to leave a review?{" "}
-          <button onClick={() => navigate({ to: "/auth" })} className="text-foreground underline underline-offset-4 hover:text-[color:var(--neon)]">
+          <button
+            onClick={() => navigate({ to: "/auth" })}
+            className="text-foreground underline underline-offset-4 hover:text-[color:var(--neon)]"
+          >
             Sign in
-          </button>
-          {" "}first.
+          </button>{" "}
+          first.
         </p>
       </div>
     );
@@ -55,7 +61,10 @@ export function ReviewForm() {
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); if (author && quote) mut.mutate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (author && quote) mut.mutate();
+      }}
       className="mt-12 hairline rounded-3xl p-8 bg-background"
     >
       <h3 className="font-display text-2xl tracking-tight">Leave a review</h3>
@@ -65,15 +74,33 @@ export function ReviewForm() {
       <div className="mt-6 grid sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="r-author">Name</Label>
-          <Input id="r-author" required value={author} onChange={(e) => setAuthor(e.target.value)} maxLength={100} />
+          <Input
+            id="r-author"
+            required
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            maxLength={100}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="r-role">Role / company (optional)</Label>
-          <Input id="r-role" value={role} onChange={(e) => setRole(e.target.value)} maxLength={100} />
+          <Input
+            id="r-role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            maxLength={100}
+          />
         </div>
         <div className="sm:col-span-2 space-y-1.5">
           <Label htmlFor="r-quote">Your review</Label>
-          <Textarea id="r-quote" required rows={4} maxLength={800} value={quote} onChange={(e) => setQuote(e.target.value)} />
+          <Textarea
+            id="r-quote"
+            required
+            rows={4}
+            maxLength={800}
+            value={quote}
+            onChange={(e) => setQuote(e.target.value)}
+          />
         </div>
       </div>
       <Button type="submit" className="mt-6" disabled={mut.isPending}>

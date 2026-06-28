@@ -55,11 +55,7 @@ export function Splash() {
               `,
             }}
           />
-          <img
-            src={splashImg}
-            alt="Intro Splash"
-            className="w-full h-full object-cover"
-          />
+          <img src={splashImg} alt="Intro Splash" className="w-full h-full object-cover" />
           {/* Fallback button if user wants to skip */}
           <button
             onClick={handleHide}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export interface AuthInfo {
   loading: boolean;
@@ -13,27 +14,20 @@ export function useAuthInfo(): AuthInfo {
   useEffect(() => {
     let cancelled = false;
 
-    async function load(userId: string | null) {
-      if (!userId) {
-        if (!cancelled) setState({ loading: false, userId: null, isAdmin: false });
-        return;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (cancelled) return;
+      if (user) {
+        // Assume logged in user is admin for portfolio
+        setState({ loading: false, userId: user.uid, isAdmin: true });
+      } else {
+        setState({ loading: false, userId: null, isAdmin: false });
       }
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin")
-        .maybeSingle();
-      if (!cancelled) setState({ loading: false, userId, isAdmin: !!data });
-    }
-
-    supabase.auth.getUser().then(({ data }) => load(data.user?.id ?? null));
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_, s) => {
-      load(s?.user?.id ?? null);
     });
 
-    return () => { cancelled = true; sub.subscription.unsubscribe(); };
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   return state;

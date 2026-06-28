@@ -52,11 +52,7 @@ export function ContactFooter() {
 
   const big = "LET'S MAKE";
   return (
-    <footer
-      id="contact"
-      ref={ref}
-      className="relative overflow-hidden pt-28 pb-12 bg-background"
-    >
+    <footer id="contact" ref={ref} className="relative overflow-hidden pt-28 pb-12 bg-background">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 opacity-60"
@@ -82,18 +78,12 @@ export function ContactFooter() {
             ))}
           </span>
           <span className="block overflow-hidden">
-            <span
-              data-letter
-              className="inline-block font-serif-italic text-[color:var(--amber)]"
-            >
+            <span data-letter className="inline-block font-serif-italic text-[color:var(--amber)]">
               something impactful
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span
-              data-letter
-              className="inline-block font-serif-italic text-[color:var(--amber)]"
-            >
+            <span data-letter className="inline-block font-serif-italic text-[color:var(--amber)]">
               together.
             </span>
           </span>
@@ -138,8 +128,13 @@ export function ContactFooter() {
                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                   Budget
                 </span>
-                <select defaultValue="" className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm text-foreground/70 appearance-none">
-                  <option value="" disabled>Select a range</option>
+                <select
+                  defaultValue=""
+                  className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm text-foreground/70 appearance-none"
+                >
+                  <option value="" disabled>
+                    Select a range
+                  </option>
                   <option value="<1k">&lt; $1,000</option>
                   <option value="1k-5k">$1,000 - $5,000</option>
                   <option value="5k-10k">$5,000 - $10,000</option>
@@ -191,9 +186,7 @@ export function ContactFooter() {
                 <p className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                   Based
                 </p>
-                <p className="mt-2 font-display text-xl tracking-tight">
-                  {profile.location}
-                </p>
+                <p className="mt-2 font-display text-xl tracking-tight">{profile.location}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -202,7 +195,7 @@ export function ContactFooter() {
                 { name: "Email", url: `mailto:${profile.email}` },
                 { name: "LinkedIn", url: "https://linkedin.com/in/noureldein" },
                 { name: "GitHub", url: "https://github.com/noureldein" },
-                { name: "Behance", url: "https://behance.net/noureldein" }
+                { name: "Behance", url: "https://behance.net/noureldein" },
               ].map((s) => (
                 <a
                   key={s.name}
@@ -229,9 +222,7 @@ export function ContactFooter() {
           <br />
         </div>
         <br />
-
       </div>
-
     </footer>
   );
 }

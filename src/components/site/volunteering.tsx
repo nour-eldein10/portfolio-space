@@ -17,9 +17,7 @@ export function Volunteering() {
           title={
             <>
               Volunteering &{" "}
-              <span className="font-serif-italic text-[color:var(--neon)]">
-                Contributions.
-              </span>
+              <span className="font-serif-italic text-[color:var(--neon)]">Contributions.</span>
             </>
           }
           subtitle="Building communities, mentoring, and contributing to open initiatives."
@@ -50,9 +48,7 @@ export function Volunteering() {
               <p className="font-mono text-[11px] uppercase tracking-widest text-[color:var(--neon)] mb-4">
                 {vol.role}
               </p>
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-6">
-                {vol.description}
-              </p>
+              <p className="text-sm text-muted-foreground line-clamp-2 mb-6">{vol.description}</p>
               <div className="mt-auto pt-4 border-t hairline flex justify-between items-center">
                 <span className="text-sm font-medium">Read impact</span>
                 <span className="h-8 w-8 rounded-full hairline flex items-center justify-center group-hover:bg-foreground group-hover:text-background transition-colors">
@@ -84,7 +80,7 @@ export function Volunteering() {
               <div className="bg-surface rounded-3xl hairline p-8 sm:p-10 relative overflow-hidden">
                 {/* Decorative blob */}
                 <div className="absolute -top-32 -right-32 w-64 h-64 bg-[color:var(--neon)]/20 rounded-full blur-3xl" />
-                
+
                 <button
                   onClick={() => setSelectedId(null)}
                   className="absolute top-6 right-6 h-10 w-10 rounded-full hairline flex items-center justify-center hover:bg-surface-2 transition-colors z-10"

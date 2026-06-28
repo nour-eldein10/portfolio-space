@@ -2,7 +2,8 @@ import logo from "@/assets/logo.webp";
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useAuthInfo } from "@/hooks/use-auth-info";
-import { supabase } from "@/integrations/supabase/client";
+import { auth as firebaseAuth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 import { motion, AnimatePresence } from "motion/react";
 
 const links = [
@@ -18,7 +19,7 @@ export function SiteNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const auth = useAuthInfo();
   const router = useRouterState();
-  
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -36,18 +37,12 @@ export function SiteNav() {
         <div className="mx-auto max-w-7xl px-5">
           <div
             className={`flex items-center justify-between rounded-full px-5 py-2.5 transition-all duration-500 ${
-              scrolled
-                ? "bg-surface/70 backdrop-blur-xl hairline"
-                : "bg-transparent"
+              scrolled ? "bg-surface/70 backdrop-blur-xl hairline" : "bg-transparent"
             }`}
           >
             <Link to="/" className="flex items-center gap-2.5 group">
               <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-md overflow-hidden ring-1 ring-[color:var(--neon)]/70 shadow-[0_0_28px_color-mix(in_oklab,var(--neon)_70%,transparent)] bg-background">
-                <img
-                  src={logo}
-                  alt="Nour Eldein logo"
-                  className="h-full w-full object-contain"
-                />
+                <img src={logo} alt="Nour Eldein logo" className="h-full w-full object-contain" />
               </span>
               <span className="font-mono text-[13px] tracking-tight">
                 nour<span className="text-muted-foreground">.dev</span>
@@ -90,13 +85,16 @@ export function SiteNav() {
               <div className="hidden md:flex items-center gap-2">
                 {auth.userId ? (
                   <button
-                    onClick={() => supabase.auth.signOut()}
+                    onClick={() => signOut(firebaseAuth)}
                     className="text-[12px] text-muted-foreground hover:text-foreground"
                   >
                     Sign out
                   </button>
                 ) : (
-                  <Link to="/auth" className="text-[12px] text-muted-foreground hover:text-foreground">
+                  <Link
+                    to="/auth"
+                    className="text-[12px] text-muted-foreground hover:text-foreground"
+                  >
                     Sign in
                   </Link>
                 )}
@@ -113,8 +111,12 @@ export function SiteNav() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden h-10 w-10 flex flex-col items-center justify-center gap-1.5 rounded-full bg-surface-2/60 hairline text-foreground"
               >
-                <span className={`h-px w-4 bg-current transition-all ${mobileMenuOpen ? "rotate-45 translate-y-[3.5px]" : ""}`} />
-                <span className={`h-px w-4 bg-current transition-all ${mobileMenuOpen ? "-rotate-45 -translate-y-[3.5px]" : ""}`} />
+                <span
+                  className={`h-px w-4 bg-current transition-all ${mobileMenuOpen ? "rotate-45 translate-y-[3.5px]" : ""}`}
+                />
+                <span
+                  className={`h-px w-4 bg-current transition-all ${mobileMenuOpen ? "-rotate-45 -translate-y-[3.5px]" : ""}`}
+                />
               </button>
             </div>
           </div>
@@ -184,7 +186,7 @@ export function SiteNav() {
               {auth.userId ? (
                 <button
                   onClick={() => {
-                    supabase.auth.signOut();
+                    signOut(firebaseAuth);
                     setMobileMenuOpen(false);
                   }}
                   className="text-sm text-muted-foreground py-2"
@@ -192,8 +194,8 @@ export function SiteNav() {
                   Sign out
                 </button>
               ) : (
-                <Link 
-                  to="/auth" 
+                <Link
+                  to="/auth"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-sm text-muted-foreground py-2 text-center"
                 >

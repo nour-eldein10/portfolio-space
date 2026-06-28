@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
-  adminListDocs, adminCreateDoc, adminUpdateDoc, adminDeleteDoc, adminUploadImage,
+  adminListDocs,
+  adminCreateDoc,
+  adminUpdateDoc,
+  adminDeleteDoc,
+  adminUploadImage,
 } from "@/lib/admin-sanity.functions";
 import { urlFor } from "@/lib/sanity";
 import type { TypeDef, FieldDef } from "@/lib/admin-schema";
@@ -11,9 +15,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2, ImagePlus } from "lucide-react";
@@ -94,10 +108,14 @@ export function CrudPage({ def }: { def: TypeDef }) {
           </p>
         </div>
         {!def.singleton && (
-          <Button onClick={openNew}><Plus className="h-4 w-4 mr-1.5" /> New {def.singular.toLowerCase()}</Button>
+          <Button onClick={openNew}>
+            <Plus className="h-4 w-4 mr-1.5" /> New {def.singular.toLowerCase()}
+          </Button>
         )}
         {def.singleton && docs.length === 0 && (
-          <Button onClick={openNew}><Plus className="h-4 w-4 mr-1.5" /> Create</Button>
+          <Button onClick={openNew}>
+            <Plus className="h-4 w-4 mr-1.5" /> Create
+          </Button>
         )}
       </div>
 
@@ -105,11 +123,17 @@ export function CrudPage({ def }: { def: TypeDef }) {
         {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
         {!isLoading && docs.length === 0 && (
           <div className="hairline rounded-2xl p-8 text-center text-sm text-muted-foreground">
-            Nothing yet. {def.singleton ? "Create the profile." : `Add your first ${def.singular.toLowerCase()}.`}
+            Nothing yet.{" "}
+            {def.singleton
+              ? "Create the profile."
+              : `Add your first ${def.singular.toLowerCase()}.`}
           </div>
         )}
         {(docs as Doc[]).map((d) => (
-          <DocRow key={d._id} def={def} doc={d}
+          <DocRow
+            key={d._id}
+            def={def}
+            doc={d}
             onEdit={() => openEdit(d)}
             onDelete={() => {
               if (confirm(`Delete "${d[def.titleField] ?? "this"}"?`)) delMut.mutate(d._id);
@@ -123,7 +147,9 @@ export function CrudPage({ def }: { def: TypeDef }) {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editing?._id ? `Edit ${def.singular.toLowerCase()}` : `New ${def.singular.toLowerCase()}`}
+              {editing?._id
+                ? `Edit ${def.singular.toLowerCase()}`
+                : `New ${def.singular.toLowerCase()}`}
             </DialogTitle>
           </DialogHeader>
           {editing && (
@@ -141,15 +167,24 @@ export function CrudPage({ def }: { def: TypeDef }) {
 }
 
 function DocRow({
-  def, doc, onEdit, onDelete, singleton,
+  def,
+  doc,
+  onEdit,
+  onDelete,
+  singleton,
 }: {
-  def: TypeDef; doc: Doc; onEdit: () => void; onDelete: () => void; singleton?: boolean;
+  def: TypeDef;
+  doc: Doc;
+  onEdit: () => void;
+  onDelete: () => void;
+  singleton?: boolean;
 }) {
   const title = doc[def.titleField] ?? "Untitled";
   const subtitle = def.subtitleField ? doc[def.subtitleField] : undefined;
-  const img = def.imageField && doc[def.imageField]?.asset
-    ? urlFor(doc[def.imageField]).width(120).height(120).url()
-    : null;
+  const img =
+    def.imageField && doc[def.imageField]?.asset
+      ? urlFor(doc[def.imageField]).width(120).height(120).url()
+      : null;
 
   return (
     <div className="hairline rounded-2xl p-4 flex items-center gap-4 bg-surface/30">
@@ -158,18 +193,28 @@ function DocRow({
         <p className="font-medium truncate">{String(title)}</p>
         {subtitle && <p className="text-sm text-muted-foreground truncate">{String(subtitle)}</p>}
       </div>
-      <Button variant="ghost" size="sm" onClick={onEdit}><Pencil className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="sm" onClick={onEdit}>
+        <Pencil className="h-4 w-4" />
+      </Button>
       {!singleton && (
-        <Button variant="ghost" size="sm" onClick={onDelete}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        <Button variant="ghost" size="sm" onClick={onDelete}>
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
       )}
     </div>
   );
 }
 
 function CrudForm({
-  def, initial, onSubmit, submitting,
+  def,
+  initial,
+  onSubmit,
+  submitting,
 }: {
-  def: TypeDef; initial: Doc; onSubmit: (v: Record<string, any>) => void; submitting: boolean;
+  def: TypeDef;
+  initial: Doc;
+  onSubmit: (v: Record<string, any>) => void;
+  submitting: boolean;
 }) {
   const initialValues = useMemo(() => {
     const v: Record<string, any> = {};
@@ -202,9 +247,15 @@ function CrudForm({
     for (const f of def.fields) {
       const v = values[f.name];
       if (f.kind === "tags") {
-        out[f.name] = String(v ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+        out[f.name] = String(v ?? "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
       } else if (f.kind === "highlights") {
-        out[f.name] = String(v ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
+        out[f.name] = String(v ?? "")
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
       } else if (f.kind === "number") {
         out[f.name] = v === "" || v == null ? undefined : Number(v);
       } else if (f.kind === "image") {
@@ -231,39 +282,74 @@ function CrudForm({
   );
 }
 
-function FieldInput({ f, value, onChange }: { f: FieldDef; value: any; onChange: (v: any) => void }) {
+function FieldInput({
+  f,
+  value,
+  onChange,
+}: {
+  f: FieldDef;
+  value: any;
+  onChange: (v: any) => void;
+}) {
   return (
     <div className="space-y-1.5">
-      <Label>{f.label}{f.required && <span className="text-destructive ml-1">*</span>}</Label>
+      <Label>
+        {f.label}
+        {f.required && <span className="text-destructive ml-1">*</span>}
+      </Label>
       {f.kind === "text" && (
-        <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} required={f.required} />
+        <Input
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          required={f.required}
+        />
       )}
       {f.kind === "number" && (
         <Input type="number" value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
       )}
       {f.kind === "textarea" && (
-        <Textarea rows={4} value={value ?? ""} onChange={(e) => onChange(e.target.value)} required={f.required} />
+        <Textarea
+          rows={4}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          required={f.required}
+        />
       )}
       {f.kind === "tags" && (
-        <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder="tag1, tag2, tag3" />
+        <Input
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="tag1, tag2, tag3"
+        />
       )}
       {f.kind === "highlights" && (
-        <Textarea rows={4} value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={"One per line"} />
+        <Textarea
+          rows={4}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={"One per line"}
+        />
       )}
       {f.kind === "boolean" && (
-        <div className="flex items-center gap-2"><Switch checked={!!value} onCheckedChange={onChange} /></div>
+        <div className="flex items-center gap-2">
+          <Switch checked={!!value} onCheckedChange={onChange} />
+        </div>
       )}
       {f.kind === "select" && (
         <Select value={value ?? ""} onValueChange={onChange}>
-          <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+          <SelectTrigger>
+            <SelectValue placeholder="Select…" />
+          </SelectTrigger>
           <SelectContent>
-            {f.options?.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+            {f.options?.map((o) => (
+              <SelectItem key={o} value={o}>
+                {o}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       )}
-      {f.kind === "image" && (
-        <ImageInput value={value} onChange={onChange} />
-      )}
+      {f.kind === "image" && <ImageInput value={value} onChange={onChange} />}
       {f.helper && <p className="text-xs text-muted-foreground">{f.helper}</p>}
     </div>
   );
@@ -272,9 +358,7 @@ function FieldInput({ f, value, onChange }: { f: FieldDef; value: any; onChange:
 function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => void }) {
   const upload = useServerFn(adminUploadImage);
   const [busy, setBusy] = useState(false);
-  const preview = value?.asset?._ref
-    ? urlFor(value).width(400).url()
-    : value?.asset?.url ?? null;
+  const preview = value?.asset?._ref ? urlFor(value).width(400).url() : (value?.asset?.url ?? null);
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

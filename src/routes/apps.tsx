@@ -50,16 +50,16 @@ function MarketplacePage() {
 
   // Combine and normalize all items
   const allItems = useMemo(() => {
-    const normalizedApps = (apps || []).map(a => ({
+    const normalizedApps = (apps || []).map((a) => ({
       ...a,
       type: "Apps" as Category,
       url: `/apps/${a.id}`,
       description: a.tagline,
       date: new Date().toISOString(), // Mock dates for sorting
-      popularity: parseInt(a.downloads?.replace(/\D/g, '') || "0")
+      popularity: parseInt(a.downloads?.replace(/\D/g, "") || "0"),
     }));
 
-    const normalizedProjects = (projects || []).map(p => ({
+    const normalizedProjects = (projects || []).map((p) => ({
       ...p,
       type: (p.role?.toLowerCase().includes("automation") ? "Automation" : "Products") as Category,
       url: `/projects/${p.id}`,
@@ -67,10 +67,10 @@ function MarketplacePage() {
       rating: 4.5,
       downloads: "N/A",
       date: new Date(p.year, 0).toISOString(),
-      popularity: Math.random() * 1000
+      popularity: Math.random() * 1000,
     }));
 
-    const normalizedDesigns = (designs || []).map(d => ({
+    const normalizedDesigns = (designs || []).map((d) => ({
       ...d,
       name: d.title,
       type: "Graphic Design" as Category,
@@ -80,7 +80,7 @@ function MarketplacePage() {
       downloads: "N/A",
       icon: "🎨",
       date: new Date().toISOString(),
-      popularity: Math.random() * 500
+      popularity: Math.random() * 500,
     }));
 
     return [...normalizedApps, ...normalizedProjects, ...normalizedDesigns];
@@ -92,14 +92,15 @@ function MarketplacePage() {
 
     // Filter by Category
     if (activeCategory !== "All") {
-      result = result.filter(item => item.type === activeCategory);
+      result = result.filter((item) => item.type === activeCategory);
     }
 
     // Filter by Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
-        item => item.name?.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q)
+        (item) =>
+          item.name?.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q),
       );
     }
 
@@ -120,7 +121,14 @@ function MarketplacePage() {
     return result;
   }, [allItems, activeCategory, searchQuery, sortBy]);
 
-  const categories: Category[] = ["All", "Apps", "Automation", "Graphic Design", "Products", "Concepts"];
+  const categories: Category[] = [
+    "All",
+    "Apps",
+    "Automation",
+    "Graphic Design",
+    "Products",
+    "Concepts",
+  ];
 
   return (
     <main className="relative">
@@ -128,19 +136,18 @@ function MarketplacePage() {
       <section className="relative pt-44 pb-10">
         <div className="mx-auto max-w-7xl px-6">
           <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
-            <span className="text-[color:var(--neon)]">●</span> Marketplace · {allItems.length} items
+            <span className="text-[color:var(--neon)]">●</span> Marketplace · {allItems.length}{" "}
+            items
           </p>
           <h1 className="mt-6 font-display font-medium text-[clamp(2.4rem,7vw,5.5rem)] leading-[0.95] tracking-[-0.035em] max-w-4xl">
             Everything I've built,{" "}
-            <span className="font-serif-italic text-[color:var(--amber)]">
-              in one place.
-            </span>
+            <span className="font-serif-italic text-[color:var(--amber)]">in one place.</span>
           </h1>
-          
+
           {/* Filtering and Search Bar */}
           <div className="mt-12 flex flex-col md:flex-row gap-4 items-center justify-between bg-surface/30 p-2 rounded-2xl hairline">
             <div className="flex flex-wrap items-center gap-1 w-full md:w-auto">
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
@@ -193,8 +200,11 @@ function MarketplacePage() {
                 className="py-20 text-center"
               >
                 <p className="text-muted-foreground">No items found matching your criteria.</p>
-                <button 
-                  onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveCategory("All");
+                  }}
                   className="mt-4 text-[color:var(--neon)] hover:underline"
                 >
                   Clear filters
@@ -205,77 +215,81 @@ function MarketplacePage() {
                 {filteredAndSortedItems.map((_item, i) => {
                   const item = _item as any;
                   return (
-                  <motion.article
-                    layout
-                    key={`${item.type}-${item.id}`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4 }}
-                    className="group relative flex flex-col hairline rounded-3xl bg-surface/40 overflow-hidden hover:bg-surface/70 transition-colors"
-                  >
-                    <div className="relative aspect-[4/5] overflow-hidden">
-                      <img
-                        src={item.cover as string}
-                        alt={item.name}
-                        loading="lazy"
-                        className={`h-full w-full object-cover transition-transform duration-700 ${
-                          item.type === 'Graphic Design' ? 'group-hover:scale-100' : 'group-hover:scale-[1.04]'
-                        }`}
-                      />
-                      <div
-                        className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,color-mix(in_oklab,var(--background)_85%,transparent)_100%)]"
-                      />
-                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                        {item.icon && (
-                          <span
-                            className={`inline-flex h-10 w-10 items-center justify-center rounded-xl text-lg backdrop-blur-md bg-background/40 hairline ${
-                              item.accent === "amber"
-                                ? "text-[color:var(--amber)]"
-                                : "text-[color:var(--neon)]"
-                            }`}
-                          >
-                            {item.icon}
-                          </span>
-                        )}
-                        <span className="font-mono text-[10px] tracking-widest uppercase text-foreground/70 backdrop-blur-md bg-background/40 rounded-full px-2.5 py-1 hairline ml-auto">
-                          {item.type}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-6 flex flex-col gap-4 flex-1">
-                      <div>
-                        <h3 className="font-display text-2xl tracking-tight">{item.name}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                      </div>
-                      
-                      {item.type !== 'Graphic Design' && (
-                        <div className="flex items-center justify-between mt-auto">
-                          <Stars rating={item.rating || 5} />
-                          {item.reviews && (
-                            <span className="font-mono text-[11px] text-muted-foreground">
-                              {item.reviews} reviews
+                    <motion.article
+                      layout
+                      key={`${item.type}-${item.id}`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.4 }}
+                      className="group relative flex flex-col hairline rounded-3xl bg-surface/40 overflow-hidden hover:bg-surface/70 transition-colors"
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden">
+                        <img
+                          src={item.cover as string}
+                          alt={item.name}
+                          loading="lazy"
+                          className={`h-full w-full object-cover transition-transform duration-700 ${
+                            item.type === "Graphic Design"
+                              ? "group-hover:scale-100"
+                              : "group-hover:scale-[1.04]"
+                          }`}
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,color-mix(in_oklab,var(--background)_85%,transparent)_100%)]" />
+                        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                          {item.icon && (
+                            <span
+                              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl text-lg backdrop-blur-md bg-background/40 hairline ${
+                                item.accent === "amber"
+                                  ? "text-[color:var(--amber)]"
+                                  : "text-[color:var(--neon)]"
+                              }`}
+                            >
+                              {item.icon}
                             </span>
                           )}
-                        </div>
-                      )}
-                      
-                      <div className={`flex items-center justify-between pt-4 border-t hairline ${item.type === 'Graphic Design' ? 'mt-auto' : ''}`}>
-                        <span className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
-                          {item.downloads !== "N/A" ? item.downloads : item.category || item.role}
-                        </span>
-                        <Link
-                          to={item.url as any}
-                          className="group/btn inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--neon)] transition-colors"
-                        >
-                          View Details
-                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full hairline group-hover/btn:border-[color:var(--neon)] transition-colors">
-                            ↗
+                          <span className="font-mono text-[10px] tracking-widest uppercase text-foreground/70 backdrop-blur-md bg-background/40 rounded-full px-2.5 py-1 hairline ml-auto">
+                            {item.type}
                           </span>
-                        </Link>
+                        </div>
                       </div>
-                    </div>
-                  </motion.article>
+                      <div className="p-6 flex flex-col gap-4 flex-1">
+                        <div>
+                          <h3 className="font-display text-2xl tracking-tight">{item.name}</h3>
+                          <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                            {item.description}
+                          </p>
+                        </div>
+
+                        {item.type !== "Graphic Design" && (
+                          <div className="flex items-center justify-between mt-auto">
+                            <Stars rating={item.rating || 5} />
+                            {item.reviews && (
+                              <span className="font-mono text-[11px] text-muted-foreground">
+                                {item.reviews} reviews
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        <div
+                          className={`flex items-center justify-between pt-4 border-t hairline ${item.type === "Graphic Design" ? "mt-auto" : ""}`}
+                        >
+                          <span className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
+                            {item.downloads !== "N/A" ? item.downloads : item.category || item.role}
+                          </span>
+                          <Link
+                            to={item.url as any}
+                            className="group/btn inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--neon)] transition-colors"
+                          >
+                            View Details
+                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full hairline group-hover/btn:border-[color:var(--neon)] transition-colors">
+                              ↗
+                            </span>
+                          </Link>
+                        </div>
+                      </div>
+                    </motion.article>
                   );
                 })}
               </motion.div>

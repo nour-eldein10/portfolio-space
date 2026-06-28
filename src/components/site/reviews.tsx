@@ -41,7 +41,9 @@ export function Reviews() {
     if (!emblaApi) return;
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
     emblaApi.on("select", onSelect);
-    return () => { emblaApi.off("select", onSelect); };
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi]);
 
   useEffect(() => {
@@ -51,7 +53,9 @@ export function Reviews() {
         qc.invalidateQueries({ queryKey: ["public", "reviews"] });
       })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [qc]);
 
   return (
@@ -62,10 +66,7 @@ export function Reviews() {
           eyebrow="Trust & numbers"
           title={
             <>
-              Driven by{" "}
-              <span className="font-serif-italic text-[color:var(--neon)]">
-                results
-              </span>{" "}
+              Driven by <span className="font-serif-italic text-[color:var(--neon)]">results</span>{" "}
               & feedback.
             </>
           }
@@ -86,8 +87,10 @@ export function Reviews() {
               } ${i < 2 ? "border-b md:border-b-0" : ""} hairline group`}
             >
               <div className="font-display text-4xl sm:text-5xl tracking-[-0.03em] group-hover:text-[color:var(--amber)] transition-colors duration-500">
-                {typeof s.value === 'number' ? <AnimatedCounter value={s.value} /> : s.value}
-                {s.label === 'Average Rating' && <span className="text-2xl ml-1 text-[color:var(--amber)]">★</span>}
+                {typeof s.value === "number" ? <AnimatedCounter value={s.value} /> : s.value}
+                {s.label === "Average Rating" && (
+                  <span className="text-2xl ml-1 text-[color:var(--amber)]">★</span>
+                )}
               </div>
               <div className="mt-2 font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
                 {s.label}
@@ -101,7 +104,10 @@ export function Reviews() {
           <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
             <div className="flex -ml-5">
               {reviews.map((r, i) => (
-                <div key={i} className="pl-5 min-w-0 flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%]">
+                <div
+                  key={i}
+                  className="pl-5 min-w-0 flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+                >
                   <motion.blockquote
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -133,7 +139,7 @@ export function Reviews() {
               ))}
             </div>
           </div>
-          
+
           {/* Carousel Controls */}
           <div className="mt-8 flex items-center justify-between">
             <div className="flex gap-2">
@@ -142,20 +148,22 @@ export function Reviews() {
                   key={i}
                   onClick={() => emblaApi?.scrollTo(i)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === selectedIndex ? "w-6 bg-[color:var(--neon)]" : "w-1.5 bg-border hover:bg-muted-foreground"
+                    i === selectedIndex
+                      ? "w-6 bg-[color:var(--neon)]"
+                      : "w-1.5 bg-border hover:bg-muted-foreground"
                   }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>
             <div className="flex gap-2">
-              <button 
+              <button
                 onClick={() => emblaApi?.scrollPrev()}
                 className="h-10 w-10 rounded-full hairline flex items-center justify-center hover:bg-surface hover:text-[color:var(--neon)] transition-colors"
               >
                 ←
               </button>
-              <button 
+              <button
                 onClick={() => emblaApi?.scrollNext()}
                 className="h-10 w-10 rounded-full hairline flex items-center justify-center hover:bg-surface hover:text-[color:var(--neon)] transition-colors"
               >

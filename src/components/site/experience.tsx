@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  workExperience,
-  volunteerExperience,
-  internships,
-  leadership,
-} from "@/lib/portfolio-data";
+import { workExperience, volunteerExperience, internships, leadership } from "@/lib/portfolio-data";
 import { SectionHeader } from "./section-header";
 
 const tabs = [
@@ -31,9 +26,7 @@ export function Experience() {
             title={
               <>
                 Roles that shaped{" "}
-                <span className="font-serif-italic text-[color:var(--amber)]">
-                  how I build.
-                </span>
+                <span className="font-serif-italic text-[color:var(--amber)]">how I build.</span>
               </>
             }
             subtitle="Freelance, startups, and self-led products. Each one added a new skill to the stack."
@@ -68,7 +61,7 @@ export function Experience() {
         </div>
 
         {/* Timeline */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.ol
             key={activeTab}
             initial={{ opacity: 0, y: 16 }}
@@ -95,9 +88,7 @@ export function Experience() {
                 {/* Progress dot */}
                 <span
                   className={`absolute left-1.5 top-1.5 h-3 w-3 rounded-full ring-4 ring-background transition-colors ${
-                    expandedIdx === i
-                      ? "bg-[color:var(--amber)]"
-                      : "bg-[color:var(--neon)]"
+                    expandedIdx === i ? "bg-[color:var(--amber)]" : "bg-[color:var(--neon)]"
                   }`}
                 />
                 <p className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
@@ -106,9 +97,7 @@ export function Experience() {
                 <h3 className="mt-2 font-display text-2xl tracking-tight group-hover:text-[color:var(--neon)] transition-colors">
                   {exp.role}
                 </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {exp.company}
-                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{exp.company}</p>
                 <AnimatePresence>
                   {(expandedIdx === i || expandedIdx === null) && (
                     <motion.ul

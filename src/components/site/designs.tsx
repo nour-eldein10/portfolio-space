@@ -32,27 +32,25 @@ export function Designs() {
               className="group relative overflow-hidden rounded-3xl hairline"
             >
               <Link to="/designs/$slug" params={{ slug: d.id }} className="block">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src={d.cover}
-                  alt={d.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <figcaption className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between bg-gradient-to-t from-background/95 via-background/40 to-transparent">
-                <div>
-                  <p className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                    {d.category}
-                  </p>
-                  <h3 className="mt-1 font-display text-lg tracking-tight">
-                    {d.title}
-                  </h3>
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={d.cover}
+                    alt={d.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
                 </div>
-                <span className="font-mono text-xs text-muted-foreground group-hover:text-[color:var(--neon)] transition-colors">
-                  ↗
-                </span>
-              </figcaption>
+                <figcaption className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between bg-gradient-to-t from-background/95 via-background/40 to-transparent">
+                  <div>
+                    <p className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                      {d.category}
+                    </p>
+                    <h3 className="mt-1 font-display text-lg tracking-tight">{d.title}</h3>
+                  </div>
+                  <span className="font-mono text-xs text-muted-foreground group-hover:text-[color:var(--neon)] transition-colors">
+                    ↗
+                  </span>
+                </figcaption>
               </Link>
             </motion.figure>
           ))}

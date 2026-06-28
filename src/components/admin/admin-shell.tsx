@@ -1,12 +1,32 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
-  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, User, Briefcase, GraduationCap, FolderKanban, Smartphone, Palette, MessageSquare, LogOut, ExternalLink } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  Briefcase,
+  GraduationCap,
+  FolderKanban,
+  Smartphone,
+  Palette,
+  MessageSquare,
+  LogOut,
+  ExternalLink,
+} from "lucide-react";
 import type { ReactNode } from "react";
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
@@ -83,7 +103,7 @@ function SignOutButton() {
   async function onSignOut() {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await signOut(auth);
     navigate({ to: "/auth", replace: true });
   }
   return (

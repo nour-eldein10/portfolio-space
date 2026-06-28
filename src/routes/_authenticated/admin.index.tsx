@@ -38,9 +38,15 @@ function Overview() {
       </p>
       <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {tiles.map((t) => (
-          <Link key={t.label} to={t.to as any} className="group hairline rounded-2xl p-6 bg-surface/30 hover:bg-surface/60 transition-colors">
+          <Link
+            key={t.label}
+            to={t.to as any}
+            className="group hairline rounded-2xl p-6 bg-surface/30 hover:bg-surface/60 transition-colors"
+          >
             <div className="flex items-start justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{t.label}</span>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                {t.label}
+              </span>
               <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
             </div>
             <div className="mt-4 font-display text-4xl tracking-tight">{t.value}</div>

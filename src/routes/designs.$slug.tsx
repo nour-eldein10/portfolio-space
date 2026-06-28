@@ -12,19 +12,25 @@ export const Route = createFileRoute("/designs/$slug")({
     const og = d?.cover?.asset ? urlFor(d.cover).width(1200).height(630).url() : undefined;
     return {
       meta: [
-        { title }, { name: "description", content: desc },
-        { property: "og:title", content: title }, { property: "og:description", content: desc },
-        ...(og ? [{ property: "og:image", content: og }, { name: "twitter:image", content: og }] : []),
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        ...(og
+          ? [
+              { property: "og:image", content: og },
+              { name: "twitter:image", content: og },
+            ]
+          : []),
       ],
     };
   },
   loader: async ({ params }) => {
-    const doc = await sanityClient.fetch(
-      `*[_type=="design" && slug.current==$slug][0]`,
-      { slug: params.slug },
-    );
+    const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+      slug: params.slug,
+    });
     if (!doc) {
-      const fallbackDoc = designs.find(d => d.id === params.slug);
+      const fallbackDoc = designs.find((d) => d.id === params.slug);
       if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
       throw notFound();
     }
@@ -33,7 +39,9 @@ export const Route = createFileRoute("/designs/$slug")({
   errorComponent: () => <DetailShell eyebrow="Error" title="Could not load this design" />,
   notFoundComponent: () => (
     <DetailShell eyebrow="404" title="Design not found">
-      <Link to="/" className="text-sm underline">Back home</Link>
+      <Link to="/" className="text-sm underline">
+        Back home
+      </Link>
     </DetailShell>
   ),
   component: DesignDetail,
@@ -44,9 +52,11 @@ function DesignDetail() {
   const { data: d } = useQuery({
     queryKey: ["cms", "design", initial.slug?.current],
     queryFn: async () => {
-      const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, { slug: initial.slug?.current });
+      const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+        slug: initial.slug?.current,
+      });
       if (!doc) {
-        const fallbackDoc = designs.find(f => f.id === initial.slug?.current);
+        const fallbackDoc = designs.find((f) => f.id === initial.slug?.current);
         if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
       }
       return doc;

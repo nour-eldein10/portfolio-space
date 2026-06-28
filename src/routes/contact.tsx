@@ -8,14 +8,12 @@ export const Route = createFileRoute("/contact")({
       { title: "Contact — Nour Eldein Ahmed" },
       {
         name: "description",
-        content:
-          "Start a mobile app, an automation, or a brand. Booking Q1 2026 from Mansoura.",
+        content: "Start a mobile app, an automation, or a brand. Booking Q1 2026 from Mansoura.",
       },
       { property: "og:title", content: "Contact — Nour Eldein Ahmed" },
       {
         property: "og:description",
-        content:
-          "Start a mobile app, an automation, or a brand. Booking Q1 2026 from Mansoura.",
+        content: "Start a mobile app, an automation, or a brand. Booking Q1 2026 from Mansoura.",
       },
     ],
   }),
