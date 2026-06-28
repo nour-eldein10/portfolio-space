@@ -26,6 +26,9 @@ import {
   MessageSquare,
   LogOut,
   ExternalLink,
+  Users,
+  HeartHandshake,
+  Award,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -38,10 +41,14 @@ const items: NavItem[] = [
   { to: "/admin/projects", label: "Projects", icon: FolderKanban },
   { to: "/admin/apps", label: "Apps", icon: Smartphone },
   { to: "/admin/designs", label: "Designs", icon: Palette },
+  { to: "/admin/organizations", label: "Organizations", icon: Users },
+  { to: "/admin/volunteering", label: "Volunteering", icon: HeartHandshake },
+  { to: "/admin/certificates", label: "Certificates", icon: Award },
   { to: "/admin/reviews", label: "Reviews", icon: MessageSquare },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -51,11 +58,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <SidebarTrigger />
             <span className="font-mono text-xs text-muted-foreground">admin</span>
             <div className="ml-auto flex items-center gap-2">
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/" target="_blank">
-                  <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                  View site
-                </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  sessionStorage.setItem("splash_played", "true");
+                  navigate({ to: "/" });
+                }}
+              >
+                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                View site
               </Button>
               <SignOutButton />
             </div>

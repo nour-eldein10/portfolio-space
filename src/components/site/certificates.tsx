@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { certificates } from "@/lib/portfolio-data";
+import { useQuery } from "@tanstack/react-query";
+import { certificatesQuery } from "@/lib/cms";
 import { SectionHeader } from "./section-header";
 import useEmblaCarousel from "embla-carousel-react";
 
 export function Certificates() {
+  const { data: certificates = [] } = useQuery(certificatesQuery);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "start",

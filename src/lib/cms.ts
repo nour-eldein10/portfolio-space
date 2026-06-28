@@ -10,6 +10,9 @@ import {
   designs as designsFallback,
   experiences as experiencesFallback,
   reviews as reviewsFallback,
+  organizations as organizationsFallback,
+  volunteering as volunteeringFallback,
+  certificates as certificatesFallback,
 } from "./portfolio-data";
 import appPulse from "@/assets/app-pulse.jpg";
 import appLedger from "@/assets/app-ledger.jpg";
@@ -83,7 +86,7 @@ export const profileQuery = queryOptions({
     };
   },
   initialData: profileFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Stats ───────── */
@@ -101,7 +104,7 @@ export const statsQuery = queryOptions({
     }));
   },
   initialData: statsFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Services ───────── */
@@ -127,7 +130,7 @@ export const servicesQuery = queryOptions({
     }));
   },
   initialData: servicesFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Featured projects ───────── */
@@ -164,7 +167,7 @@ export const projectsQuery = queryOptions({
     });
   },
   initialData: projectsFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Apps ───────── */
@@ -207,7 +210,7 @@ export const appsQuery = queryOptions({
     });
   },
   initialData: appsFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Designs ───────── */
@@ -230,7 +233,7 @@ export const designsQuery = queryOptions({
     });
   },
   initialData: designsFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });
 
 /* ───────── Experiences ───────── */
@@ -260,26 +263,126 @@ export const experiencesQuery = queryOptions({
     }));
   },
   initialData: experiencesFallback,
-  staleTime: 60_000,
+  staleTime: 0,
+});
+/* ───────── Organizations ───────── */
+
+export const organizationsQuery = queryOptions({
+  queryKey: ["cms", "organizations"],
+  queryFn: async () => {
+    const docs = await sanityClient.fetch<
+      { name: string; type: string; image?: unknown; order?: number }[]
+    >(`*[_type=="organization"] | order(order asc){ name, type, image, order }`);
+    if (!docs?.length) return organizationsFallback;
+    return docs.map((d) => ({
+      name: d.name,
+      type: d.type ?? "",
+      image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
+        ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(200).url()
+        : null,
+    }));
+  },
+  initialData: organizationsFallback,
+  staleTime: 0,
+});
+
+/* ───────── Volunteering ───────── */
+
+export const volunteeringQuery = queryOptions({
+  queryKey: ["cms", "volunteering"],
+  queryFn: async () => {
+    const docs = await sanityClient.fetch<
+      {
+        organization: string;
+        role: string;
+        period?: string;
+        description?: string;
+        achievements?: string[];
+        responsibilities?: string[];
+        image?: unknown;
+        order?: number;
+      }[]
+    >(
+      `*[_type=="volunteering"] | order(order asc){ organization, role, period, description, achievements, responsibilities, image, order }`,
+    );
+    if (!docs?.length) return volunteeringFallback;
+    return docs.map((d, i) => {
+      const id = `vol-${i}`;
+      return {
+        id,
+        organization: d.organization,
+        role: d.role,
+        period: d.period ?? "",
+        description: d.description ?? "",
+        achievements: d.achievements ?? [],
+        responsibilities: d.responsibilities ?? [],
+        image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
+          ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(400).url()
+          : null,
+      };
+    });
+  },
+  initialData: volunteeringFallback,
+  staleTime: 0,
+});
+
+/* ───────── Certificates ───────── */
+
+export const certificatesQuery = queryOptions({
+  queryKey: ["cms", "certificates"],
+  queryFn: async () => {
+    const docs = await sanityClient.fetch<
+      {
+        title: string;
+        issuer: string;
+        date?: string;
+        image?: unknown;
+        order?: number;
+      }[]
+    >(`*[_type=="certificate"] | order(order asc){ title, issuer, date, image, order }`);
+    if (!docs?.length) return certificatesFallback;
+    return docs.map((d, i) => {
+      const id = `cert-${i}`;
+      return {
+        id,
+        title: d.title,
+        issuer: d.issuer ?? "",
+        date: d.date ?? "",
+        image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
+          ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(800).url()
+          : certificatesFallback[i % certificatesFallback.length].image, // local fallback logic
+      };
+    });
+  },
+  initialData: certificatesFallback,
+  staleTime: 0,
 });
 
 /* ───────── Reviews ───────── */
 
-/**
- * Approved reviews from Lovable Cloud (RLS-filtered to status='approved').
- * Falls back to seeded reviews if the table is empty so the homepage is never bare.
- */
 export const reviewsQuery = queryOptions({
   queryKey: ["public", "reviews"],
   queryFn: async () => {
-    const { data, error } = await supabase
-      .from("reviews")
-      .select("quote, author, role")
-      .eq("status", "approved")
-      .order("created_at", { ascending: false })
-      .limit(12);
-    if (error || !data || data.length === 0) return reviewsFallback;
-    return data.map((d) => ({ quote: d.quote, author: d.author, role: d.role ?? "" }));
+    const docs = await sanityClient.fetch<
+      { quote: string; author: string; role?: string | null; avatar?: unknown }[]
+    >(
+      `*[_type == "review" && status == "approved"] | order(createdAt desc)[0...12]{
+        quote, author, role, avatar
+      }`,
+    );
+    if (!docs?.length) return reviewsFallback;
+    return docs.map((d) => ({
+      quote: d.quote,
+      author: d.author,
+      role: d.role ?? "",
+      avatar:
+        d.avatar && typeof d.avatar === "object" && "asset" in (d.avatar as object)
+          ? urlFor(d.avatar as Parameters<typeof urlFor>[0])
+              .width(120)
+              .height(120)
+              .url()
+          : null,
+    }));
   },
   initialData: reviewsFallback,
   staleTime: 30_000,
@@ -315,5 +418,5 @@ export const liveStatsQuery = queryOptions({
     ];
   },
   initialData: statsFallback,
-  staleTime: 60_000,
+  staleTime: 0,
 });

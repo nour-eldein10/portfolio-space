@@ -40,11 +40,11 @@ export function SiteNav() {
               scrolled ? "bg-surface/70 backdrop-blur-xl hairline" : "bg-transparent"
             }`}
           >
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-md overflow-hidden ring-1 ring-[color:var(--neon)]/70 shadow-[0_0_28px_color-mix(in_oklab,var(--neon)_70%,transparent)] bg-background">
-                <img src={logo} alt="Nour Eldein logo" className="h-full w-full object-contain" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-md overflow-hidden ring-1 ring-[color:var(--neon)]/70 shadow-[0_0_28px_color-mix(in_oklab,var(--neon)_70%,transparent)] bg-background">
+                <img src={logo} alt="Nour Eldein logo" className="h-full w-full object-contain p-1" />
               </span>
-              <span className="font-mono text-[13px] tracking-tight">
+              <span className="font-mono text-[15px] tracking-tight">
                 nour<span className="text-muted-foreground">.dev</span>
               </span>
             </Link>

@@ -50,7 +50,7 @@ function AuthPage() {
       }
       // Wait briefly for auth state to propagate, then navigate
       await new Promise((r) => setTimeout(r, 300));
-      await navigate({ to: "/admin" });
+      await navigate({ to: "/" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Auth failed");
     } finally {
@@ -127,9 +127,7 @@ function AuthPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-surface/40 px-2 text-muted-foreground">
-                Or continue with
-              </span>
+              <span className="bg-surface/40 px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
@@ -144,7 +142,7 @@ function AuthPage() {
                 const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
                 const provider = new GoogleAuthProvider();
                 await signInWithPopup(auth, provider);
-                await navigate({ to: "/admin" });
+                await navigate({ to: "/" });
               } catch (err) {
                 toast.error(err instanceof Error ? err.message : "Google sign in failed");
               } finally {

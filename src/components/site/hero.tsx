@@ -16,7 +16,7 @@ export function Hero() {
   const { scrollY } = useScroll();
   const yHeroText = useTransform(scrollY, [0, 600], [0, 150]);
   const yHeroImage = useTransform(scrollY, [0, 600], [0, 250]);
-  const opacityHero = useTransform(scrollY, [0, 500], [1, 0]);
+  const opacityHero = useTransform(scrollY, [400, 1000], [1, 0]);
 
   // Cycle rotating roles
   useEffect(() => {
@@ -65,7 +65,7 @@ export function Hero() {
         <span>{profile.location}</span>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6 pt-44 pb-24 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
+      <div className="relative mx-auto max-w-7xl px-6 pt-32 pb-24 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
         <motion.div style={{ y: yHeroText, opacity: opacityHero }}>
           <p
             data-hero-meta
@@ -163,11 +163,11 @@ export function Hero() {
         <motion.div
           data-hero-portrait
           style={{ y: yHeroImage, opacity: opacityHero }}
-          className="relative aspect-[4/5] w-full max-w-[36rem] justify-self-center lg:justify-self-end"
+          className="relative aspect-[4/5] w-full max-w-[24rem] justify-self-center lg:justify-self-end"
         >
           <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-[color:var(--neon)]/30 via-transparent to-[color:var(--amber)]/30 blur-2xl opacity-60" />
           <div className="relative h-full w-full overflow-hidden rounded-[2rem] hairline bg-surface flex items-center justify-center">
-            <img src={logo} alt={profile.name} className="h-full w-full object-contain" />
+            <img src={profile.portrait} alt={profile.name} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div
               className="absolute inset-0"

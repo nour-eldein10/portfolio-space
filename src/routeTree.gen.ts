@@ -21,12 +21,15 @@ import { Route as DesignsSlugRouteImport } from './routes/designs.$slug'
 import { Route as AppsSlugRouteImport } from './routes/apps.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminVolunteeringRouteImport } from './routes/_authenticated/admin.volunteering'
 import { Route as AuthenticatedAdminServicesRouteImport } from './routes/_authenticated/admin.services'
 import { Route as AuthenticatedAdminReviewsRouteImport } from './routes/_authenticated/admin.reviews'
 import { Route as AuthenticatedAdminProjectsRouteImport } from './routes/_authenticated/admin.projects'
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
+import { Route as AuthenticatedAdminOrganizationsRouteImport } from './routes/_authenticated/admin.organizations'
 import { Route as AuthenticatedAdminExperienceRouteImport } from './routes/_authenticated/admin.experience'
 import { Route as AuthenticatedAdminDesignsRouteImport } from './routes/_authenticated/admin.designs'
+import { Route as AuthenticatedAdminCertificatesRouteImport } from './routes/_authenticated/admin.certificates'
 import { Route as AuthenticatedAdminAppsRouteImport } from './routes/_authenticated/admin.apps'
 
 const ServicesRoute = ServicesRouteImport.update({
@@ -88,6 +91,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminVolunteeringRoute =
+  AuthenticatedAdminVolunteeringRouteImport.update({
+    id: '/volunteering',
+    path: '/volunteering',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminServicesRoute =
   AuthenticatedAdminServicesRouteImport.update({
     id: '/services',
@@ -112,6 +121,12 @@ const AuthenticatedAdminProfileRoute =
     path: '/profile',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminOrganizationsRoute =
+  AuthenticatedAdminOrganizationsRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminExperienceRoute =
   AuthenticatedAdminExperienceRouteImport.update({
     id: '/experience',
@@ -122,6 +137,12 @@ const AuthenticatedAdminDesignsRoute =
   AuthenticatedAdminDesignsRouteImport.update({
     id: '/designs',
     path: '/designs',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCertificatesRoute =
+  AuthenticatedAdminCertificatesRouteImport.update({
+    id: '/certificates',
+    path: '/certificates',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAppsRoute = AuthenticatedAdminAppsRouteImport.update({
@@ -142,12 +163,15 @@ export interface FileRoutesByFullPath {
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
+  '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/admin/experience': typeof AuthenticatedAdminExperienceRoute
+  '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
+  '/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -161,12 +185,15 @@ export interface FileRoutesByTo {
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
+  '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/admin/experience': typeof AuthenticatedAdminExperienceRoute
+  '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
+  '/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -183,12 +210,15 @@ export interface FileRoutesById {
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/_authenticated/admin/apps': typeof AuthenticatedAdminAppsRoute
+  '/_authenticated/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/_authenticated/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/_authenticated/admin/experience': typeof AuthenticatedAdminExperienceRoute
+  '/_authenticated/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/_authenticated/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/_authenticated/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/_authenticated/admin/services': typeof AuthenticatedAdminServicesRoute
+  '/_authenticated/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -205,12 +235,15 @@ export interface FileRouteTypes {
     | '/designs/$slug'
     | '/projects/$slug'
     | '/admin/apps'
+    | '/admin/certificates'
     | '/admin/designs'
     | '/admin/experience'
+    | '/admin/organizations'
     | '/admin/profile'
     | '/admin/projects'
     | '/admin/reviews'
     | '/admin/services'
+    | '/admin/volunteering'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -224,12 +257,15 @@ export interface FileRouteTypes {
     | '/designs/$slug'
     | '/projects/$slug'
     | '/admin/apps'
+    | '/admin/certificates'
     | '/admin/designs'
     | '/admin/experience'
+    | '/admin/organizations'
     | '/admin/profile'
     | '/admin/projects'
     | '/admin/reviews'
     | '/admin/services'
+    | '/admin/volunteering'
     | '/admin'
   id:
     | '__root__'
@@ -245,12 +281,15 @@ export interface FileRouteTypes {
     | '/designs/$slug'
     | '/projects/$slug'
     | '/_authenticated/admin/apps'
+    | '/_authenticated/admin/certificates'
     | '/_authenticated/admin/designs'
     | '/_authenticated/admin/experience'
+    | '/_authenticated/admin/organizations'
     | '/_authenticated/admin/profile'
     | '/_authenticated/admin/projects'
     | '/_authenticated/admin/reviews'
     | '/_authenticated/admin/services'
+    | '/_authenticated/admin/volunteering'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -352,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/volunteering': {
+      id: '/_authenticated/admin/volunteering'
+      path: '/volunteering'
+      fullPath: '/admin/volunteering'
+      preLoaderRoute: typeof AuthenticatedAdminVolunteeringRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/services': {
       id: '/_authenticated/admin/services'
       path: '/services'
@@ -380,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProfileRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/organizations': {
+      id: '/_authenticated/admin/organizations'
+      path: '/organizations'
+      fullPath: '/admin/organizations'
+      preLoaderRoute: typeof AuthenticatedAdminOrganizationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/experience': {
       id: '/_authenticated/admin/experience'
       path: '/experience'
@@ -394,6 +447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDesignsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/certificates': {
+      id: '/_authenticated/admin/certificates'
+      path: '/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AuthenticatedAdminCertificatesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/apps': {
       id: '/_authenticated/admin/apps'
       path: '/apps'
@@ -406,23 +466,29 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAppsRoute: typeof AuthenticatedAdminAppsRoute
+  AuthenticatedAdminCertificatesRoute: typeof AuthenticatedAdminCertificatesRoute
   AuthenticatedAdminDesignsRoute: typeof AuthenticatedAdminDesignsRoute
   AuthenticatedAdminExperienceRoute: typeof AuthenticatedAdminExperienceRoute
+  AuthenticatedAdminOrganizationsRoute: typeof AuthenticatedAdminOrganizationsRoute
   AuthenticatedAdminProfileRoute: typeof AuthenticatedAdminProfileRoute
   AuthenticatedAdminProjectsRoute: typeof AuthenticatedAdminProjectsRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminServicesRoute: typeof AuthenticatedAdminServicesRoute
+  AuthenticatedAdminVolunteeringRoute: typeof AuthenticatedAdminVolunteeringRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAppsRoute: AuthenticatedAdminAppsRoute,
+  AuthenticatedAdminCertificatesRoute: AuthenticatedAdminCertificatesRoute,
   AuthenticatedAdminDesignsRoute: AuthenticatedAdminDesignsRoute,
   AuthenticatedAdminExperienceRoute: AuthenticatedAdminExperienceRoute,
+  AuthenticatedAdminOrganizationsRoute: AuthenticatedAdminOrganizationsRoute,
   AuthenticatedAdminProfileRoute: AuthenticatedAdminProfileRoute,
   AuthenticatedAdminProjectsRoute: AuthenticatedAdminProjectsRoute,
   AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
   AuthenticatedAdminServicesRoute: AuthenticatedAdminServicesRoute,
+  AuthenticatedAdminVolunteeringRoute: AuthenticatedAdminVolunteeringRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 

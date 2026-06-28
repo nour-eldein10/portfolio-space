@@ -130,9 +130,17 @@ export function Reviews() {
                           {r.role}
                         </p>
                       </div>
-                      <div className="h-8 w-8 rounded-full bg-surface-2 flex items-center justify-center font-display text-xs text-muted-foreground hairline">
-                        {r.author?.charAt(0) || "U"}
-                      </div>
+                      {r.avatar ? (
+                        <img
+                          src={r.avatar}
+                          alt={r.author}
+                          className="h-8 w-8 rounded-full object-cover hairline"
+                        />
+                      ) : (
+                        <div className="h-8 w-8 rounded-full bg-surface-2 flex items-center justify-center font-display text-xs text-muted-foreground hairline">
+                          {r.author?.charAt(0) || "U"}
+                        </div>
+                      )}
                     </footer>
                   </motion.blockquote>
                 </div>

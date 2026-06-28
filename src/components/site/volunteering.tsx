@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { volunteering } from "@/lib/portfolio-data";
+import { volunteeringQuery } from "@/lib/cms";
+import { useQuery } from "@tanstack/react-query";
 import { SectionHeader } from "./section-header";
 
 export function Volunteering() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { data: volunteering = [] } = useQuery(volunteeringQuery);
 
   const selectedVol = volunteering.find((v) => v.id === selectedId);
 
@@ -35,8 +37,12 @@ export function Volunteering() {
               className="group relative p-8 hairline rounded-3xl bg-surface/40 hover:bg-surface/70 transition-colors cursor-pointer flex flex-col h-full"
             >
               <div className="flex items-start justify-between mb-6">
-                <div className="h-12 w-12 rounded-2xl bg-surface-2 hairline flex items-center justify-center font-display text-xl text-foreground/60 group-hover:text-[color:var(--neon)] transition-colors">
-                  {vol.organization.charAt(0)}
+                <div className="h-12 w-12 rounded-2xl bg-surface-2 hairline flex items-center justify-center font-display text-xl text-foreground/60 overflow-hidden group-hover:text-[color:var(--neon)] transition-colors">
+                  {vol.image ? (
+                    <img src={vol.image} alt={vol.organization} className="h-full w-full object-cover p-0.5" />
+                  ) : (
+                    vol.organization.charAt(0)
+                  )}
                 </div>
                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                   {vol.period}

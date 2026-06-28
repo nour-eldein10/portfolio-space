@@ -1,49 +1,67 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** Submit a new review. User must be signed in. Inserts as pending. */
+/** Submit a new review. Public — any visitor can submit. Inserts as pending. */
 export const submitReview = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((data: { author: string; role?: string; quote: string }) => data)
-  .handler(async ({ data, context }) => {
-    const { error, data: inserted } = await context.supabase
-      .from("reviews")
-      .insert({
-        user_id: context.userId,
-        author: data.author.slice(0, 100),
-        role: data.role?.slice(0, 100) ?? null,
-        quote: data.quote.slice(0, 800),
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return inserted;
+  .validator(
+    (data: { author: string; role?: string; quote: string; avatarDataUrl?: string }) => data,
+  )
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+
+    let avatarRef: { _type: "reference"; _ref: string } | undefined;
+
+    if (data.avatarDataUrl) {
+      const match = data.avatarDataUrl.match(/^data:(.+);base64,(.+)$/);
+      if (match) {
+        const contentType = match[1];
+        const buffer = Buffer.from(match[2], "base64");
+        const asset = await client.assets.upload("image", buffer, {
+          filename: `review-avatar-${Date.now()}`,
+          contentType,
+        });
+        avatarRef = { _type: "reference", _ref: asset._id };
+      }
+    }
+
+    const doc: Record<string, unknown> = {
+      _type: "review",
+      author: data.author.slice(0, 100),
+      role: data.role?.slice(0, 100) ?? null,
+      quote: data.quote.slice(0, 800),
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (avatarRef) {
+      doc.avatar = { _type: "image", asset: avatarRef };
+    }
+
+    const created = await client.create(doc);
+    return created;
   });
 
 /** Admin: list all reviews by status. */
 export const adminListReviews = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { status?: "pending" | "approved" | "rejected" }) => data)
-  .handler(async ({ data, context }) => {
-    const query = context.supabase
-      .from("reviews")
-      .select("*")
-      .order("created_at", { ascending: false });
-    const { data: rows, error } = data.status ? await query.eq("status", data.status) : await query;
-    if (error) throw new Error(error.message);
-    return rows ?? [];
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    const filter = data.status ? `&& status == "${data.status}"` : "";
+    const reviews = await client.fetch(`*[_type == "review" ${filter}] | order(createdAt desc)`);
+    return (reviews ?? []) as any[];
   });
 
 /** Admin: change a review status. */
 export const adminSetReviewStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { id: string; status: "pending" | "approved" | "rejected" }) => data)
-  .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
-      .from("reviews")
-      .update({ status: data.status })
-      .eq("id", data.id);
-    if (error) throw new Error(error.message);
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    await client.patch(data.id).set({ status: data.status }).commit();
     return { ok: true as const };
   });
 
@@ -51,9 +69,10 @@ export const adminSetReviewStatus = createServerFn({ method: "POST" })
 export const adminDeleteReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => data)
-  .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("reviews").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    await client.delete(data.id);
     return { ok: true as const };
   });
 
@@ -61,6 +80,5 @@ export const adminDeleteReview = createServerFn({ method: "POST" })
 export const checkIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    // With Firebase Auth, if they are authenticated we assume they are the admin
     return { isAdmin: true };
   });

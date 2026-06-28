@@ -1,63 +1,61 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitReview } from "@/lib/reviews.functions";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ImagePlus } from "lucide-react";
 
 export function ReviewForm() {
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const submit = useServerFn(submitReview);
 
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [author, setAuthor] = useState("");
   const [role, setRole] = useState("");
   const [quote, setQuote] = useState("");
+  const [avatarDataUrl, setAvatarDataUrl] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  useEffect(() => {
-    setSignedIn(!!auth.currentUser);
-    const unsubscribe = onAuthStateChanged(auth, (user) => setSignedIn(!!user));
-    return () => unsubscribe();
-  }, []);
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2 MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setAvatarDataUrl(result);
+      setAvatarPreview(result);
+    };
+    reader.readAsDataURL(file);
+  }
 
   const mut = useMutation({
-    mutationFn: () => submit({ data: { author, role: role || undefined, quote } }),
+    mutationFn: () =>
+      submit({
+        data: {
+          author,
+          role: role || undefined,
+          quote,
+          avatarDataUrl: avatarDataUrl || undefined,
+        },
+      }),
     onSuccess: () => {
       toast.success("Thanks — your review is pending approval.");
       setAuthor("");
       setRole("");
       setQuote("");
+      setAvatarDataUrl(null);
+      setAvatarPreview(null);
       qc.invalidateQueries({ queryKey: ["public", "reviews"] });
     },
     onError: (e: any) => toast.error(e?.message ?? "Could not submit"),
   });
-
-  if (signedIn === false) {
-    return (
-      <div className="mt-12 hairline rounded-3xl p-8 bg-background text-center">
-        <p className="text-sm text-muted-foreground">
-          Want to leave a review?{" "}
-          <button
-            onClick={() => navigate({ to: "/auth" })}
-            className="text-foreground underline underline-offset-4 hover:text-[color:var(--neon)]"
-          >
-            Sign in
-          </button>{" "}
-          first.
-        </p>
-      </div>
-    );
-  }
-
-  if (!signedIn) return null;
 
   return (
     <form
@@ -101,6 +99,27 @@ export function ReviewForm() {
             value={quote}
             onChange={(e) => setQuote(e.target.value)}
           />
+        </div>
+
+        {/* Avatar upload */}
+        <div className="sm:col-span-2 space-y-1.5">
+          <Label>Profile picture (optional)</Label>
+          <div className="flex items-center gap-4">
+            {avatarPreview && (
+              <img
+                src={avatarPreview}
+                alt="Preview"
+                className="h-14 w-14 rounded-full object-cover ring-2 ring-border"
+              />
+            )}
+            <label className="cursor-pointer">
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+              <span className="inline-flex items-center gap-2 px-3 py-2 hairline rounded-md text-sm hover:bg-surface/50 transition-colors">
+                <ImagePlus className="h-4 w-4" />
+                {avatarPreview ? "Change photo" : "Upload photo"}
+              </span>
+            </label>
+          </div>
         </div>
       </div>
       <Button type="submit" className="mt-6" disabled={mut.isPending}>

@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListReviews, adminSetReviewStatus, adminDeleteReview } from "@/lib/reviews.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { urlFor } from "@/lib/sanity";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Check, X, Trash2, RotateCcw } from "lucide-react";
@@ -21,26 +20,15 @@ function AdminReviews() {
   const { data: reviews = [] } = useQuery({
     queryKey: ["admin", "reviews", "all"],
     queryFn: () => list({ data: {} }),
+    refetchInterval: 15_000,
   });
-
-  useEffect(() => {
-    const ch = supabase
-      .channel("admin-reviews")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reviews" }, () => {
-        qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
-        qc.invalidateQueries({ queryKey: ["public", "reviews"] });
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, [qc]);
 
   const setStatusMut = useMutation({
     mutationFn: (v: { id: string; status: "pending" | "approved" | "rejected" }) =>
       setStatus({ data: v }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
+      qc.invalidateQueries({ queryKey: ["public", "reviews"] });
       toast.success("Updated");
     },
   });
@@ -48,6 +36,7 @@ function AdminReviews() {
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
+      qc.invalidateQueries({ queryKey: ["public", "reviews"] });
       toast.success("Deleted");
     },
   });
@@ -61,28 +50,26 @@ function AdminReviews() {
   return (
     <div>
       <h1 className="font-display text-3xl tracking-tight">Reviews</h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Approved reviews appear on the homepage. Updates stream in real-time.
-      </p>
+      <p className="text-sm text-muted-foreground mt-1">Approved reviews appear on the homepage.</p>
 
       <Section title={`Pending (${groups.pending.length})`}>
         {groups.pending.length === 0 && <Empty>No pending reviews.</Empty>}
         {groups.pending.map((r: any) => (
           <ReviewRow
-            key={r.id}
+            key={r._id}
             r={r}
             actions={
               <>
                 <Button
                   size="sm"
-                  onClick={() => setStatusMut.mutate({ id: r.id, status: "approved" })}
+                  onClick={() => setStatusMut.mutate({ id: r._id, status: "approved" })}
                 >
                   <Check className="h-4 w-4 mr-1" /> Approve
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setStatusMut.mutate({ id: r.id, status: "rejected" })}
+                  onClick={() => setStatusMut.mutate({ id: r._id, status: "rejected" })}
                 >
                   <X className="h-4 w-4 mr-1" /> Reject
                 </Button>
@@ -96,14 +83,14 @@ function AdminReviews() {
         {groups.approved.length === 0 && <Empty>No approved reviews yet.</Empty>}
         {groups.approved.map((r: any) => (
           <ReviewRow
-            key={r.id}
+            key={r._id}
             r={r}
             actions={
               <>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setStatusMut.mutate({ id: r.id, status: "pending" })}
+                  onClick={() => setStatusMut.mutate({ id: r._id, status: "pending" })}
                 >
                   <RotateCcw className="h-4 w-4 mr-1" /> Unpublish
                 </Button>
@@ -111,7 +98,7 @@ function AdminReviews() {
                   size="sm"
                   variant="ghost"
                   onClick={() => {
-                    if (confirm("Delete?")) delMut.mutate(r.id);
+                    if (confirm("Delete?")) delMut.mutate(r._id);
                   }}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
@@ -126,14 +113,14 @@ function AdminReviews() {
         {groups.rejected.length === 0 && <Empty>None.</Empty>}
         {groups.rejected.map((r: any) => (
           <ReviewRow
-            key={r.id}
+            key={r._id}
             r={r}
             actions={
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => {
-                  if (confirm("Delete?")) delMut.mutate(r.id);
+                  if (confirm("Delete?")) delMut.mutate(r._id);
                 }}
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -160,16 +147,23 @@ function Empty({ children }: { children: React.ReactNode }) {
   return <div className="hairline rounded-2xl p-6 text-sm text-muted-foreground">{children}</div>;
 }
 function ReviewRow({ r, actions }: { r: any; actions: React.ReactNode }) {
+  const avatarUrl = r.avatar?.asset ? urlFor(r.avatar).width(80).height(80).url() : null;
+
   return (
-    <div className="hairline rounded-2xl p-5 bg-surface/30">
-      <p className="text-sm leading-relaxed">"{r.quote}"</p>
-      <div className="mt-3 flex items-center justify-between gap-4">
-        <div className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">{r.author}</span>
-          {r.role && <> · {r.role}</>}
-          <> · {new Date(r.created_at).toLocaleDateString()}</>
+    <div className="hairline rounded-2xl p-5 bg-surface/30 flex gap-4">
+      {avatarUrl && (
+        <img src={avatarUrl} alt="" className="h-12 w-12 rounded-full object-cover shrink-0" />
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm leading-relaxed">"{r.quote}"</p>
+        <div className="mt-3 flex items-center justify-between gap-4">
+          <div className="text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">{r.author}</span>
+            {r.role && <> · {r.role}</>}
+            {r.createdAt && <> · {new Date(r.createdAt).toLocaleDateString()}</>}
+          </div>
+          <div className="flex items-center gap-2">{actions}</div>
         </div>
-        <div className="flex items-center gap-2">{actions}</div>
       </div>
     </div>
   );
