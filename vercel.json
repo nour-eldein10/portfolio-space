@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "buildCommand": "vite build",
+  "outputDirectory": ".output/public",
+  "functions": {
+    "api/**": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }
