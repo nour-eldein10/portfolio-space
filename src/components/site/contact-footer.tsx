@@ -59,7 +59,7 @@ export function ContactFooter() {
         style={{
           background:
             "radial-gradient(70% 50% at 30% 100%, color-mix(in oklab, var(--amber) 22%, transparent), transparent 70%), radial-gradient(60% 50% at 80% 0%, color-mix(in oklab, var(--neon) 15%, transparent), transparent 70%)",
-        }}
+        } as React.CSSProperties}
       />
 
       <div className="mx-auto max-w-6xl px-6">
