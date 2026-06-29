@@ -52,7 +52,7 @@ export function ContactFooter() {
 
   const big = "LET'S MAKE";
   return (
-    <footer id="contact" ref={ref} className="relative overflow-hidden pt-28 pb-12 bg-background">
+    <footer id="contact" ref={ref} className="relative overflow-hidden pt-14 pb-6 bg-background">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 opacity-60"
@@ -62,12 +62,12 @@ export function ContactFooter() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-6">
-        <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
+      <div className="mx-auto max-w-6xl px-6">
+        <p className="font-mono text-[5px] tracking-[0.25em] uppercase text-muted-foreground">
           <span className="text-[color:var(--neon)]">●</span> Booking Q1 2026
         </p>
 
-        <h2 className="mt-8 font-display font-medium leading-[0.9] tracking-[-0.04em] text-[clamp(3rem,13vw,11rem)]">
+        <h3 className="mt-8 font-display font-medium leading-[0.7] tracking-[-0.04em] text-[clamp(3rem,13vw,11rem)]">
           <span className="block overflow-hidden">
             {big.split("").map((c, i) => (
               <span key={i} className="inline-block overflow-hidden align-bottom">
@@ -77,17 +77,12 @@ export function ContactFooter() {
               </span>
             ))}
           </span>
-          <span className="block overflow-hidden">
-            <span data-letter className="inline-block font-serif-italic text-[color:var(--amber)]">
+          <span className="block overflow-visible">
+            <span data-letter className="inline-flex font-serif-italic text-[color:var(--amber)] text-[105px] tracking-wider">
               something impactful
             </span>
           </span>
-          <span className="block overflow-hidden">
-            <span data-letter className="inline-block font-serif-italic text-[color:var(--amber)]">
-              together.
-            </span>
-          </span>
-        </h2>
+        </h3>
 
         <div className="mt-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
           <form
@@ -191,10 +186,10 @@ export function ContactFooter() {
             </div>
             <div className="flex flex-wrap gap-2">
               {[
-                { name: "WhatsApp", url: "https://wa.me/yournumber" },
+                { name: "WhatsApp", url: "+201016082821" },
                 { name: "Email", url: `mailto:${profile.email}` },
-                { name: "LinkedIn", url: "https://linkedin.com/in/noureldein" },
-                { name: "GitHub", url: "https://github.com/noureldein" },
+                { name: "LinkedIn", url: "https://linkedin.com/in/noureldein1" },
+                { name: "GitHub", url: "https://github.com/nour-eldein10" },
                 { name: "Behance", url: "https://behance.net/noureldein" },
               ].map((s) => (
                 <a

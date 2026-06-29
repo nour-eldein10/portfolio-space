@@ -59,13 +59,9 @@ export function Hero() {
         className="absolute inset-0 -z-10 w-full h-full opacity-90"
         color="rgba(120, 230, 255, 0.85)"
       />
-      <br />    <br />    <br />
-      {/* Top dateline */}
-      <div className="absolute top-28 inset-x-30 px-6 flex items-center justify-between font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
-        <span>{profile.email}</span>
-      </div>
 
-
+      <br />
+  
       <div className="relative mx-auto max-w-7xl px-6 pt-28 pb-16 grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
         <motion.div style={{ y: yHeroText, opacity: opacityHero }}>
           <p
@@ -147,15 +143,37 @@ export function Hero() {
             </Link>
             <Link
               to="/services"
-              className="inline-flex items-center gap-2 rounded-full hairline px-5 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:border-[color:var(--neon)] transition-colors"
+              className="group relative p-[2px] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(120,230,255,0.35)]"
             >
-              View Services
+              <span className="absolute inset-0 bg-gradient-to-r from-[color:var(--neon)] via-[color:var(--amber)] to-[color:var(--neon)] bg-[length:200%_auto] group-hover:bg-right transition-all duration-500 rounded-full" />
+              <span className="relative flex items-center justify-center px-6 py-2.5 rounded-full bg-background/95 group-hover:bg-background/90 transition-colors">
+                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span 
+                  className="font-display font-medium text-sm text-foreground tracking-tight transition-all duration-300"
+                  style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
+                >
+                  View Services
+                </span>
+              </span>
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full hairline px-5 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:border-[color:var(--amber)] transition-colors"
+              className="group relative p-[2px] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(209,160,84,0.35)]"
             >
-              Contact Me
+              <span className="absolute inset-0 bg-gradient-to-r from-[color:var(--amber)] via-[color:var(--neon)] to-[color:var(--amber)] bg-[length:200%_auto] group-hover:bg-right transition-all duration-500 rounded-full" />
+              <span className="relative flex items-center justify-center px-6 py-2.5 rounded-full bg-background/95 group-hover:bg-background/90 transition-colors">
+                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
+                <span 
+                  className="font-display font-medium text-sm text-foreground tracking-tight transition-all duration-300"
+                  style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
+                >
+                  Contact Me
+                </span>
+              </span>
             </Link>
           </div>
         </motion.div>

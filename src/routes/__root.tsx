@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Splash } from "@/components/site/splash";
+import { CustomCursor } from "@/components/site/custom-cursor";
 import { Toaster } from "sonner";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -149,6 +150,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <CustomCursor />
       <Splash />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
