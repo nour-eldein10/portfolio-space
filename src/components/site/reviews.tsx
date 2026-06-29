@@ -130,9 +130,9 @@ export function Reviews() {
                           {r.role}
                         </p>
                       </div>
-                      {r.avatar ? (
+                      {(r as any).avatar ? (
                         <img
-                          src={r.avatar}
+                          src={(r as any).avatar}
                           alt={r.author}
                           className="h-8 w-8 rounded-full object-cover hairline"
                         />

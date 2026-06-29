@@ -25,21 +25,18 @@ export const submitReview = createServerFn({ method: "POST" })
       }
     }
 
-    const doc: Record<string, unknown> = {
-      _type: "review",
+    const doc = {
+      _type: "review" as const,
       author: data.author.slice(0, 100),
       role: data.role?.slice(0, 100) ?? null,
       quote: data.quote.slice(0, 800),
       status: "pending",
       createdAt: new Date().toISOString(),
+      ...(avatarRef ? { avatar: { _type: "image" as const, asset: avatarRef } } : {}),
     };
 
-    if (avatarRef) {
-      doc.avatar = { _type: "image", asset: avatarRef };
-    }
-
     const created = await client.create(doc);
-    return created;
+    return created as any;
   });
 
 /** Admin: list all reviews by status. */

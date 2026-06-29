@@ -16,6 +16,7 @@ import { Route as AppsRouteImport } from './routes/apps'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppsIndexRouteImport } from './routes/apps.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as DesignsSlugRouteImport } from './routes/designs.$slug'
 import { Route as AppsSlugRouteImport } from './routes/apps.$slug'
@@ -65,6 +66,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppsIndexRoute = AppsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppsRoute,
 } as any)
 const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   id: '/projects/$slug',
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/apps/': typeof AppsIndexRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
@@ -177,13 +184,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/apps': typeof AppsRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/apps': typeof AppsIndexRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
@@ -209,6 +216,7 @@ export interface FileRoutesById {
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/apps/': typeof AppsIndexRoute
   '/_authenticated/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/_authenticated/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/_authenticated/admin/designs': typeof AuthenticatedAdminDesignsRoute
@@ -234,6 +242,7 @@ export interface FileRouteTypes {
     | '/apps/$slug'
     | '/designs/$slug'
     | '/projects/$slug'
+    | '/apps/'
     | '/admin/apps'
     | '/admin/certificates'
     | '/admin/designs'
@@ -249,13 +258,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/apps'
     | '/auth'
     | '/contact'
     | '/services'
     | '/apps/$slug'
     | '/designs/$slug'
     | '/projects/$slug'
+    | '/apps'
     | '/admin/apps'
     | '/admin/certificates'
     | '/admin/designs'
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/apps/$slug'
     | '/designs/$slug'
     | '/projects/$slug'
+    | '/apps/'
     | '/_authenticated/admin/apps'
     | '/_authenticated/admin/certificates'
     | '/_authenticated/admin/designs'
@@ -355,6 +365,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/apps/': {
+      id: '/apps/'
+      path: '/'
+      fullPath: '/apps/'
+      preLoaderRoute: typeof AppsIndexRouteImport
+      parentRoute: typeof AppsRoute
     }
     '/projects/$slug': {
       id: '/projects/$slug'
@@ -508,10 +525,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AppsRouteChildren {
   AppsSlugRoute: typeof AppsSlugRoute
+  AppsIndexRoute: typeof AppsIndexRoute
 }
 
 const AppsRouteChildren: AppsRouteChildren = {
   AppsSlugRoute: AppsSlugRoute,
+  AppsIndexRoute: AppsIndexRoute,
 }
 
 const AppsRouteWithChildren = AppsRoute._addFileChildren(AppsRouteChildren)

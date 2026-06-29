@@ -30,15 +30,17 @@ export const Route = createFileRoute("/apps/$slug")({
     };
   },
   loader: async ({ params }) => {
-    const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
-      slug: params.slug,
-    });
-    if (!doc) {
-      const fallbackDoc = appsFallback.find((a) => a.id === params.slug);
-      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
-      throw notFound();
+    try {
+      const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
+        slug: params.slug,
+      });
+      if (doc) return doc;
+    } catch {
+      // Sanity unreachable — fall through to local data
     }
-    return doc;
+    const fallbackDoc = appsFallback.find((a) => a.id === params.slug);
+    if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+    throw notFound();
   },
   errorComponent: () => (
     <main>
@@ -87,14 +89,17 @@ function AppDetail() {
   const { data: a } = useQuery({
     queryKey: ["cms", "app", initial.slug?.current],
     queryFn: async () => {
-      const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
-        slug: initial.slug?.current,
-      });
-      if (!doc) {
-        const fallbackDoc = appsFallback.find((f) => f.id === initial.slug?.current);
-        if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      try {
+        const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
+          slug: initial.slug?.current,
+        });
+        if (doc) return doc;
+      } catch {
+        // Sanity unreachable
       }
-      return doc;
+      const fallbackDoc = appsFallback.find((f) => f.id === initial.slug?.current);
+      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      return initial;
     },
     initialData: initial,
   });

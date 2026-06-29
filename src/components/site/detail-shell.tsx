@@ -45,7 +45,7 @@ function RatingBar({ pct, count }: { pct: number; count: number }) {
       <div className="flex-1 h-1.5 rounded-full bg-surface-2 overflow-hidden">
         <div
           className="h-full rounded-full bg-[color:var(--amber)]"
-          style={{ width: `${pct}%` }}
+          style={{ width: `${pct}%` } as React.CSSProperties}
         />
       </div>
     </div>
@@ -73,6 +73,7 @@ function MediaCarousel({ items }: { items: string[] }) {
           <button
             key={i}
             onClick={() => scrollTo(i)}
+            aria-label={`View media ${i + 1}`}
             className={`snap-center shrink-0 relative rounded-2xl overflow-hidden hairline transition-all ${
               active === i ? "ring-2 ring-[color:var(--neon)]" : "opacity-70 hover:opacity-100"
             }`}
