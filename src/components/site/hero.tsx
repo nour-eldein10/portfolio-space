@@ -59,13 +59,14 @@ export function Hero() {
         className="absolute inset-0 -z-10 w-full h-full opacity-90"
         color="rgba(120, 230, 255, 0.85)"
       />
-
+      <br />    <br />    <br />
       {/* Top dateline */}
-      <div className="absolute top-28 inset-x-0 px-6 flex items-center justify-between font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
-        <span>{profile.location}</span>
+      <div className="absolute top-28 inset-x-30 px-6 flex items-center justify-between font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
+        <span>{profile.email}</span>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6 pt-32 pb-24 grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
+
+      <div className="relative mx-auto max-w-7xl px-6 pt-28 pb-16 grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
         <motion.div style={{ y: yHeroText, opacity: opacityHero }}>
           <p
             data-hero-meta
@@ -77,7 +78,7 @@ export function Hero() {
 
           <h1
             ref={headlineRef}
-            className="font-display font-medium text-[clamp(2.6rem,9vw,7.2rem)] leading-[0.95] tracking-[-0.035em] text-balance"
+            className="font-display font-medium text-[clamp(2rem,6.5vw,5.2rem)] leading-[0.95] tracking-[-0.035em] text-balance"
           >
             <span className="block overflow-hidden">
               <span data-hero-line className="block">
@@ -163,7 +164,7 @@ export function Hero() {
         <motion.div
           data-hero-portrait
           style={{ y: yHeroImage, opacity: opacityHero }}
-          className="relative aspect-[4/5] w-full max-w-[24rem] justify-self-center lg:justify-self-end"
+          className="relative aspect-[4/5] w-full max-w-[18rem] justify-self-center lg:justify-self-end"
         >
           <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-[color:var(--neon)]/30 via-transparent to-[color:var(--amber)]/30 blur-2xl opacity-60" />
           <div className="relative h-full w-full overflow-hidden rounded-[2rem] hairline bg-surface flex items-center justify-center">

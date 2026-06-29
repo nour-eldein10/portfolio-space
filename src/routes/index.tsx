@@ -36,6 +36,14 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function Divider() {
+  return (
+    <div className="mx-auto max-w-6xl px-6">
+      <div className="w-full h-px bg-border/40" />
+    </div>
+  );
+}
+
 function Index() {
   return (
     <main className="relative">
@@ -43,16 +51,23 @@ function Index() {
       <SiteNav />
       <Hero />
       <Marquee />
+      <Divider />
       <SectionReveal>
         <Projects />
       </SectionReveal>
+      <Divider />
       <Organizations />
+      <Divider />
       <SectionReveal>
         <Experience />
       </SectionReveal>
+      <Divider />
       <Skills />
+      <Divider />
       <Reviews />
+      <Divider />
       <Certificates />
+      <Divider />
       <SectionReveal>
         <Volunteering />
       </SectionReveal>
