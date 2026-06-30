@@ -84,10 +84,10 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "order", label: "Order", kind: "number" },
     ],
   },
-  project: {
-    type: "project",
-    label: "Projects",
-    singular: "Project",
+  product: {
+    type: "product",
+    label: "Products",
+    singular: "Product",
     titleField: "name",
     subtitleField: "summary",
     imageField: "cover",
@@ -120,7 +120,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "name", label: "Name", kind: "text" },
       { name: "slug", label: "Slug", kind: "text" },
       { name: "tagline", label: "Tagline", kind: "text" },
-      { name: "description", label: "Description", kind: "textarea" },
+      { name: "description", label: "Short Description", kind: "textarea" },
       { name: "icon", label: "Icon character", kind: "text", helper: "Single glyph e.g. ◐" },
       { name: "rating", label: "Rating (0-5)", kind: "number" },
       { name: "reviews", label: "Reviews label", kind: "text", helper: "e.g. 2.1k" },

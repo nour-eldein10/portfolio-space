@@ -134,7 +134,7 @@ export const services = [
   },
 ];
 
-export const featuredProjects = [
+export const featuredProducts = [
   {
     id: "pulse",
     name: "Pulse — habit OS",

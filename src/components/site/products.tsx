@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { projectsQuery } from "@/lib/cms";
+import { productsQuery } from "@/lib/cms";
 import { SectionHeader } from "./section-header";
 
-export function Projects() {
-  const { data: featuredProjects } = useQuery(projectsQuery);
+export function Products() {
+  const { data: featuredProducts } = useQuery(productsQuery);
   return (
     <section id="work" className="py-28 sm:py-36 bg-surface/30">
       <div className="mx-auto max-w-7xl px-6">
@@ -21,7 +21,7 @@ export function Projects() {
         />
 
         <div className="mt-16 space-y-6">
-          {featuredProjects.map((p, i) => (
+          {featuredProducts.map((p, i) => (
             <motion.div
               key={p.id}
               initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50, y: 30 }}
@@ -50,7 +50,7 @@ export function Projects() {
                   {p.summary}
                 </p>
                 <Link
-                  to="/projects/$slug"
+                  to="/products/$slug"
                   params={{ slug: p.id }}
                   className="mt-6 inline-flex items-center gap-2 text-sm text-foreground group-hover:gap-4 group-hover:text-[color:var(--neon)] transition-all duration-300"
                 >

@@ -17,7 +17,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppsIndexRouteImport } from './routes/apps.index'
-import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
+import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as DesignsSlugRouteImport } from './routes/designs.$slug'
 import { Route as AppsSlugRouteImport } from './routes/apps.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -25,8 +25,8 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminVolunteeringRouteImport } from './routes/_authenticated/admin.volunteering'
 import { Route as AuthenticatedAdminServicesRouteImport } from './routes/_authenticated/admin.services'
 import { Route as AuthenticatedAdminReviewsRouteImport } from './routes/_authenticated/admin.reviews'
-import { Route as AuthenticatedAdminProjectsRouteImport } from './routes/_authenticated/admin.projects'
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
+import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminOrganizationsRouteImport } from './routes/_authenticated/admin.organizations'
 import { Route as AuthenticatedAdminExperienceRouteImport } from './routes/_authenticated/admin.experience'
 import { Route as AuthenticatedAdminDesignsRouteImport } from './routes/_authenticated/admin.designs'
@@ -72,9 +72,9 @@ const AppsIndexRoute = AppsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppsRoute,
 } as any)
-const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
-  id: '/projects/$slug',
-  path: '/projects/$slug',
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignsSlugRoute = DesignsSlugRouteImport.update({
@@ -115,16 +115,16 @@ const AuthenticatedAdminReviewsRoute =
     path: '/reviews',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminProjectsRoute =
-  AuthenticatedAdminProjectsRouteImport.update({
-    id: '/projects',
-    path: '/projects',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminProfileRoute =
   AuthenticatedAdminProfileRouteImport.update({
     id: '/profile',
     path: '/profile',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProductsRoute =
+  AuthenticatedAdminProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminOrganizationsRoute =
@@ -167,15 +167,15 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/apps/': typeof AppsIndexRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/admin/experience': typeof AuthenticatedAdminExperienceRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
+  '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
-  '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
   '/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
@@ -189,15 +189,15 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/apps': typeof AppsIndexRoute
   '/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/admin/experience': typeof AuthenticatedAdminExperienceRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
+  '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
-  '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
   '/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
@@ -215,15 +215,15 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/apps/$slug': typeof AppsSlugRoute
   '/designs/$slug': typeof DesignsSlugRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/apps/': typeof AppsIndexRoute
   '/_authenticated/admin/apps': typeof AuthenticatedAdminAppsRoute
   '/_authenticated/admin/certificates': typeof AuthenticatedAdminCertificatesRoute
   '/_authenticated/admin/designs': typeof AuthenticatedAdminDesignsRoute
   '/_authenticated/admin/experience': typeof AuthenticatedAdminExperienceRoute
   '/_authenticated/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
+  '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
-  '/_authenticated/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/_authenticated/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/_authenticated/admin/services': typeof AuthenticatedAdminServicesRoute
   '/_authenticated/admin/volunteering': typeof AuthenticatedAdminVolunteeringRoute
@@ -241,15 +241,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps/$slug'
     | '/designs/$slug'
-    | '/projects/$slug'
+    | '/products/$slug'
     | '/apps/'
     | '/admin/apps'
     | '/admin/certificates'
     | '/admin/designs'
     | '/admin/experience'
     | '/admin/organizations'
+    | '/admin/products'
     | '/admin/profile'
-    | '/admin/projects'
     | '/admin/reviews'
     | '/admin/services'
     | '/admin/volunteering'
@@ -263,15 +263,15 @@ export interface FileRouteTypes {
     | '/services'
     | '/apps/$slug'
     | '/designs/$slug'
-    | '/projects/$slug'
+    | '/products/$slug'
     | '/apps'
     | '/admin/apps'
     | '/admin/certificates'
     | '/admin/designs'
     | '/admin/experience'
     | '/admin/organizations'
+    | '/admin/products'
     | '/admin/profile'
-    | '/admin/projects'
     | '/admin/reviews'
     | '/admin/services'
     | '/admin/volunteering'
@@ -288,15 +288,15 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/apps/$slug'
     | '/designs/$slug'
-    | '/projects/$slug'
+    | '/products/$slug'
     | '/apps/'
     | '/_authenticated/admin/apps'
     | '/_authenticated/admin/certificates'
     | '/_authenticated/admin/designs'
     | '/_authenticated/admin/experience'
     | '/_authenticated/admin/organizations'
+    | '/_authenticated/admin/products'
     | '/_authenticated/admin/profile'
-    | '/_authenticated/admin/projects'
     | '/_authenticated/admin/reviews'
     | '/_authenticated/admin/services'
     | '/_authenticated/admin/volunteering'
@@ -312,7 +312,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ServicesRoute: typeof ServicesRoute
   DesignsSlugRoute: typeof DesignsSlugRoute
-  ProjectsSlugRoute: typeof ProjectsSlugRoute
+  ProductsSlugRoute: typeof ProductsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -373,11 +373,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppsIndexRouteImport
       parentRoute: typeof AppsRoute
     }
-    '/projects/$slug': {
-      id: '/projects/$slug'
-      path: '/projects/$slug'
-      fullPath: '/projects/$slug'
-      preLoaderRoute: typeof ProjectsSlugRouteImport
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/designs/$slug': {
@@ -429,18 +429,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReviewsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/projects': {
-      id: '/_authenticated/admin/projects'
-      path: '/projects'
-      fullPath: '/admin/projects'
-      preLoaderRoute: typeof AuthenticatedAdminProjectsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/profile': {
       id: '/_authenticated/admin/profile'
       path: '/profile'
       fullPath: '/admin/profile'
       preLoaderRoute: typeof AuthenticatedAdminProfileRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/products': {
+      id: '/_authenticated/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/organizations': {
@@ -487,8 +487,8 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDesignsRoute: typeof AuthenticatedAdminDesignsRoute
   AuthenticatedAdminExperienceRoute: typeof AuthenticatedAdminExperienceRoute
   AuthenticatedAdminOrganizationsRoute: typeof AuthenticatedAdminOrganizationsRoute
+  AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminProfileRoute: typeof AuthenticatedAdminProfileRoute
-  AuthenticatedAdminProjectsRoute: typeof AuthenticatedAdminProjectsRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminServicesRoute: typeof AuthenticatedAdminServicesRoute
   AuthenticatedAdminVolunteeringRoute: typeof AuthenticatedAdminVolunteeringRoute
@@ -501,8 +501,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDesignsRoute: AuthenticatedAdminDesignsRoute,
   AuthenticatedAdminExperienceRoute: AuthenticatedAdminExperienceRoute,
   AuthenticatedAdminOrganizationsRoute: AuthenticatedAdminOrganizationsRoute,
+  AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminProfileRoute: AuthenticatedAdminProfileRoute,
-  AuthenticatedAdminProjectsRoute: AuthenticatedAdminProjectsRoute,
   AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
   AuthenticatedAdminServicesRoute: AuthenticatedAdminServicesRoute,
   AuthenticatedAdminVolunteeringRoute: AuthenticatedAdminVolunteeringRoute,
@@ -544,7 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ServicesRoute: ServicesRoute,
   DesignsSlugRoute: DesignsSlugRoute,
-  ProjectsSlugRoute: ProjectsSlugRoute,
+  ProductsSlugRoute: ProductsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

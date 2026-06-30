@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteNav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { Marquee } from "@/components/site/marquee";
-import { Projects } from "@/components/site/projects";
+import { Products } from "@/components/site/products";
 import { Organizations } from "@/components/site/organizations";
 import { Experience } from "@/components/site/experience";
 import { Skills } from "@/components/site/skills";
@@ -53,7 +53,7 @@ function Index() {
       <Marquee />
       <Divider />
       <SectionReveal>
-        <Projects />
+        <Products />
       </SectionReveal>
       <Divider />
       <Organizations />

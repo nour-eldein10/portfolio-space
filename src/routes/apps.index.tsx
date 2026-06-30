@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
-import { appsQuery, projectsQuery, designsQuery } from "@/lib/cms";
+import { appsQuery, productsQuery, designsQuery } from "@/lib/cms";
 
 export const Route = createFileRoute("/apps/")({
   head: () => ({
@@ -41,7 +41,7 @@ function Stars({ rating }: { rating: number }) {
 
 function MarketplacePage() {
   const { data: apps } = useQuery(appsQuery);
-  const { data: projects } = useQuery(projectsQuery);
+  const { data: projects } = useQuery(productsQuery);
   const { data: designs } = useQuery(designsQuery);
 
   const [activeCategory, setActiveCategory] = useState<Category>("All");

@@ -7,6 +7,7 @@ import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { appsQuery } from "@/lib/cms";
+import { PortableText } from "@portabletext/react";
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -60,29 +61,7 @@ export const Route = createFileRoute("/apps/$slug")({
   component: AppDetail,
 });
 
-function Stars({ rating, size = "md" }: { rating: number; size?: "sm" | "md" | "lg" }) {
-  const filled = Math.round(rating);
-  const cls = size === "lg" ? "text-base" : size === "sm" ? "text-[10px]" : "text-xs";
-  return (
-    <span className={`${cls} text-[color:var(--amber)] inline-flex gap-px`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < filled ? "" : "opacity-25"}>★</span>
-      ))}
-    </span>
-  );
-}
 
-function RatingBar({ count, pct }: { count: number; pct: number }) {
-  return (
-    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-      <span className="w-3 text-right">{count}</span>
-      <span className="text-[9px]">★</span>
-      <div className="flex-1 h-1 rounded-full bg-surface-2 overflow-hidden">
-        <div className="h-full rounded-full bg-[color:var(--amber)]" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
 
 function AppDetail() {
   const initial: any = Route.useLoaderData();
@@ -110,16 +89,7 @@ function AppDetail() {
   const iconUrl = a?.cover?.asset ? urlFor(a.cover).width(256).url() : initial.cover;
   const gallery: string[] = Array.isArray(a?.gallery) ? a.gallery : [];
   const currentId = a?.slug?.current ?? initial.id;
-  const ratingVal = a?.rating ?? 4.8;
-  const otherApps = (allApps ?? []).filter((x) => x.id !== currentId).slice(0, 6);
 
-  const bars = [
-    { count: 5, pct: ratingVal >= 4.5 ? 78 : ratingVal >= 4 ? 60 : 30 },
-    { count: 4, pct: ratingVal >= 4 ? 14 : 25 },
-    { count: 3, pct: 4 },
-    { count: 2, pct: 2 },
-    { count: 1, pct: 2 },
-  ];
 
   const [activeShot, setActiveShot] = useState(0);
 
@@ -164,20 +134,7 @@ function AppDetail() {
           </div>
         </div>
 
-        {/* STATS BAR */}
-        <div className="mt-5 flex flex-wrap gap-px hairline rounded-2xl overflow-hidden bg-surface/20">
-          {[
-            { label: "Rating", value: `${ratingVal.toFixed(1)} ★` },
-            { label: "Reviews", value: a.reviews ?? "0" },
-            { label: "Downloads", value: a.downloads ?? "—" },
-            { label: "Category", value: a.category ?? "App" },
-          ].map((s) => (
-            <div key={s.label} className="flex-1 min-w-[80px] flex flex-col items-center py-3 px-3 bg-surface/40">
-              <span className="text-sm font-semibold font-display">{s.value}</span>
-              <span className="text-[9px] text-muted-foreground mt-0.5 font-mono uppercase tracking-widest">{s.label}</span>
-            </div>
-          ))}
-        </div>
+
 
         {/* SCREENSHOT GALLERY */}
         {gallery.length > 0 && (
@@ -223,57 +180,33 @@ function AppDetail() {
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0 space-y-8">
 
-            {(a.description || a.tagline) && (
-              <section>
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
-                <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                  {a.description ?? a.tagline}
-                </p>
-                {a.category && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full text-[11px] hairline bg-surface text-muted-foreground">{a.category}</span>
-                  </div>
-                )}
-              </section>
-            )}
-
-            <div className="w-full h-px bg-border/40" />
-
-            {ratingVal > 0 && (
-              <section>
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-4">Ratings &amp; Reviews</h2>
-                <div className="flex flex-col sm:flex-row gap-6">
-                  <div className="flex flex-col items-center justify-center shrink-0 w-32">
-                    <span className="font-display text-5xl font-bold">{ratingVal.toFixed(1)}</span>
-                    <Stars rating={ratingVal} size="lg" />
-                    <span className="text-[10px] text-muted-foreground mt-1">{a.reviews ?? "0"} ratings</span>
-                  </div>
-                  <div className="flex-1 flex flex-col-reverse gap-1 justify-center">
-                    {bars.map((b) => <RatingBar key={b.count} count={b.count} pct={b.pct} />)}
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-3">
-                  {[
-                    { author: "Ahmed K.", date: "Jun 2026", text: "Excellent work! Really clean and professional.", rating: 5 },
-                    { author: "Sara M.", date: "May 2026", text: "Loved the design. Would definitely recommend.", rating: 4 },
-                  ].map((r) => (
-                    <div key={r.author} className="p-4 rounded-2xl bg-surface/40 hairline space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="h-7 w-7 rounded-full bg-surface-2 flex items-center justify-center text-[12px] font-medium">
-                            {r.author[0]}
+            {(a.content) ? (
+              <section className="prose prose-sm md:prose-base prose-invert prose-p:leading-relaxed prose-headings:font-display">
+                <PortableText
+                  value={a.content}
+                  components={{
+                    types: {
+                      image: ({ value }: any) => {
+                        if (!value?.asset) return null;
+                        return (
+                          <div className="my-8 rounded-2xl overflow-hidden hairline">
+                            <img src={urlFor(value).url()} alt={value.alt || ""} className="w-full" />
                           </div>
-                          <span className="text-[13px] font-medium">{r.author}</span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground">{r.date}</span>
-                      </div>
-                      <Stars rating={r.rating} size="sm" />
-                      <p className="text-[12px] text-foreground/75">{r.text}</p>
-                    </div>
-                  ))}
-                </div>
+                        );
+                      },
+                    },
+                  }}
+                />
               </section>
+            ) : (
+              (a.description || a.tagline) && (
+                <section>
+                  <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
+                  <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
+                    {a.description ?? a.tagline}
+                  </p>
+                </section>
+              )
             )}
           </div>
 
@@ -282,10 +215,7 @@ function AppDetail() {
             <div className="p-4 rounded-2xl hairline bg-surface/30 space-y-3">
               <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">App Info</h3>
               {[
-                { label: "Developer", value: "Nour Eldein" },
                 { label: "Category", value: a.category ?? "—" },
-                { label: "Downloads", value: a.downloads ?? "—" },
-                { label: "Rating", value: `${ratingVal.toFixed(1)} / 5` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between text-[13px]">
                   <span className="text-muted-foreground">{row.label}</span>

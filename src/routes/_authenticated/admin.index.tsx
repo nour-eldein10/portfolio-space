@@ -24,7 +24,7 @@ function Overview() {
 
   const tiles = [
     { label: "Apps", value: countData?.apps ?? "—", to: "/admin/apps" },
-    { label: "Projects", value: countData?.projects ?? "—", to: "/admin/projects" },
+    { label: "Products", value: countData?.products ?? "—", to: "/admin/products" },
     { label: "Designs", value: countData?.designs ?? "—", to: "/admin/designs" },
     { label: "Experience entries", value: countData?.experiences ?? "—", to: "/admin/experience" },
     { label: "Pending reviews", value: pending.length, to: "/admin/reviews" },

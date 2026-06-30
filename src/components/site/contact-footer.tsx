@@ -139,7 +139,7 @@ export function ContactFooter() {
             </div>
             <label className="flex flex-col gap-1.5">
               <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                Project Type
+                Product Type
               </span>
               <input
                 className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm"

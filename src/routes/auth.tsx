@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
 } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
@@ -142,12 +143,19 @@ function AuthPage() {
               setLoading(true);
               try {
                 const provider = new GoogleAuthProvider();
-                await signInWithPopup(auth, provider);
-                await navigate({ to: "/" });
-              } catch (err) {
-                toast.error(err instanceof Error ? err.message : "Google sign in failed");
-              } finally {
-                setLoading(false);
+                const result = await signInWithPopup(auth, provider);
+                if (result.user) {
+                  await navigate({ to: "/admin" });
+                }
+              } catch (err: any) {
+                // popup blocked — fall back to redirect
+                if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
+                  const provider = new GoogleAuthProvider();
+                  await signInWithRedirect(auth, provider);
+                } else {
+                  toast.error(err instanceof Error ? err.message : "Google sign in failed");
+                  setLoading(false);
+                }
               }
             }}
           >

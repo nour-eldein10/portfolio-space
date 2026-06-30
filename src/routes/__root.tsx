@@ -12,7 +12,7 @@ import { Splash } from "@/components/site/splash";
 import { CustomCursor } from "@/components/site/custom-cursor";
 import { Toaster } from "sonner";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, getRedirectResult } from "firebase/auth";
 
 import appCss from "../styles.css?url";
 
@@ -141,6 +141,14 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    // Handle Google redirect result (e.g. after signInWithRedirect comes back)
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        router.invalidate();
+        queryClient.invalidateQueries();
+      }
+    }).catch(() => {});
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       router.invalidate();
       if (user) queryClient.invalidateQueries();

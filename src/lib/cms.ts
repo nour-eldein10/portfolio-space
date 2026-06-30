@@ -5,7 +5,7 @@ import {
   profile as profileFallback,
   stats as statsFallback,
   services as servicesFallback,
-  featuredProjects as projectsFallback,
+  featuredProducts as productsFallback,
   apps as appsFallback,
   designs as designsFallback,
   experiences as experiencesFallback,
@@ -135,8 +135,8 @@ export const servicesQuery = queryOptions({
 
 /* ───────── Featured projects ───────── */
 
-export const projectsQuery = queryOptions({
-  queryKey: ["cms", "projects"],
+export const productsQuery = queryOptions({
+  queryKey: ["cms", "products"],
   queryFn: async () => {
     const docs = await sanityClient.fetch<
       {
@@ -155,9 +155,9 @@ export const projectsQuery = queryOptions({
         order?: number;
       }[]
     >(
-      `*[_type=="project"] | order(order asc){ name, slug, year, role, summary, accent, cover, description, rating, reviews, downloads, gallery, order }`,
+      `*[_type=="product"] | order(order asc){ name, slug, year, role, summary, accent, cover, description, rating, reviews, downloads, gallery, order }`,
     );
-    if (!docs?.length) return projectsFallback;
+    if (!docs?.length) return productsFallback;
     return docs.map((d, i) => {
       const id = d.slug?.current ?? slugify(d.name);
       return {
@@ -167,7 +167,7 @@ export const projectsQuery = queryOptions({
         role: d.role ?? "",
         summary: d.summary ?? "",
         accent: (d.accent ?? "neon") as "neon" | "amber",
-        cover: resolveImage(d.cover, id, projectsFallback[i % projectsFallback.length].cover),
+        cover: resolveImage(d.cover, id, productsFallback[i % productsFallback.length].cover),
         description: d.description ?? "",
         rating: d.rating,
         reviews: d.reviews,
@@ -176,7 +176,7 @@ export const projectsQuery = queryOptions({
       };
     });
   },
-  initialData: projectsFallback,
+  initialData: productsFallback,
   staleTime: 0,
 });
 

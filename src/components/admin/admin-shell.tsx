@@ -38,7 +38,7 @@ const items: NavItem[] = [
   { to: "/admin/profile", label: "Profile", icon: User },
   { to: "/admin/services", label: "Services", icon: Briefcase },
   { to: "/admin/experience", label: "Experience", icon: GraduationCap },
-  { to: "/admin/projects", label: "Projects", icon: FolderKanban },
+  { to: "/admin/products", label: "Products", icon: FolderKanban },
   { to: "/admin/apps", label: "Apps", icon: Smartphone },
   { to: "/admin/designs", label: "Designs", icon: Palette },
   { to: "/admin/organizations", label: "Organizations", icon: Users },
