@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
@@ -139,7 +141,6 @@ function AuthPage() {
             onClick={async () => {
               setLoading(true);
               try {
-                const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
                 const provider = new GoogleAuthProvider();
                 await signInWithPopup(auth, provider);
                 await navigate({ to: "/" });
