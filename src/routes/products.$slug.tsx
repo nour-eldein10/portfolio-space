@@ -5,6 +5,8 @@ import { DetailShell } from "@/components/site/detail-shell";
 import { featuredProducts } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
@@ -86,9 +88,15 @@ function ProductDetail() {
               <h1 className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight text-foreground">
                 {p.name}
               </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed pt-2">
-                {p.description ?? p.summary}
-              </p>
+              {p.content ? (
+                <div className="prose prose-sm md:prose-base prose-invert prose-p:leading-relaxed pt-2">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{p.content}</ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed pt-2">
+                  {p.description ?? p.summary}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-8 w-full py-8 border-y hairline border-border/40">

@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2, ImagePlus } from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
 
 type Doc = Record<string, any> & { _id: string };
 
@@ -348,6 +349,17 @@ function FieldInput({
             ))}
           </SelectContent>
         </Select>
+      )}
+      {f.kind === "markdown" && (
+        <div data-color-mode="dark" className="mt-2">
+          <MDEditor
+            value={value ?? ""}
+            onChange={(val) => onChange(val || "")}
+            preview="edit"
+            height={400}
+            className="w-full !bg-surface/30 !border-border"
+          />
+        </div>
       )}
       {f.kind === "image" && <ImageInput value={value} onChange={onChange} />}
       {f.helper && <p className="text-xs text-muted-foreground">{f.helper}</p>}

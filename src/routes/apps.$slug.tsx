@@ -7,7 +7,8 @@ import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { appsQuery } from "@/lib/cms";
-import { PortableText } from "@portabletext/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -182,21 +183,9 @@ function AppDetail() {
 
             {(a.content) ? (
               <section className="prose prose-sm md:prose-base prose-invert prose-p:leading-relaxed prose-headings:font-display">
-                <PortableText
-                  value={a.content}
-                  components={{
-                    types: {
-                      image: ({ value }: any) => {
-                        if (!value?.asset) return null;
-                        return (
-                          <div className="my-8 rounded-2xl overflow-hidden hairline">
-                            <img src={urlFor(value).url()} alt={value.alt || ""} className="w-full" />
-                          </div>
-                        );
-                      },
-                    },
-                  }}
-                />
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {a.content}
+                </ReactMarkdown>
               </section>
             ) : (
               (a.description || a.tagline) && (
