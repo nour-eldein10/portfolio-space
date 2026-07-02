@@ -8,7 +8,6 @@ import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { appsQuery } from "@/lib/cms";
 
-
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
     const a: any = loaderData;
@@ -37,7 +36,7 @@ export const Route = createFileRoute("/apps/$slug")({
       });
       if (doc) return doc;
     } catch {
-      // Sanity unreachable — fall through to local data
+      // Sanity unreachable
     }
     const fallbackDoc = appsFallback.find((a) => a.id === params.slug);
     if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
@@ -60,8 +59,6 @@ export const Route = createFileRoute("/apps/$slug")({
   ),
   component: AppDetail,
 });
-
-
 
 function AppDetail() {
   const initial: any = Route.useLoaderData();
@@ -119,7 +116,7 @@ function AppDetail() {
 
           <div className="flex-1 min-w-0 pb-1">
             <Link to="/apps" className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-1.5">
-              ← Marketplace
+              &larr; Marketplace
             </Link>
             <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight leading-tight">{a.name}</h1>
             <p className="mt-0.5 text-sm text-[color:var(--neon)] font-medium">Nour Eldein</p>
@@ -134,7 +131,7 @@ function AppDetail() {
                 rel="noopener noreferrer"
                 className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]"
               >
-                {a.price ? `Get — ${a.price}` : "Install"}
+                {a.price ? `Get \u2014 ${a.price}` : "Install"}
               </a>
             ) : (
               <button className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]">
@@ -151,9 +148,8 @@ function AppDetail() {
                 Live Demo
               </a>
             )}
+          </div>
         </div>
-
-
 
         {/* SCREENSHOT GALLERY */}
         {gallery.length > 0 && (
@@ -198,7 +194,6 @@ function AppDetail() {
         {/* BODY + SIDEBAR */}
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0 space-y-8">
-
             {(a.description || a.tagline) && (
               <section>
                 <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
@@ -232,7 +227,6 @@ function AppDetail() {
                 </div>
               </section>
             )}
-
           </div>
 
           {/* Sidebar */}
@@ -240,8 +234,8 @@ function AppDetail() {
             <div className="p-4 rounded-2xl hairline bg-surface/30 space-y-3">
               <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">App Info</h3>
               {[
-                { label: "Category", value: a.category ?? "—" },
-                ...(a.rating ? [{ label: "Rating", value: `${a.rating} ★ (${a.reviews ?? "—"})` }] : []),
+                { label: "Category", value: a.category || "\u2014" },
+                ...(a.rating ? [{ label: "Rating", value: `${a.rating} \u2605 (${a.reviews || "\u2014"})` }] : []),
                 ...(a.downloads ? [{ label: "Installs", value: a.downloads }] : []),
                 ...(a.price ? [{ label: "Price", value: a.price }] : []),
               ].map((row) => (
@@ -253,8 +247,13 @@ function AppDetail() {
             </div>
             <div className="flex flex-col gap-2">
               {a.purchaseUrl ? (
-                <a href={a.purchaseUrl} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center">
-                  {a.price ? `Get — ${a.price}` : "Install Now"}
+                <a
+                  href={a.purchaseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center"
+                >
+                  {a.price ? `Get \u2014 ${a.price}` : "Install Now"}
                 </a>
               ) : (
                 <button className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all">
@@ -262,7 +261,12 @@ function AppDetail() {
                 </button>
               )}
               {a.demoUrl && (
-                <a href={a.demoUrl} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface transition-all text-center">
+                <a
+                  href={a.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface transition-all text-center"
+                >
                   Live Demo
                 </a>
               )}
@@ -277,7 +281,7 @@ function AppDetail() {
               <h2 className="font-display text-base font-medium tracking-tight">More Apps</h2>
               <div className="flex-1 h-px bg-border/50" />
               <Link to="/apps" className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground">
-                View all →
+                View all &rarr;
               </Link>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
@@ -293,7 +297,7 @@ function AppDetail() {
                     <p className="text-[11px] font-medium line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">{app.name}</p>
                     <div className="flex items-center gap-0.5 mt-0.5">
                       <span className="text-[10px] text-muted-foreground">{app.rating?.toFixed(1) ?? "5.0"}</span>
-                      <span className="text-[8px] text-[color:var(--amber)]">★</span>
+                      <span className="text-[8px] text-[color:var(--amber)]">&#9733;</span>
                     </div>
                   </div>
                 </Link>
