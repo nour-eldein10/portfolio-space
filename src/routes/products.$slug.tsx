@@ -4,7 +4,8 @@ import { sanityClient, urlFor } from "@/lib/sanity";
 import { DetailShell } from "@/components/site/detail-shell";
 import { featuredProducts } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
-import { Reviews } from "@/components/site/reviews";
+import { ProjectReviews } from "@/components/site/project-reviews";
+import { GalleryViewer } from "@/components/site/gallery-viewer";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
@@ -66,10 +67,11 @@ function ProductDetail() {
     initialData: initial,
   });
 
-  const cover = p?.cover?.asset ? urlFor(p.cover).width(1600).url() : p?.cover;
-  const meta = [p.year, p.role].filter(Boolean).join(" · ");
-  const features: string[] = p?.features ?? [];
-  const technologies: string[] = p?.technologies ?? [];
+  const cover = p?.cover?.asset ? urlFor(p.cover).width(1600).url() : initial.cover;
+  const features: string[] = Array.isArray(p?.features) ? p.features : [];
+  const technologies: string[] = Array.isArray(p?.technologies) ? p.technologies : [];
+  const gallery: any[] = Array.isArray(p?.gallery) ? p.gallery : [];
+  const meta = [p.role, p.year].filter(Boolean).join(" — ");
 
   return (
     <main className="min-h-screen bg-background">
@@ -179,6 +181,10 @@ function ProductDetail() {
                 </a>
               )}
             </div>
+            {/* Gallery */}
+            <div className="w-full">
+              <GalleryViewer gallery={gallery} />
+            </div>
           </div>
 
           {/* Right Column: Hero Image */}
@@ -193,8 +199,9 @@ function ProductDetail() {
             )}
           </div>
         </div>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <ProjectReviews projectId={p._id ?? p.slug?.current ?? ""} />
       </div>
-      <Reviews />
     </main>
   );
 }

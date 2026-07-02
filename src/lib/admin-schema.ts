@@ -8,11 +8,11 @@ export type FieldKind =
   | "textarea"
   | "number"
   | "boolean"
-  | "tags"
   | "image"
   | "highlights"
   | "select"
-  | "medialist";
+  | "medialist"
+  | "gallery";
 
 export interface FieldDef {
   name: string;
@@ -95,9 +95,9 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "name", label: "Name", kind: "text" },
       {
         name: "slug",
-        label: "Slug",
+        label: "URL Slug",
         kind: "text",
-        helper: "URL slug, lowercase-hyphens",
+        helper: "URL identifier used in page address. Example: my-awesome-app becomes /products/my-awesome-app",
         required: true,
       },
       { name: "year", label: "Year", kind: "number" },
@@ -111,7 +111,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "demoUrl", label: "Demo URL", kind: "text" },
       { name: "purchaseUrl", label: "Purchase URL", kind: "text" },
       { name: "price", label: "Price", kind: "text", helper: "e.g., $49 or Free" },
-      { name: "gallery", label: "Media Gallery URLs", kind: "medialist", helper: "One URL per line" },
+      { name: "gallery", label: "Gallery Media", kind: "gallery", helper: "Upload images, videos (<50MB), or add external URLs. Drag to reorder." },
       { name: "order", label: "Order", kind: "number" },
     ],
   },
@@ -124,7 +124,7 @@ export const TYPES: Record<string, TypeDef> = {
     imageField: "cover",
     fields: [
       { name: "name", label: "Name", kind: "text" },
-      { name: "slug", label: "Slug", kind: "text" },
+      { name: "slug", label: "URL Slug", kind: "text", helper: "URL identifier used in page address. Example: my-awesome-app becomes /apps/my-awesome-app" },
       { name: "tagline", label: "Tagline", kind: "text" },
       { name: "description", label: "Short Description", kind: "textarea" },
       { name: "icon", label: "Icon character", kind: "text", helper: "Single glyph e.g. ◐" },
@@ -139,7 +139,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "demoUrl", label: "Demo URL", kind: "text" },
       { name: "purchaseUrl", label: "Purchase URL", kind: "text" },
       { name: "price", label: "Price", kind: "text", helper: "e.g., $49 or Free" },
-      { name: "gallery", label: "Media Gallery URLs", kind: "medialist", helper: "One URL per line (.mp4, youtube, images)" },
+      { name: "gallery", label: "Gallery Media", kind: "gallery", helper: "Upload images, videos (<50MB), or add external URLs. Drag to reorder." },
       { name: "order", label: "Order", kind: "number" },
     ],
   },
@@ -154,9 +154,9 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "title", label: "Title", kind: "text" },
       {
         name: "slug",
-        label: "Slug",
+        label: "URL Slug",
         kind: "text",
-        helper: "URL slug, lowercase-hyphens",
+        helper: "URL identifier used in page address. Example: my-awesome-design becomes /designs/my-awesome-design",
         required: true,
       },
       { name: "category", label: "Category", kind: "text" },

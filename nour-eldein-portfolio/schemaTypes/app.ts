@@ -28,10 +28,19 @@ export default defineType({
     defineField({ name: "price", title: "Price", type: "string" }),
     defineField({
       name: "gallery",
-      title: "Gallery URLs",
-      description: "Screenshots or video URLs shown in the media gallery",
+      title: "Gallery Media",
+      description: "Images, video files, or external video URLs",
       type: "array",
-      of: [{ type: "string" }],
+      of: [
+        { type: "image", options: { hotspot: true } },
+        { type: "file", title: "Video File", options: { accept: "video/*" } },
+        {
+          type: "object",
+          name: "externalMedia",
+          title: "External URL",
+          fields: [{ name: "url", type: "url", title: "Media URL" }],
+        },
+      ],
     }),
     defineField({ name: "order", title: "Order", type: "number" }),
   ],

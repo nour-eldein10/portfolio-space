@@ -86,6 +86,33 @@ export const adminUploadImage = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Upload a generic file (like video) to Sanity using FormData to avoid base64 JSON payload limits.
+ * Returns a file reference object: { _type: "file", asset: { _type: "reference", _ref: "..." } }
+ */
+export const adminUploadFile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: FormData) => data)
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+
+    const file = data.get("file") as File;
+    if (!file) throw new Error("No file provided");
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    const asset = await client.assets.upload("file", buffer, {
+      filename: file.name,
+      contentType: file.type,
+    });
+
+    return {
+      _type: "file",
+      asset: { _type: "reference", _ref: asset._id },
+    };
+  });
+
 /** Counts of each content type, for the homepage stats strip. Public. */
 export const getContentCounts = createServerFn({ method: "GET" }).handler(async () => {
   // Read via server-only write client (uses token but only reads) to avoid CDN cache for fresh counts.

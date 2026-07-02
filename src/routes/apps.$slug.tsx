@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "motion/react";
 import { sanityClient, urlFor } from "@/lib/sanity";
 import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
-import { Reviews } from "@/components/site/reviews";
+import { ProjectReviews } from "@/components/site/project-reviews";
 import { appsQuery } from "@/lib/cms";
+import { GalleryViewer } from "@/components/site/gallery-viewer";
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -84,7 +84,7 @@ function AppDetail() {
 
   const coverUrl = a?.cover?.asset ? urlFor(a.cover).width(1600).url() : initial.cover;
   const iconUrl = a?.cover?.asset ? urlFor(a.cover).width(256).url() : initial.cover;
-  const gallery: string[] = Array.isArray(a?.gallery) ? a.gallery : [];
+  const gallery: any[] = Array.isArray(a?.gallery) ? a.gallery : [];
   const features: string[] = Array.isArray(a?.features) ? a.features : [];
   const technologies: string[] = Array.isArray(a?.technologies) ? a.technologies : [];
   const currentId = a?.slug?.current ?? initial.id;
@@ -189,43 +189,7 @@ function AppDetail() {
             )}
 
             {/* SCREENSHOT GALLERY */}
-            {gallery.length > 0 && (
-              <section className="space-y-3 pt-4">
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground">Gallery</h2>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeShot}
-                    initial={{ opacity: 0, scale: 0.99 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.2 }}
-                    className="relative w-full aspect-video rounded-2xl overflow-hidden hairline bg-surface/30"
-                  >
-                    {gallery[activeShot]?.toLowerCase().endsWith(".mp4") ? (
-                      <video src={gallery[activeShot]} controls className="w-full h-full object-contain bg-black" />
-                    ) : (
-                      <img src={gallery[activeShot]} alt={`Screenshot ${activeShot + 1}`} className="w-full h-full object-cover" />
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-
-                {gallery.length > 1 && (
-                  <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
-                    {gallery.map((url, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveShot(i)}
-                        className={`snap-center shrink-0 relative rounded-xl overflow-hidden hairline transition-all ${
-                          i === activeShot ? "ring-2 ring-[color:var(--neon)] opacity-100" : "opacity-50 hover:opacity-80"
-                        }`}
-                      >
-                        <img src={url} alt={`Thumb ${i + 1}`} className="h-14 w-24 object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
+            <GalleryViewer gallery={gallery} />
           </div>
 
           {/* Sidebar */}
@@ -304,9 +268,9 @@ function AppDetail() {
             </div>
           </section>
         )}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <ProjectReviews projectId={currentId} />
       </div>
-
-      <Reviews />
     </main>
   );
 }

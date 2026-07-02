@@ -7,6 +7,7 @@ import {
   adminUpdateDoc,
   adminDeleteDoc,
   adminUploadImage,
+  adminUploadFile,
 } from "@/lib/admin-sanity.functions";
 import { urlFor } from "@/lib/sanity";
 import type { TypeDef, FieldDef } from "@/lib/admin-schema";
@@ -30,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, ImagePlus } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ImagePlus, GripVertical, Video, Link2, X, Play } from "lucide-react";
 
 type Doc = Record<string, any> & { _id: string };
 
@@ -271,7 +272,7 @@ function CrudForm({
           .filter(Boolean);
       } else if (f.kind === "number") {
         out[f.name] = v === "" || v == null ? undefined : Number(v);
-      } else if (f.kind === "image") {
+      } else if (f.kind === "image" || f.kind === "gallery") {
         if (v) out[f.name] = v;
       } else {
         out[f.name] = v;
@@ -282,10 +283,10 @@ function CrudForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {def.fields.map((f) => (
         <FieldInput
           key={f.name}
           f={f}
+          docType={def.type}
           value={values[f.name]}
           onChange={(v) => set(f.name, v)}
           onBlur={f.name === "name" && isNew ? () => {
@@ -308,11 +309,13 @@ function CrudForm({
 
 function FieldInput({
   f,
+  docType,
   value,
   onChange,
   onBlur,
 }: {
   f: FieldDef;
+  docType: string;
   value: any;
   onChange: (v: any) => void;
   onBlur?: () => void;
@@ -323,7 +326,29 @@ function FieldInput({
         {f.label}
         {f.required && <span className="text-destructive ml-1">*</span>}
       </Label>
-      {f.kind === "text" && (
+      {f.kind === "text" && f.name === "slug" && (
+        <div className="space-y-2">
+          <Input
+            value={value ?? ""}
+            onChange={(e) => {
+              // Strict validation: lowercase, numbers, hyphens only
+              const v = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+              onChange(v);
+            }}
+            onBlur={onBlur}
+            required={f.required}
+            className="font-mono"
+            placeholder="my-awesome-project"
+          />
+          {value && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5 bg-surface/50 p-2 rounded-md hairline">
+              <Link2 className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">https://noureldein.com/{docType === "app" ? "apps" : docType === "product" ? "products" : docType === "design" ? "designs" : docType}s/<span className="text-foreground font-medium">{value}</span></span>
+            </p>
+          )}
+        </div>
+      )}
+      {f.kind === "text" && f.name !== "slug" && (
         <Input
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
@@ -377,6 +402,7 @@ function FieldInput({
         </Select>
       )}
       {f.kind === "image" && <ImageInput value={value} onChange={onChange} />}
+      {f.kind === "gallery" && <GalleryInput value={value} onChange={onChange} />}
       {f.helper && <p className="text-xs text-muted-foreground">{f.helper}</p>}
     </div>
   );
@@ -424,6 +450,162 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
           {preview ? "Replace image" : "Upload image"}
         </span>
       </label>
+    </div>
+  );
+}
+
+function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) => void }) {
+  const uploadImg = useServerFn(adminUploadImage);
+  const uploadFile = useServerFn(adminUploadFile);
+  const [busy, setBusy] = useState(false);
+  const [external, setExternal] = useState("");
+
+  const items = Array.isArray(value) ? value : [];
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, type: "image" | "video") {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (type === "video" && file.size > 50 * 1024 * 1024) {
+      toast.error("Video must be under 50 MB");
+      return;
+    }
+    if (type === "image" && file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5 MB");
+      return;
+    }
+
+    setBusy(true);
+    try {
+      if (type === "image") {
+        const dataUrl: string = await new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result as string);
+          r.onerror = () => reject(r.error);
+          r.readAsDataURL(file);
+        });
+        const result = await uploadImg({ data: { dataUrl, filename: file.name } });
+        onChange([...items, result]);
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+        const result = await uploadFile({ data: formData });
+        onChange([...items, result]);
+      }
+      toast.success("Uploaded successfully");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setBusy(false);
+      e.target.value = ""; // reset input
+    }
+  }
+
+  function addExternal() {
+    if (!external) return;
+    onChange([...items, { _type: "externalMedia", url: external }]);
+    setExternal("");
+  }
+
+  function move(index: number, dir: number) {
+    if (index + dir < 0 || index + dir >= items.length) return;
+    const next = [...items];
+    const temp = next[index];
+    next[index] = next[index + dir];
+    next[index + dir] = temp;
+    onChange(next);
+  }
+
+  function remove(index: number) {
+    onChange(items.filter((_, i) => i !== index));
+  }
+
+  return (
+    <div className="space-y-4">
+      {items.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {items.map((item, i) => (
+            <div key={item._key || i} className="flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30">
+              <div className="flex flex-col gap-1">
+                <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                  <GripVertical className="h-3 w-3" />
+                </button>
+                <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                  <GripVertical className="h-3 w-3" />
+                </button>
+              </div>
+
+              {item._type === "image" && (
+                <div className="h-12 w-16 bg-surface shrink-0 rounded overflow-hidden relative flex items-center justify-center">
+                  {item.asset?._ref ? (
+                    <img src={urlFor(item).width(200).url()} alt="" className="object-cover h-full w-full" />
+                  ) : item.asset?.url ? (
+                    <img src={item.asset.url} alt="" className="object-cover h-full w-full" />
+                  ) : (
+                    <ImagePlus className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">IMG</span>
+                </div>
+              )}
+
+              {item._type === "file" && (
+                <div className="h-12 w-16 bg-surface shrink-0 rounded flex flex-col items-center justify-center gap-1">
+                  <Video className="h-4 w-4 text-muted-foreground" />
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">MP4</span>
+                </div>
+              )}
+
+              {item._type === "externalMedia" && (
+                <div className="h-12 w-16 bg-surface shrink-0 rounded flex flex-col items-center justify-center gap-1">
+                  <Link2 className="h-4 w-4 text-muted-foreground" />
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">URL</span>
+                </div>
+              )}
+
+              <div className="flex-1 min-w-0">
+                <p className="text-xs truncate font-mono">
+                  {item._type === "externalMedia" ? item.url : item.asset?._ref || "Uploaded media"}
+                </p>
+              </div>
+
+              <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 items-center bg-surface/30 p-3 rounded-lg hairline">
+        <label className="cursor-pointer">
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleUpload(e, "image")} disabled={busy} />
+          <div className="inline-flex items-center gap-2 px-3 py-2 bg-surface hairline rounded-md text-sm hover:bg-surface-2 transition-colors">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+            Image
+          </div>
+        </label>
+        
+        <label className="cursor-pointer">
+          <input type="file" accept="video/*" className="hidden" onChange={(e) => handleUpload(e, "video")} disabled={busy} />
+          <div className="inline-flex items-center gap-2 px-3 py-2 bg-surface hairline rounded-md text-sm hover:bg-surface-2 transition-colors">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4" />}
+            Video
+          </div>
+        </label>
+
+        <div className="flex-1 min-w-[200px] flex items-center gap-2">
+          <Input 
+            placeholder="Paste external video URL" 
+            value={external}
+            onChange={e => setExternal(e.target.value)}
+            className="h-9 text-xs font-mono"
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addExternal(); } }}
+          />
+          <Button type="button" onClick={addExternal} size="sm" variant="secondary" className="h-9 shrink-0">
+            Add URL
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
