@@ -4,7 +4,7 @@ import { sanityClient, urlFor } from "@/lib/sanity";
 import { DetailShell } from "@/components/site/detail-shell";
 import { featuredProducts } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
-import { ContactFooter } from "@/components/site/contact-footer";
+import { Reviews } from "@/components/site/reviews";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
@@ -194,7 +194,7 @@ function ProductDetail() {
           </div>
         </div>
       </div>
-      <ContactFooter />
+      <Reviews />
     </main>
   );
 }

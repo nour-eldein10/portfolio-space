@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { sanityClient, urlFor } from "@/lib/sanity";
 import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
-import { ContactFooter } from "@/components/site/contact-footer";
+import { Reviews } from "@/components/site/reviews";
 import { appsQuery } from "@/lib/cms";
 
 export const Route = createFileRoute("/apps/$slug")({
@@ -151,46 +151,6 @@ function AppDetail() {
           </div>
         </div>
 
-        {/* SCREENSHOT GALLERY */}
-        {gallery.length > 0 && (
-          <div className="mt-7 space-y-3">
-            <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground">Screenshots</h2>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeShot}
-                initial={{ opacity: 0, scale: 0.99 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.99 }}
-                transition={{ duration: 0.2 }}
-                className="relative w-full aspect-video rounded-2xl overflow-hidden hairline bg-surface/30"
-              >
-                {gallery[activeShot]?.toLowerCase().endsWith(".mp4") ? (
-                  <video src={gallery[activeShot]} controls className="w-full h-full object-contain bg-black" />
-                ) : (
-                  <img src={gallery[activeShot]} alt={`Screenshot ${activeShot + 1}`} className="w-full h-full object-cover" />
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {gallery.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
-                {gallery.map((url, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveShot(i)}
-                    className={`snap-center shrink-0 relative rounded-xl overflow-hidden hairline transition-all ${
-                      i === activeShot ? "ring-2 ring-[color:var(--neon)] opacity-100" : "opacity-50 hover:opacity-80"
-                    }`}
-                  >
-                    <img src={url} alt={`Thumb ${i + 1}`} className="h-14 w-24 object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* BODY + SIDEBAR */}
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0 space-y-8">
@@ -225,6 +185,45 @@ function AppDetail() {
                     <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">{t}</span>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {/* SCREENSHOT GALLERY */}
+            {gallery.length > 0 && (
+              <section className="space-y-3 pt-4">
+                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground">Gallery</h2>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeShot}
+                    initial={{ opacity: 0, scale: 0.99 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative w-full aspect-video rounded-2xl overflow-hidden hairline bg-surface/30"
+                  >
+                    {gallery[activeShot]?.toLowerCase().endsWith(".mp4") ? (
+                      <video src={gallery[activeShot]} controls className="w-full h-full object-contain bg-black" />
+                    ) : (
+                      <img src={gallery[activeShot]} alt={`Screenshot ${activeShot + 1}`} className="w-full h-full object-cover" />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {gallery.length > 1 && (
+                  <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
+                    {gallery.map((url, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveShot(i)}
+                        className={`snap-center shrink-0 relative rounded-xl overflow-hidden hairline transition-all ${
+                          i === activeShot ? "ring-2 ring-[color:var(--neon)] opacity-100" : "opacity-50 hover:opacity-80"
+                        }`}
+                      >
+                        <img src={url} alt={`Thumb ${i + 1}`} className="h-14 w-24 object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
           </div>
@@ -307,7 +306,7 @@ function AppDetail() {
         )}
       </div>
 
-      <ContactFooter />
+      <Reviews />
     </main>
   );
 }
