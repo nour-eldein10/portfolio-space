@@ -5,8 +5,6 @@ import { DetailShell } from "@/components/site/detail-shell";
 import { featuredProducts } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
@@ -67,19 +65,24 @@ function ProductDetail() {
     },
     initialData: initial,
   });
+
   const cover = p?.cover?.asset ? urlFor(p.cover).width(1600).url() : p?.cover;
   const meta = [p.year, p.role].filter(Boolean).join(" · ");
+  const features: string[] = p?.features ?? [];
+  const technologies: string[] = p?.technologies ?? [];
+
   return (
     <main className="min-h-screen bg-background">
       <SiteNav />
       <div className="pt-32 pb-24 mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+
           {/* Left Column: Product Info */}
           <div className="flex flex-col items-start gap-8">
             <Link to="/" className="font-mono text-[10px] tracking-widest uppercase text-[color:var(--neon)] hover:opacity-80 inline-flex items-center gap-2">
               ← Back to portfolio
             </Link>
-            
+
             <div className="space-y-4">
               <div className="inline-flex items-center gap-3 font-mono text-[11px] tracking-widest uppercase text-muted-foreground bg-surface/50 px-4 py-2 rounded-full hairline">
                 <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--amber)] animate-pulse" />
@@ -88,51 +91,103 @@ function ProductDetail() {
               <h1 className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight text-foreground">
                 {p.name}
               </h1>
-              {p.content ? (
-                <div className="prose prose-sm md:prose-base prose-invert prose-p:leading-relaxed pt-2">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{p.content}</ReactMarkdown>
-                </div>
-              ) : (
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed pt-2">
-                  {p.description ?? p.summary}
-                </p>
-              )}
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed pt-2">
+                {p.description ?? p.summary}
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 w-full py-8 border-y hairline border-border/40">
-              {p.rating && (
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Rating</span>
-                  <span className="font-display text-2xl text-foreground flex items-center gap-2">
-                    {p.rating} ★ <span className="text-sm text-muted-foreground font-sans">({p.reviews})</span>
-                  </span>
-                </div>
-              )}
-              {p.downloads && (
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Installs</span>
-                  <span className="font-display text-2xl text-foreground">{p.downloads}</span>
-                </div>
-              )}
-            </div>
+            {/* Stats row */}
+            {(p.rating || p.downloads || p.price) && (
+              <div className="grid grid-cols-3 gap-6 w-full py-8 border-y hairline border-border/40">
+                {p.rating && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Rating</span>
+                    <span className="font-display text-2xl text-foreground flex items-center gap-1">
+                      {p.rating} <span className="text-amber-400">★</span>
+                      {p.reviews && <span className="text-sm text-muted-foreground font-sans">({p.reviews})</span>}
+                    </span>
+                  </div>
+                )}
+                {p.downloads && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Installs</span>
+                    <span className="font-display text-2xl text-foreground">{p.downloads}</span>
+                  </div>
+                )}
+                {p.price && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Price</span>
+                    <span className="font-display text-2xl text-foreground">{p.price}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
+            {/* Features */}
+            {features.length > 0 && (
+              <div className="w-full space-y-3">
+                <h2 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Features</h2>
+                <ul className="space-y-2">
+                  {features.map((f, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--neon)] shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Technologies */}
+            {technologies.length > 0 && (
+              <div className="w-full space-y-3">
+                <h2 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Technologies</h2>
+                <div className="flex flex-wrap gap-2">
+                  {technologies.map((t) => (
+                    <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-              <button className="w-full sm:w-auto px-8 py-4 rounded-full font-medium bg-foreground text-background hover:bg-[color:var(--neon)] hover:text-background transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_var(--neon)]">
-                Get this Product
-              </button>
-              <button className="w-full sm:w-auto px-8 py-4 rounded-full font-medium border hairline hover:bg-surface transition-colors">
-                View Live Demo
-              </button>
+              {p.purchaseUrl ? (
+                <a
+                  href={p.purchaseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full font-medium bg-foreground text-background hover:bg-[color:var(--neon)] hover:text-background transition-all duration-300 text-center"
+                >
+                  Get this Product{p.price ? ` — ${p.price}` : ""}
+                </a>
+              ) : (
+                <button className="w-full sm:w-auto px-8 py-4 rounded-full font-medium bg-foreground text-background opacity-50 cursor-not-allowed">
+                  Get this Product
+                </button>
+              )}
+              {p.demoUrl && (
+                <a
+                  href={p.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full font-medium border hairline hover:bg-surface transition-colors text-center"
+                >
+                  View Live Demo
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Right Column: Hero Image/Video */}
+          {/* Right Column: Hero Image */}
           <div className="relative w-full aspect-[4/5] rounded-[2rem] hairline p-2 bg-surface/30 overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--neon)]/10 to-[color:var(--amber)]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             {cover && (
-              <img 
-                src={cover} 
-                alt={p.name} 
+              <img
+                src={cover}
+                alt={p.name}
                 className="w-full h-full object-cover rounded-[1.5rem] shadow-2xl group-hover:scale-105 transition-transform duration-1000 ease-out"
               />
             )}

@@ -151,11 +151,16 @@ export const productsQuery = queryOptions({
         rating?: number;
         reviews?: string;
         downloads?: string;
+        features?: string[];
+        technologies?: string[];
+        demoUrl?: string;
+        purchaseUrl?: string;
+        price?: string;
         gallery?: string[];
         order?: number;
       }[]
     >(
-      `*[_type=="product"] | order(order asc){ name, slug, year, role, summary, accent, cover, description, rating, reviews, downloads, gallery, order }`,
+      `*[_type=="product"] | order(order asc){ name, slug, year, role, summary, accent, cover, description, rating, reviews, downloads, features, technologies, demoUrl, purchaseUrl, price, gallery, order }`,
     );
     if (!docs?.length) return productsFallback;
     return docs.map((d, i) => {
@@ -172,6 +177,11 @@ export const productsQuery = queryOptions({
         rating: d.rating,
         reviews: d.reviews,
         downloads: d.downloads,
+        features: d.features ?? [],
+        technologies: d.technologies ?? [],
+        demoUrl: d.demoUrl,
+        purchaseUrl: d.purchaseUrl,
+        price: d.price,
         gallery: d.gallery ?? [],
       };
     });
@@ -198,11 +208,16 @@ export const appsQuery = queryOptions({
         accent?: "neon" | "amber";
         cover?: unknown;
         description?: string;
+        features?: string[];
+        technologies?: string[];
+        demoUrl?: string;
+        purchaseUrl?: string;
+        price?: string;
         gallery?: string[];
         order?: number;
       }[]
     >(
-      `*[_type=="app"] | order(order asc){ name, slug, tagline, icon, rating, reviews, downloads, category, accent, cover, description, gallery, order }`,
+      `*[_type=="app"] | order(order asc){ name, slug, tagline, icon, rating, reviews, downloads, category, accent, cover, description, features, technologies, demoUrl, purchaseUrl, price, gallery, order }`,
     );
     if (!docs?.length) return appsFallback;
     return docs.map((d, i) => {
@@ -219,6 +234,11 @@ export const appsQuery = queryOptions({
         accent: (d.accent ?? "neon") as "neon" | "amber",
         cover: resolveImage(d.cover, id, appsFallback[i % appsFallback.length].cover),
         description: d.description ?? "",
+        features: d.features ?? [],
+        technologies: d.technologies ?? [],
+        demoUrl: d.demoUrl,
+        purchaseUrl: d.purchaseUrl,
+        price: d.price,
         gallery: d.gallery ?? [],
       };
     });

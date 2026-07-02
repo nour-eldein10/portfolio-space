@@ -21,6 +21,11 @@ export default defineType({
       options: { list: ["neon", "amber"] },
     }),
     defineField({ name: "cover", title: "Cover image", type: "image" }),
+    defineField({ name: "features", title: "Features (Title: Description)", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "technologies", title: "Technologies", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "demoUrl", title: "Demo URL", type: "url" }),
+    defineField({ name: "purchaseUrl", title: "Purchase URL", type: "url" }),
+    defineField({ name: "price", title: "Price", type: "string" }),
     defineField({
       name: "gallery",
       title: "Gallery URLs",

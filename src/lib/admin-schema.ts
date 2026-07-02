@@ -12,8 +12,7 @@ export type FieldKind =
   | "image"
   | "highlights"
   | "select"
-  | "medialist"
-  | "markdown";
+  | "medialist";
 
 export interface FieldDef {
   name: string;
@@ -107,7 +106,11 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "description", label: "Long description", kind: "textarea" },
       { name: "accent", label: "Accent", kind: "select", options: ["neon", "amber"] },
       { name: "cover", label: "Cover image", kind: "image" },
-      { name: "content", label: "Rich Content (Markdown)", kind: "markdown" },
+      { name: "features", label: "Features", kind: "highlights", helper: "Format: Title: Description" },
+      { name: "technologies", label: "Technologies", kind: "tags", helper: "Comma separated" },
+      { name: "demoUrl", label: "Demo URL", kind: "text" },
+      { name: "purchaseUrl", label: "Purchase URL", kind: "text" },
+      { name: "price", label: "Price", kind: "text", helper: "e.g., $49 or Free" },
       { name: "gallery", label: "Media Gallery URLs", kind: "medialist", helper: "One URL per line" },
       { name: "order", label: "Order", kind: "number" },
     ],
@@ -131,7 +134,11 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "category", label: "Category", kind: "text" },
       { name: "accent", label: "Accent", kind: "select", options: ["neon", "amber"] },
       { name: "cover", label: "Cover image", kind: "image" },
-      { name: "content", label: "Rich Content (Markdown)", kind: "markdown" },
+      { name: "features", label: "Features", kind: "highlights", helper: "Format: Title: Description" },
+      { name: "technologies", label: "Technologies", kind: "tags", helper: "Comma separated" },
+      { name: "demoUrl", label: "Demo URL", kind: "text" },
+      { name: "purchaseUrl", label: "Purchase URL", kind: "text" },
+      { name: "price", label: "Price", kind: "text", helper: "e.g., $49 or Free" },
       { name: "gallery", label: "Media Gallery URLs", kind: "medialist", helper: "One URL per line (.mp4, youtube, images)" },
       { name: "order", label: "Order", kind: "number" },
     ],

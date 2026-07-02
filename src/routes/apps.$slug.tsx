@@ -7,8 +7,7 @@ import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { appsQuery } from "@/lib/cms";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -89,8 +88,10 @@ function AppDetail() {
   const coverUrl = a?.cover?.asset ? urlFor(a.cover).width(1600).url() : initial.cover;
   const iconUrl = a?.cover?.asset ? urlFor(a.cover).width(256).url() : initial.cover;
   const gallery: string[] = Array.isArray(a?.gallery) ? a.gallery : [];
+  const features: string[] = Array.isArray(a?.features) ? a.features : [];
+  const technologies: string[] = Array.isArray(a?.technologies) ? a.technologies : [];
   const currentId = a?.slug?.current ?? initial.id;
-
+  const otherApps = (allApps ?? []).filter((x: any) => (x.id ?? x.slug?.current) !== currentId).slice(0, 6);
 
   const [activeShot, setActiveShot] = useState(0);
 
@@ -126,13 +127,30 @@ function AppDetail() {
           </div>
 
           <div className="flex flex-wrap gap-2 shrink-0">
-            <button className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]">
-              Install
-            </button>
-            <button className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface hover:border-foreground/30 transition-all">
-              Order your product
-            </button>
-          </div>
+            {a.purchaseUrl ? (
+              <a
+                href={a.purchaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]"
+              >
+                {a.price ? `Get — ${a.price}` : "Install"}
+              </a>
+            ) : (
+              <button className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]">
+                Install
+              </button>
+            )}
+            {a.demoUrl && (
+              <a
+                href={a.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface hover:border-foreground/30 transition-all"
+              >
+                Live Demo
+              </a>
+            )}
         </div>
 
 
@@ -181,22 +199,40 @@ function AppDetail() {
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0 space-y-8">
 
-            {(a.content) ? (
-              <section className="prose prose-sm md:prose-base prose-invert prose-p:leading-relaxed prose-headings:font-display">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {a.content}
-                </ReactMarkdown>
+            {(a.description || a.tagline) && (
+              <section>
+                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
+                <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
+                  {a.description ?? a.tagline}
+                </p>
               </section>
-            ) : (
-              (a.description || a.tagline) && (
-                <section>
-                  <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
-                  <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                    {a.description ?? a.tagline}
-                  </p>
-                </section>
-              )
             )}
+
+            {features.length > 0 && (
+              <section>
+                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">Features</h2>
+                <ul className="space-y-2">
+                  {features.map((f, i) => (
+                    <li key={i} className="flex items-start gap-3 text-[13px] text-foreground/80">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[color:var(--neon)] shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {technologies.length > 0 && (
+              <section>
+                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">Technologies</h2>
+                <div className="flex flex-wrap gap-2">
+                  {technologies.map((t) => (
+                    <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">{t}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
           </div>
 
           {/* Sidebar */}
@@ -205,6 +241,9 @@ function AppDetail() {
               <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">App Info</h3>
               {[
                 { label: "Category", value: a.category ?? "—" },
+                ...(a.rating ? [{ label: "Rating", value: `${a.rating} ★ (${a.reviews ?? "—"})` }] : []),
+                ...(a.downloads ? [{ label: "Installs", value: a.downloads }] : []),
+                ...(a.price ? [{ label: "Price", value: a.price }] : []),
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between text-[13px]">
                   <span className="text-muted-foreground">{row.label}</span>
@@ -213,12 +252,20 @@ function AppDetail() {
               ))}
             </div>
             <div className="flex flex-col gap-2">
-              <button className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all">
-                Install Now
-              </button>
-              <button className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface transition-all">
-                Order your product
-              </button>
+              {a.purchaseUrl ? (
+                <a href={a.purchaseUrl} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center">
+                  {a.price ? `Get — ${a.price}` : "Install Now"}
+                </a>
+              ) : (
+                <button className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all">
+                  Install Now
+                </button>
+              )}
+              {a.demoUrl && (
+                <a href={a.demoUrl} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface transition-all text-center">
+                  Live Demo
+                </a>
+              )}
             </div>
           </aside>
         </div>
