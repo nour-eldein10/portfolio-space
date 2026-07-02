@@ -65,16 +65,17 @@ export function CrudPage({ def }: { def: TypeDef }) {
 
   const saveMut = useMutation({
     mutationFn: async (values: Record<string, any>) => {
+      // Always normalize slug to Sanity object format
+      const normalized = { ...values };
+      if (normalized.slug && typeof normalized.slug === "string") {
+        normalized.slug = { _type: "slug", current: normalized.slug };
+      }
       if (editing && editing._id) {
         // existing - patch
-        return update({ data: { id: editing._id, set: values } });
+        return update({ data: { id: editing._id, set: normalized } });
       }
-      const doc: Record<string, any> = { _type: def.type, ...values };
+      const doc: Record<string, any> = { _type: def.type, ...normalized };
       if (def.singleton && def.singletonId) doc._id = def.singletonId;
-      // slug field handling
-      if (values.slug && typeof values.slug === "string") {
-        doc.slug = { _type: "slug", current: values.slug };
-      }
       return create({ data: { doc } });
     },
     onSuccess: () => {
@@ -144,7 +145,7 @@ export function CrudPage({ def }: { def: TypeDef }) {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editing?._id
@@ -236,9 +237,21 @@ function CrudForm({
   }, [def, initial]);
 
   const [values, setValues] = useState(initialValues);
+  const isNew = !initial._id;
 
   function set<K extends string>(k: K, v: any) {
-    setValues((s) => ({ ...s, [k]: v }));
+    setValues((s) => {
+      const next = { ...s, [k]: v };
+      // Auto-generate slug from name for new docs only
+      if (k === "name" && isNew && !s.slug) {
+        next.slug = String(v)
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
+      return next;
+    });
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -270,7 +283,18 @@ function CrudForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {def.fields.map((f) => (
-        <FieldInput key={f.name} f={f} value={values[f.name]} onChange={(v) => set(f.name, v)} />
+        <FieldInput
+          key={f.name}
+          f={f}
+          value={values[f.name]}
+          onChange={(v) => set(f.name, v)}
+          onBlur={f.name === "name" && isNew ? () => {
+            // Re-run slug gen on blur if still empty
+            if (!values.slug && values.name) {
+              set("slug", String(values.name).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+            }
+          } : undefined}
+        />
       ))}
       <DialogFooter className="pt-2">
         <Button type="submit" disabled={submitting}>
@@ -286,10 +310,12 @@ function FieldInput({
   f,
   value,
   onChange,
+  onBlur,
 }: {
   f: FieldDef;
   value: any;
   onChange: (v: any) => void;
+  onBlur?: () => void;
 }) {
   return (
     <div className="space-y-1.5">
@@ -301,6 +327,7 @@ function FieldInput({
         <Input
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
           required={f.required}
         />
       )}
