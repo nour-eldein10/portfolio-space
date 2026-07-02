@@ -464,36 +464,42 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
   const items = Array.isArray(value) ? value : [];
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, type: "image" | "video") {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (type === "video" && file.size > 50 * 1024 * 1024) {
-      toast.error("Video must be under 50 MB");
-      return;
-    }
-    if (type === "image" && file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be under 5 MB");
-      return;
-    }
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setBusy(true);
+    let uploadedItems: any[] = [];
     try {
-      if (type === "image") {
-        const dataUrl: string = await new Promise((resolve, reject) => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result as string);
-          r.onerror = () => reject(r.error);
-          r.readAsDataURL(file);
-        });
-        const result = await uploadImg({ data: { dataUrl, filename: file.name } });
-        onChange([...items, result]);
-      } else {
-        const formData = new FormData();
-        formData.append("file", file);
-        const result = await uploadFile({ data: formData });
-        onChange([...items, result]);
+      for (const file of files) {
+        if (type === "video" && file.size > 50 * 1024 * 1024) {
+          toast.error(`Video ${file.name} must be under 50 MB`);
+          continue;
+        }
+        if (type === "image" && file.size > 5 * 1024 * 1024) {
+          toast.error(`Image ${file.name} must be under 5 MB`);
+          continue;
+        }
+
+        if (type === "image") {
+          const dataUrl: string = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result as string);
+            r.onerror = () => reject(r.error);
+            r.readAsDataURL(file);
+          });
+          const result = await uploadImg({ data: { dataUrl, filename: file.name } });
+          uploadedItems.push(result);
+        } else {
+          const formData = new FormData();
+          formData.append("file", file);
+          const result = await uploadFile({ data: formData });
+          uploadedItems.push(result);
+        }
       }
-      toast.success("Uploaded successfully");
+      onChange([...items, ...uploadedItems]);
+      if (uploadedItems.length > 0) {
+        toast.success(`Uploaded ${uploadedItems.length} item(s)`);
+      }
     } catch (err: any) {
       toast.error(err?.message ?? "Upload failed");
     } finally {
@@ -579,7 +585,7 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
 
       <div className="flex flex-wrap gap-2 items-center bg-surface/30 p-3 rounded-lg hairline">
         <label className="cursor-pointer">
-          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleUpload(e, "image")} disabled={busy} />
+          <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleUpload(e, "image")} disabled={busy} />
           <div className="inline-flex items-center gap-2 px-3 py-2 bg-surface hairline rounded-md text-sm hover:bg-surface-2 transition-colors">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
             Image

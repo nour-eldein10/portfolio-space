@@ -76,7 +76,7 @@ function GalleryItemRenderer({ item }: { item: any }) {
     return <video src={url} controls className="w-full h-full object-contain bg-black" />;
   }
 
-  return <img src={url} alt="Gallery" className="w-full h-full object-cover" />;
+  return <img src={url} alt="Gallery" className="w-full h-full object-contain bg-black/5" />;
 }
 
 function GalleryThumbRenderer({ item, index }: { item: any; index: number }) {

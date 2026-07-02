@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -139,6 +140,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const routerState = useRouterState();
+
+  useEffect(() => {
+    if (!routerState.location.pathname.startsWith("/admin")) {
+      sessionStorage.setItem("last_public_path", routerState.location.pathname);
+    }
+  }, [routerState.location.pathname]);
 
   useEffect(() => {
     // Handle Google redirect result (e.g. after signInWithRedirect comes back)

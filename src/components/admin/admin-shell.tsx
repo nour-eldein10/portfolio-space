@@ -63,7 +63,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 size="sm"
                 onClick={() => {
                   sessionStorage.setItem("splash_played", "true");
-                  navigate({ to: "/" });
+                  const lastPath = sessionStorage.getItem("last_public_path") || "/";
+                  navigate({ to: lastPath });
                 }}
               >
                 <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
