@@ -29,7 +29,9 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
             <button
               key={i}
               onClick={() => setActiveShot(i)}
-              className={snap-center shrink-0 relative rounded-xl overflow-hidden hairline transition-all }
+              className={`snap-center shrink-0 relative rounded-xl overflow-hidden hairline transition-all ${
+                i === activeShot ? "ring-2 ring-[color:var(--neon)] opacity-100" : "opacity-50 hover:opacity-80"
+              }`}
             >
               <GalleryThumbRenderer item={item} index={i} />
             </button>
@@ -65,11 +67,11 @@ function GalleryItemRenderer({ item }: { item: any }) {
   if (video) {
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
       const id = url.includes("v=") ? new URL(url).searchParams.get("v") : url.split("/").pop();
-      return <iframe src={https://www.youtube.com/embed/?autoplay=0} className="w-full h-full" allowFullScreen />;
+      return <iframe src={`https://www.youtube.com/embed/${id}?autoplay=0`} className="w-full h-full" allowFullScreen />;
     }
     if (url.includes("vimeo.com")) {
       const id = url.split("/").pop();
-      return <iframe src={https://player.vimeo.com/video/} className="w-full h-full" allowFullScreen />;
+      return <iframe src={`https://player.vimeo.com/video/${id}`} className="w-full h-full" allowFullScreen />;
     }
     return <video src={url} controls className="w-full h-full object-contain bg-black" />;
   }

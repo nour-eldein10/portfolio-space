@@ -283,6 +283,7 @@ function CrudForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {def.fields.map((f) => (
         <FieldInput
           key={f.name}
           f={f}

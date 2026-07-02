@@ -199,6 +199,7 @@ function ProductDetail() {
             )}
           </div>
         </div>
+      </div>
       <div className="max-w-6xl mx-auto px-6 py-12">
         <ProjectReviews projectId={p._id ?? p.slug?.current ?? ""} />
       </div>

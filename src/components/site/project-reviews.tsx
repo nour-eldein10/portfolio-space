@@ -1,22 +1,22 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Star, Loader2, ThumbsUp, MoreVertical, Flag } from "lucide-react";
+import { Star, Loader2, MoreVertical } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 export function ProjectReviews({ projectId }: { projectId: string }) {
-  const { user } = useAuth();
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
   const [quote, setQuote] = useState("");
+  const [author, setAuthor] = useState("");
 
   const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ["reviews", projectId],
+    queryKey: ["project_reviews", projectId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
@@ -31,13 +31,12 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
 
   const submitMut = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error("Must be logged in");
+      if (!author.trim()) throw new Error("Name is required");
       const { error } = await supabase.from("reviews").insert({
         project_id: projectId,
-        author: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
-        quote,
+        author: author.trim(),
+        quote: quote.trim(),
         rating,
-        user_id: user.id,
         status: "pending", // require admin approval
       });
       if (error) throw error;
@@ -46,6 +45,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
       toast.success("Review submitted for approval!");
       setShowForm(false);
       setQuote("");
+      setAuthor("");
       setRating(5);
     },
     onError: (err: any) => toast.error(err.message),
@@ -81,7 +81,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
               <span className="text-6xl font-display font-medium tracking-tighter">{stats.average}</span>
               <div className="flex items-center text-amber-500 my-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className={"w-3.5 h-3.5 } />
+                  <Star key={s} className={`w-3.5 h-3.5 ${s <= parseFloat(stats.average) ? "fill-current" : "text-muted"}`} />
                 ))}
               </div>
               <span className="text-xs text-muted-foreground">{stats.total} reviews</span>
@@ -95,7 +95,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                   <div key={star} className="flex items-center gap-3 text-xs">
                     <span className="w-2 text-muted-foreground">{star}</span>
                     <div className="flex-1 h-2.5 bg-surface rounded-full overflow-hidden">
-                      <div className="h-full bg-[color:var(--neon)] rounded-full" style={{ width: ${pct}% }} />
+                      <div className="h-full bg-[color:var(--neon)] rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
@@ -108,13 +108,10 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
         <div className="flex-1 min-w-0 space-y-8">
           <div className="flex items-center justify-between">
             <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">User Reviews</h3>
-            {user && !showForm && (
+            {!showForm && (
               <Button onClick={() => setShowForm(true)} variant="outline" size="sm" className="rounded-full">
                 Write a review
               </Button>
-            )}
-            {!user && (
-              <p className="text-xs text-muted-foreground">Log in to write a review</p>
             )}
           </div>
 
@@ -122,11 +119,17 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
             <div className="p-5 rounded-2xl bg-surface/30 hairline space-y-4">
               <div className="flex items-center gap-1 mb-2">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <button key={s} type="button" onClick={() => setRating(s)} className={"p-1 hover:scale-110 transition-transform }>
-                    <Star className={"w-6 h-6 } />
+                  <button key={s} type="button" onClick={() => setRating(s)} className={`p-1 hover:scale-110 transition-transform ${s <= rating ? "text-amber-500" : "text-muted"}`}>
+                    <Star className={`w-6 h-6 ${s <= rating ? "fill-current" : ""}`} />
                   </button>
                 ))}
               </div>
+              <Input
+                value={author}
+                onChange={e => setAuthor(e.target.value)}
+                placeholder="Your name"
+                className="w-full sm:w-64"
+              />
               <Textarea 
                 value={quote} 
                 onChange={e => setQuote(e.target.value)} 
@@ -136,7 +139,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
               />
               <div className="flex justify-end gap-3">
                 <Button variant="ghost" onClick={() => setShowForm(false)} disabled={submitMut.isPending}>Cancel</Button>
-                <Button onClick={() => submitMut.mutate()} disabled={submitMut.isPending || !rating}>
+                <Button onClick={() => submitMut.mutate()} disabled={submitMut.isPending || !rating || !author.trim()}>
                   {submitMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Post"}
                 </Button>
               </div>
@@ -155,14 +158,14 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[color:var(--neon)]/10 text-[color:var(--neon)] flex items-center justify-center font-mono text-lg font-medium">
-                      {r.author[0]?.toUpperCase()}
+                      {r.author?.[0]?.toUpperCase() || "A"}
                     </div>
                     <div>
-                      <div className="font-medium text-sm">{r.author}</div>
+                      <div className="font-medium text-sm">{r.author || "Anonymous"}</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-2">
                         <div className="flex text-amber-500">
                           {[1, 2, 3, 4, 5].map((s) => (
-                            <Star key={s} className={"w-3 h-3 } />
+                            <Star key={s} className={`w-3 h-3 ${s <= (r.rating || 5) ? "fill-current" : "text-muted"}`} />
                           ))}
                         </div>
                         {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}

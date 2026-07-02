@@ -268,6 +268,7 @@ function AppDetail() {
             </div>
           </section>
         )}
+      </div>
       <div className="max-w-6xl mx-auto px-6 py-12">
         <ProjectReviews projectId={currentId} />
       </div>
