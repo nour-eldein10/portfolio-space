@@ -160,10 +160,8 @@ export const fetchReviews = createServerFn({ method: "POST" })
     const filter = data.projectId
       ? `_type=="review" && status=="approved" && projectId==$projectId`
       : `_type=="review" && status=="approved"`;
-    const reviews = await client.fetch(
-      `*[${filter}] | order(_createdAt desc)`,
-      { projectId: data.projectId ?? "" }
-    );
+    const reviews = await client.fetch(`*[${filter}] | order(_createdAt desc)`, {
+      projectId: data.projectId ?? "",
+    });
     return reviews as any[];
   });
-

@@ -3,7 +3,11 @@ import { createMiddleware } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 
 // Only these emails are allowed admin access
-const ADMIN_EMAILS = ["noureldein1100@gmail.com", "noureldein1100@outlook.com", "noureldein1100@hotmail.com"];
+const ADMIN_EMAILS = [
+  "noureldein1100@gmail.com",
+  "noureldein1100@outlook.com",
+  "noureldein1100@hotmail.com",
+];
 
 export const requireSupabaseAuth = createMiddleware({ type: "function" }).server(
   async ({ next }) => {

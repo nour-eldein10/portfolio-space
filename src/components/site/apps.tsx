@@ -25,17 +25,7 @@ export function Apps() {
     <section id="apps" className="py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <SectionHeader
-            index="03"
-            eyebrow="App marketplace"
-            title={
-              <>
-                Products on the{" "}
-                <span className="font-serif-italic text-[color:var(--amber)]">App Store</span> &
-                Play.
-              </>
-            }
-          />
+          <SectionHeader index="03" eyebrow="App marketplace" title={<>featured Apps</>} />
           <Link
             to="/apps"
             className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground"
@@ -53,11 +43,7 @@ export function Apps() {
               viewport={{ once: true, margin: "-40px" }}
               transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.05 }}
             >
-              <Link
-                to="/apps/$slug"
-                params={{ slug: a.id }}
-                className="group flex flex-col gap-3"
-              >
+              <Link to="/apps/$slug" params={{ slug: a.id }} className="group flex flex-col gap-3">
                 <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-3xl sm:rounded-[2rem] hairline shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300">
                   <img
                     src={a.cover}

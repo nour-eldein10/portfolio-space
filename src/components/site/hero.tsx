@@ -22,7 +22,7 @@ export function Hero() {
   useEffect(() => {
     const id = setInterval(() => setIdx((i) => (i + 1) % profile.rotatingRoles.length), 2400);
     return () => clearInterval(id);
-  }, []);
+  }, [profile.rotatingRoles.length]);
 
   // GSAP entry timeline for headline + meta
   useEffect(() => {
@@ -61,7 +61,7 @@ export function Hero() {
       />
 
       <br />
-  
+
       <div className="relative mx-auto max-w-7xl px-6 pt-28 pb-16 grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
         <motion.div style={{ y: yHeroText, opacity: opacityHero }}>
           <p
@@ -147,10 +147,16 @@ export function Hero() {
             >
               <span className="absolute inset-0 bg-gradient-to-r from-[color:var(--neon)] via-[color:var(--amber)] to-[color:var(--neon)] bg-[length:200%_auto] group-hover:bg-right transition-all duration-500 rounded-full" />
               <span className="relative flex items-center justify-center px-6 py-2.5 rounded-full bg-background/95 group-hover:bg-background/90 transition-colors">
-                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span 
+                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span
                   className="font-display font-medium text-sm text-foreground tracking-tight transition-all duration-300"
                   style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
                 >
@@ -164,10 +170,16 @@ export function Hero() {
             >
               <span className="absolute inset-0 bg-gradient-to-r from-[color:var(--amber)] via-[color:var(--neon)] to-[color:var(--amber)] bg-[length:200%_auto] group-hover:bg-right transition-all duration-500 rounded-full" />
               <span className="relative flex items-center justify-center px-6 py-2.5 rounded-full bg-background/95 group-hover:bg-background/90 transition-colors">
-                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">+</span>
-                <span 
+                <span className="absolute top-1.5 left-6 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span className="absolute top-1.5 right-6 text-[8px] font-mono text-muted-foreground/30 leading-none">
+                  +
+                </span>
+                <span
                   className="font-display font-medium text-sm text-foreground tracking-tight transition-all duration-300"
                   style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
                 >

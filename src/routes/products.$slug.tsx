@@ -79,10 +79,12 @@ function ProductDetail() {
       <SiteNav />
       <div className="pt-32 pb-24 mx-auto max-w-7xl px-6">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-
           {/* Left Column: Product Info */}
           <div className="flex flex-col items-start gap-8">
-            <Link to="/" className="font-mono text-[10px] tracking-widest uppercase text-[color:var(--neon)] hover:opacity-80 inline-flex items-center gap-2">
+            <Link
+              to="/"
+              className="font-mono text-[10px] tracking-widest uppercase text-[color:var(--neon)] hover:opacity-80 inline-flex items-center gap-2"
+            >
               ← Back to portfolio
             </Link>
 
@@ -104,22 +106,32 @@ function ProductDetail() {
               <div className="grid grid-cols-3 gap-6 w-full py-8 border-y hairline border-border/40">
                 {p.rating && (
                   <div className="flex flex-col gap-1">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Rating</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                      Rating
+                    </span>
                     <span className="font-display text-2xl text-foreground flex items-center gap-1">
                       {p.rating} <span className="text-amber-400">★</span>
-                      {p.reviews && <span className="text-sm text-muted-foreground font-sans">({p.reviews})</span>}
+                      {p.reviews && (
+                        <span className="text-sm text-muted-foreground font-sans">
+                          ({p.reviews})
+                        </span>
+                      )}
                     </span>
                   </div>
                 )}
                 {p.downloads && (
                   <div className="flex flex-col gap-1">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Installs</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                      Installs
+                    </span>
                     <span className="font-display text-2xl text-foreground">{p.downloads}</span>
                   </div>
                 )}
                 {p.price && (
                   <div className="flex flex-col gap-1">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Price</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                      Price
+                    </span>
                     <span className="font-display text-2xl text-foreground">{p.price}</span>
                   </div>
                 )}
@@ -148,7 +160,10 @@ function ProductDetail() {
                 <CollapsibleSection title="Technologies" defaultOpen={false}>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {technologies.map((t) => (
-                      <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">
+                      <span
+                        key={t}
+                        className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40"
+                      >
                         {t}
                       </span>
                     ))}

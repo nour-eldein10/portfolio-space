@@ -31,7 +31,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, ImagePlus, GripVertical, Video, Link2, X, Play, UploadCloud } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  ImagePlus,
+  GripVertical,
+  Video,
+  Link2,
+  X,
+  Play,
+  UploadCloud,
+} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 type Doc = Record<string, any> & { _id: string };
@@ -291,12 +303,23 @@ function CrudForm({
           docType={def.type}
           value={values[f.name]}
           onChange={(v) => set(f.name, v)}
-          onBlur={f.name === "name" && isNew ? () => {
-            // Re-run slug gen on blur if still empty
-            if (!values.slug && values.name) {
-              set("slug", String(values.name).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
-            }
-          } : undefined}
+          onBlur={
+            f.name === "name" && isNew
+              ? () => {
+                  // Re-run slug gen on blur if still empty
+                  if (!values.slug && values.name) {
+                    set(
+                      "slug",
+                      String(values.name)
+                        .toLowerCase()
+                        .trim()
+                        .replace(/[^a-z0-9]+/g, "-")
+                        .replace(/^-|-$/g, ""),
+                    );
+                  }
+                }
+              : undefined
+          }
         />
       ))}
       <DialogFooter className="pt-2">
@@ -334,7 +357,10 @@ function FieldInput({
             value={value ?? ""}
             onChange={(e) => {
               // Strict validation: lowercase, numbers, hyphens only
-              const v = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+              const v = e.target.value
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, "")
+                .replace(/-+/g, "-");
               onChange(v);
             }}
             onBlur={onBlur}
@@ -345,7 +371,17 @@ function FieldInput({
           {value && (
             <p className="text-xs text-muted-foreground flex items-center gap-1.5 bg-surface/50 p-2 rounded-md hairline">
               <Link2 className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">https://noureldein.com/{docType === "app" ? "apps" : docType === "product" ? "products" : docType === "design" ? "designs" : docType}s/<span className="text-foreground font-medium">{value}</span></span>
+              <span className="truncate">
+                https://noureldein.com/
+                {docType === "app"
+                  ? "apps"
+                  : docType === "product"
+                    ? "products"
+                    : docType === "design"
+                      ? "designs"
+                      : docType}
+                s/<span className="text-foreground font-medium">{value}</span>
+              </span>
             </p>
           )}
         </div>
@@ -467,13 +503,24 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
       <div className="flex-1 max-w-[300px]">
         <label
           className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
-            isDragging ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10" : "border-border hover:bg-surface/50"
+            isDragging
+              ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10"
+              : "border-border hover:bg-surface/50"
           }`}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={onDrop}
         >
-          <input type="file" accept="image/*" className="hidden" onChange={onPick} disabled={busy} />
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onPick}
+            disabled={busy}
+          />
           {busy ? (
             <div className="flex flex-col items-center gap-2 w-full">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -508,14 +555,14 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
 
     setBusy(true);
     setProgress(10);
-    let uploadedItems: any[] = [];
+    const uploadedItems: any[] = [];
     try {
       const step = 90 / files.length;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const isVideo = file.type.startsWith("video/");
         const isImage = file.type.startsWith("image/");
-        
+
         if (isVideo && file.size > 50 * 1024 * 1024) {
           toast.error(`Video ${file.name} must be under 50 MB`);
           continue;
@@ -593,12 +640,27 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
       {items.length > 0 && (
         <div className="flex flex-col gap-2">
           {items.map((item, i) => (
-            <div key={item._key || i} className="flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30">
+            <div
+              key={item._key || i}
+              className="flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30"
+            >
               <div className="flex flex-col gap-1">
-                <button type="button" aria-label="Move up" onClick={() => move(i, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                <button
+                  type="button"
+                  aria-label="Move up"
+                  onClick={() => move(i, -1)}
+                  disabled={i === 0}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                >
                   <GripVertical className="h-3 w-3" />
                 </button>
-                <button type="button" aria-label="Move down" onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                <button
+                  type="button"
+                  aria-label="Move down"
+                  onClick={() => move(i, 1)}
+                  disabled={i === items.length - 1}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                >
                   <GripVertical className="h-3 w-3" />
                 </button>
               </div>
@@ -606,27 +668,37 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
               {item._type === "image" && (
                 <div className="h-12 w-16 bg-surface shrink-0 rounded overflow-hidden relative flex items-center justify-center">
                   {item.asset?._ref ? (
-                    <img src={urlFor(item).width(200).url()} alt="" className="object-cover h-full w-full" />
+                    <img
+                      src={urlFor(item).width(200).url()}
+                      alt=""
+                      className="object-cover h-full w-full"
+                    />
                   ) : item.asset?.url ? (
                     <img src={item.asset.url} alt="" className="object-cover h-full w-full" />
                   ) : (
                     <ImagePlus className="h-4 w-4 text-muted-foreground" />
                   )}
-                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">IMG</span>
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">
+                    IMG
+                  </span>
                 </div>
               )}
 
               {item._type === "file" && (
                 <div className="h-12 w-16 bg-surface shrink-0 rounded flex flex-col items-center justify-center gap-1">
                   <Video className="h-4 w-4 text-muted-foreground" />
-                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">MP4</span>
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">
+                    MP4
+                  </span>
                 </div>
               )}
 
               {item._type === "externalMedia" && (
                 <div className="h-12 w-16 bg-surface shrink-0 rounded flex flex-col items-center justify-center gap-1">
                   <Link2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">URL</span>
+                  <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">
+                    URL
+                  </span>
                 </div>
               )}
 
@@ -636,7 +708,13 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
                 </p>
               </div>
 
-              <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => remove(i)}
+                className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
@@ -647,13 +725,25 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
       <div className="space-y-3">
         <label
           className={`relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
-            isDragging ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10" : "border-border hover:bg-surface/50"
+            isDragging
+              ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10"
+              : "border-border hover:bg-surface/50"
           }`}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={onDrop}
         >
-          <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={onPick} disabled={busy} />
+          <input
+            type="file"
+            multiple
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={onPick}
+            disabled={busy}
+          />
           {busy ? (
             <div className="flex flex-col items-center gap-3 w-full max-w-xs">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -664,20 +754,33 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
             <div className="flex flex-col items-center text-center">
               <UploadCloud className="h-8 w-8 mb-3 text-muted-foreground" />
               <span className="text-sm font-medium">Click to upload or drag and drop</span>
-              <span className="text-xs text-muted-foreground mt-1">Images (max 5MB) or Videos (max 50MB)</span>
+              <span className="text-xs text-muted-foreground mt-1">
+                Images (max 5MB) or Videos (max 50MB)
+              </span>
             </div>
           )}
         </label>
 
         <div className="flex items-center gap-2 pt-2 border-t border-border/30">
-          <Input 
-            placeholder="Or paste external video URL (YouTube, Vimeo...)" 
+          <Input
+            placeholder="Or paste external video URL (YouTube, Vimeo...)"
             value={external}
-            onChange={e => setExternal(e.target.value)}
+            onChange={(e) => setExternal(e.target.value)}
             className="h-9 text-xs font-mono bg-surface/30"
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addExternal(); } }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addExternal();
+              }
+            }}
           />
-          <Button type="button" onClick={addExternal} size="sm" variant="secondary" className="h-9 shrink-0">
+          <Button
+            type="button"
+            onClick={addExternal}
+            size="sm"
+            variant="secondary"
+            className="h-9 shrink-0"
+          >
             Add URL
           </Button>
         </div>

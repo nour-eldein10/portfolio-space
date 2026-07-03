@@ -150,12 +150,14 @@ function RootComponent() {
 
   useEffect(() => {
     // Handle Google redirect result (e.g. after signInWithRedirect comes back)
-    getRedirectResult(auth).then((result) => {
-      if (result?.user) {
-        router.invalidate();
-        queryClient.invalidateQueries();
-      }
-    }).catch(() => {});
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          router.invalidate();
+          queryClient.invalidateQueries();
+        }
+      })
+      .catch(() => {});
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       router.invalidate();

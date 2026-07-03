@@ -253,8 +253,20 @@ export const designsQuery = queryOptions({
   queryKey: ["cms", "designs"],
   queryFn: async () => {
     const docs = await sanityClient.fetch<
-      { title: string; category?: string; description?: string; rating?: number; reviews?: string; downloads?: string; cover?: unknown; gallery?: string[]; order?: number }[]
-    >(`*[_type=="design"] | order(order asc){ title, category, description, rating, reviews, downloads, cover, gallery, order }`);
+      {
+        title: string;
+        category?: string;
+        description?: string;
+        rating?: number;
+        reviews?: string;
+        downloads?: string;
+        cover?: unknown;
+        gallery?: string[];
+        order?: number;
+      }[]
+    >(
+      `*[_type=="design"] | order(order asc){ title, category, description, rating, reviews, downloads, cover, gallery, order }`,
+    );
     if (!docs?.length) return designsFallback;
     return docs.map((d, i) => {
       const id = slugify(d.title);
@@ -316,9 +328,12 @@ export const organizationsQuery = queryOptions({
     return docs.map((d) => ({
       name: d.name,
       type: d.type ?? "",
-      image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
-        ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(200).url()
-        : null,
+      image:
+        d.image && typeof d.image === "object" && "asset" in (d.image as object)
+          ? urlFor(d.image as Parameters<typeof urlFor>[0])
+              .width(200)
+              .url()
+          : null,
     }));
   },
   initialData: organizationsFallback,
@@ -355,9 +370,12 @@ export const volunteeringQuery = queryOptions({
         description: d.description ?? "",
         achievements: d.achievements ?? [],
         responsibilities: d.responsibilities ?? [],
-        image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
-          ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(400).url()
-          : null,
+        image:
+          d.image && typeof d.image === "object" && "asset" in (d.image as object)
+            ? urlFor(d.image as Parameters<typeof urlFor>[0])
+                .width(400)
+                .url()
+            : null,
       };
     });
   },
@@ -387,9 +405,12 @@ export const certificatesQuery = queryOptions({
         title: d.title,
         issuer: d.issuer ?? "",
         date: d.date ?? "",
-        image: d.image && typeof d.image === "object" && "asset" in (d.image as object)
-          ? urlFor(d.image as Parameters<typeof urlFor>[0]).width(800).url()
-          : certificatesFallback[i % certificatesFallback.length].image, // local fallback logic
+        image:
+          d.image && typeof d.image === "object" && "asset" in (d.image as object)
+            ? urlFor(d.image as Parameters<typeof urlFor>[0])
+                .width(800)
+                .url()
+            : certificatesFallback[i % certificatesFallback.length].image, // local fallback logic
       };
     });
   },

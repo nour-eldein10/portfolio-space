@@ -149,7 +149,10 @@ function AuthPage() {
                 }
               } catch (err: any) {
                 // popup blocked — fall back to redirect
-                if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
+                if (
+                  err?.code === "auth/popup-blocked" ||
+                  err?.code === "auth/popup-closed-by-user"
+                ) {
                   const provider = new GoogleAuthProvider();
                   await signInWithRedirect(auth, provider);
                 } else {

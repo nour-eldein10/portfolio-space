@@ -6,6 +6,7 @@ import { Play, Maximize2, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 export function GalleryViewer({ gallery }: { gallery: any[] }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     containScroll: "trimSnaps",
@@ -18,6 +19,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
   useEffect(() => {
     if (!isPlaying || !gallery || gallery.length <= 1) return;
     const timer = setInterval(() => {
+      setDirection(1);
       setSelectedIndex((prev) => (prev + 1) % gallery.length);
     }, 4000);
     return () => clearInterval(timer);
@@ -31,14 +33,16 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
+        setDirection(1);
         setSelectedIndex((p) => (p + 1) % gallery.length);
       } else if (e.key === "ArrowLeft") {
+        setDirection(-1);
         setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length);
       } else if (e.key === "Escape") {
         setLightboxOpen(false);
       }
     },
-    [gallery]
+    [gallery],
   );
 
   useEffect(() => {
@@ -91,16 +95,22 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
         {/* Hover Controls */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
-          
+
           <button
-            onClick={() => setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length)}
+            onClick={() => {
+              setDirection(-1);
+              setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length);
+            }}
             className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 hover:scale-110 active:scale-95 transition-all pointer-events-auto"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-          
+
           <button
-            onClick={() => setSelectedIndex((p) => (p + 1) % gallery.length)}
+            onClick={() => {
+              setDirection(1);
+              setSelectedIndex((p) => (p + 1) % gallery.length);
+            }}
             className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 hover:scale-110 active:scale-95 transition-all pointer-events-auto"
           >
             <ChevronRight className="w-6 h-6" />
@@ -157,14 +167,15 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
               <X className="w-6 h-6" />
             </button>
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={selectedIndex}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className="w-full h-full p-4 md:p-12 flex items-center justify-center relative"
+                custom={direction}
+                initial={{ opacity: 0, x: direction > 0 ? 100 : -100, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: direction > 0 ? -100 : 100, scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="w-full h-full p-4 md:p-12 flex items-center justify-center absolute inset-0"
               >
                 <GalleryItemRenderer item={gallery[selectedIndex]} inLightbox />
               </motion.div>
@@ -174,14 +185,20 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
             {gallery.length > 1 && (
               <>
                 <button
-                  onClick={() => setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length)}
+                  onClick={() => {
+                    setDirection(-1);
+                    setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length);
+                  }}
                   className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
                 >
                   <ChevronLeft className="w-8 h-8" />
                 </button>
-                
+
                 <button
-                  onClick={() => setSelectedIndex((p) => (p + 1) % gallery.length)}
+                  onClick={() => {
+                    setDirection(1);
+                    setSelectedIndex((p) => (p + 1) % gallery.length);
+                  }}
                   className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
                 >
                   <ChevronRight className="w-8 h-8" />
@@ -190,9 +207,35 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
             )}
 
             {/* Lightbox Counter */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs tracking-widest z-[110]">
+            <div className="absolute top-6 left-6 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs tracking-widest z-[110]">
               {selectedIndex + 1} / {gallery.length}
             </div>
+
+            {/* Lightbox Thumbnails */}
+            {gallery.length > 1 && (
+              <div className="absolute bottom-4 sm:bottom-8 w-full max-w-4xl px-8 z-[110]">
+                <div className="overflow-hidden" ref={emblaRef}>
+                  <div className="flex gap-2 py-2 cursor-grab active:cursor-grabbing">
+                    {gallery.map((item, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setDirection(i > selectedIndex ? 1 : -1);
+                          setSelectedIndex(i);
+                        }}
+                        className={`relative flex-[0_0_80px] sm:flex-[0_0_120px] aspect-video rounded-lg overflow-hidden hairline transition-all duration-300 group ${
+                          i === selectedIndex
+                            ? "ring-2 ring-white scale-100 opacity-100 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                            : "opacity-40 hover:opacity-80 scale-95"
+                        }`}
+                      >
+                        <GalleryThumbRenderer item={item} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -212,11 +255,16 @@ function getMediaUrl(item: any): string | null {
 
 function isVideo(item: any): boolean {
   if (item._type === "file" || item._type === "externalMedia") return true;
-  if (typeof item === "string") return item.toLowerCase().endsWith(".mp4") || item.includes("youtube.com") || item.includes("vimeo.com");
+  if (typeof item === "string")
+    return (
+      item.toLowerCase().endsWith(".mp4") ||
+      item.includes("youtube.com") ||
+      item.includes("vimeo.com")
+    );
   return false;
 }
 
-function GalleryItemRenderer({ item, inLightbox }: { item: any, inLightbox?: boolean }) {
+function GalleryItemRenderer({ item, inLightbox }: { item: any; inLightbox?: boolean }) {
   const url = getMediaUrl(item);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -227,13 +275,35 @@ function GalleryItemRenderer({ item, inLightbox }: { item: any, inLightbox?: boo
   if (video) {
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
       const id = url.includes("v=") ? new URL(url).searchParams.get("v") : url.split("/").pop();
-      return <iframe src={`https://www.youtube.com/embed/${id}?autoplay=0&rel=0`} title="YouTube video" className="w-full h-full rounded-2xl shadow-2xl" allowFullScreen />;
+      return (
+        <iframe
+          src={`https://www.youtube.com/embed/${id}?autoplay=0&rel=0`}
+          title="YouTube video"
+          className="w-full h-full rounded-2xl shadow-2xl"
+          allowFullScreen
+        />
+      );
     }
     if (url.includes("vimeo.com")) {
       const id = url.split("/").pop();
-      return <iframe src={`https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0`} title="Vimeo video" className="w-full h-full rounded-2xl shadow-2xl" allowFullScreen />;
+      return (
+        <iframe
+          src={`https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0`}
+          title="Vimeo video"
+          className="w-full h-full rounded-2xl shadow-2xl"
+          allowFullScreen
+        />
+      );
     }
-    return <video src={url} controls autoPlay={inLightbox} loop className="w-full h-full object-contain rounded-2xl shadow-2xl bg-black" />;
+    return (
+      <video
+        src={url}
+        controls
+        autoPlay={inLightbox}
+        loop
+        className="w-full h-full object-contain rounded-2xl shadow-2xl bg-black"
+      />
+    );
   }
 
   return (
@@ -243,12 +313,12 @@ function GalleryItemRenderer({ item, inLightbox }: { item: any, inLightbox?: boo
           <div className="w-8 h-8 rounded-full border-2 border-[color:var(--neon)] border-t-transparent animate-spin" />
         </div>
       )}
-      <img 
-        src={url} 
-        alt="Gallery media" 
+      <img
+        src={url}
+        alt="Gallery media"
         onLoad={() => setIsLoading(false)}
         loading="lazy"
-        className={`w-full h-full transition-opacity duration-500 ${inLightbox ? "object-contain max-h-[85vh] drop-shadow-2xl" : "object-cover"} ${isLoading ? "opacity-0" : "opacity-100"}`} 
+        className={`w-full h-full transition-opacity duration-500 ${inLightbox ? "object-contain max-h-[85vh] drop-shadow-2xl" : "object-cover"} ${isLoading ? "opacity-0" : "opacity-100"}`}
       />
     </div>
   );
@@ -265,16 +335,23 @@ function GalleryThumbRenderer({ item }: { item: any }) {
       <div className="h-full w-full bg-surface flex items-center justify-center relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--neon)]/10 to-transparent pointer-events-none" />
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] transition-all group-hover:bg-black/20">
-           <Play className="w-6 h-6 text-white fill-white drop-shadow-md transition-transform group-hover:scale-110" />
+          <Play className="w-6 h-6 text-white fill-white drop-shadow-md transition-transform group-hover:scale-110" />
         </div>
-        <span className="absolute bottom-1 right-1.5 text-[8px] font-mono text-white/80 bg-black/60 px-1 py-0.5 rounded backdrop-blur-sm">VIDEO</span>
+        <span className="absolute bottom-1 right-1.5 text-[8px] font-mono text-white/80 bg-black/60 px-1 py-0.5 rounded backdrop-blur-sm">
+          VIDEO
+        </span>
       </div>
     );
   }
 
   return (
     <div className="relative w-full h-full">
-      <img src={urlFor(item).width(300).url() || url} alt="Thumbnail" loading="lazy" className="h-full w-full object-cover" />
+      <img
+        src={urlFor(item).width(300).url() || url}
+        alt="Thumbnail"
+        loading="lazy"
+        className="h-full w-full object-cover"
+      />
     </div>
   );
 }

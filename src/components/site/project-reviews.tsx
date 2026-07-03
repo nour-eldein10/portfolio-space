@@ -52,7 +52,10 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
     let sum = 0;
     const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     for (const r of reviews) {
-      if (r.rating) { sum += r.rating; counts[r.rating]++; }
+      if (r.rating) {
+        sum += r.rating;
+        counts[r.rating]++;
+      }
     }
     return { total, average: total > 0 ? (sum / total).toFixed(1) : null, counts };
   }, [reviews]);
@@ -62,30 +65,38 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
   return (
     <section className="mt-24 pt-16 border-t border-border/30">
       <div className="grid md:grid-cols-[280px_1fr] gap-12">
-
         {/* ─── Left: Rating Summary ─── */}
         <div className="space-y-8">
           <div>
             <h2 className="font-display text-3xl font-semibold tracking-tight">Reviews</h2>
-            <p className="text-xs text-muted-foreground mt-1 font-mono uppercase tracking-widest">What people say</p>
+            <p className="text-xs text-muted-foreground mt-1 font-mono uppercase tracking-widest">
+              What people say
+            </p>
           </div>
 
           {stats.average ? (
             <div className="space-y-5">
               <div className="flex items-end gap-4">
-                <span className="text-7xl font-display font-medium tracking-tighter leading-none text-foreground">{stats.average}</span>
+                <span className="text-7xl font-display font-medium tracking-tighter leading-none text-foreground">
+                  {stats.average}
+                </span>
                 <div className="pb-2 space-y-1">
                   <div className="flex gap-0.5">
-                    {[1,2,3,4,5].map(s => (
-                      <Star key={s} className={`w-4 h-4 ${s <= parseFloat(stats.average!) ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}`} />
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`w-4 h-4 ${s <= parseFloat(stats.average!) ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}`}
+                      />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground">{stats.total} {stats.total === 1 ? "review" : "reviews"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.total} {stats.total === 1 ? "review" : "reviews"}
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                {[5,4,3,2,1].map(star => {
+                {[5, 4, 3, 2, 1].map((star) => {
                   const count = stats.counts[star] ?? 0;
                   const pct = stats.total > 0 ? (count / stats.total) * 100 : 0;
                   return (
@@ -99,7 +110,9 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                           transition={{ duration: 0.6, delay: (5 - star) * 0.05 }}
                         />
                       </div>
-                      <span className="w-4 text-[10px] text-muted-foreground font-mono text-right">{count}</span>
+                      <span className="w-4 text-[10px] text-muted-foreground font-mono text-right">
+                        {count}
+                      </span>
                     </div>
                   );
                 })}
@@ -108,7 +121,9 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
           ) : (
             <div className="py-6 text-center space-y-2 rounded-2xl hairline bg-surface/20">
               <div className="flex justify-center gap-0.5">
-                {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-muted text-muted" />)}
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} className="w-5 h-5 fill-muted text-muted" />
+                ))}
               </div>
               <p className="text-sm text-muted-foreground">No reviews yet</p>
             </div>
@@ -142,7 +157,9 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                   <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
                     <CheckCircle2 className="w-10 h-10 text-[color:var(--neon)]" />
                     <p className="font-medium">Review posted!</p>
-                    <p className="text-sm text-muted-foreground">Thank you for sharing your thoughts.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Thank you for sharing your thoughts.
+                    </p>
                   </div>
                 ) : (
                   <div className="p-6 space-y-5">
@@ -160,7 +177,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
 
                     {/* Star Picker */}
                     <div className="flex gap-1" onMouseLeave={() => setHovered(0)}>
-                      {[1,2,3,4,5].map(s => (
+                      {[1, 2, 3, 4, 5].map((s) => (
                         <button
                           key={s}
                           type="button"
@@ -169,7 +186,9 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                           onClick={() => setRating(s)}
                           className="group transition-transform hover:scale-110 active:scale-95"
                         >
-                          <Star className={`w-8 h-8 transition-colors ${s <= displayStar ? "fill-amber-400 text-amber-400" : "fill-muted text-muted group-hover:text-amber-300"}`} />
+                          <Star
+                            className={`w-8 h-8 transition-colors ${s <= displayStar ? "fill-amber-400 text-amber-400" : "fill-muted text-muted group-hover:text-amber-300"}`}
+                          />
                         </button>
                       ))}
                       {displayStar > 0 && (
@@ -182,14 +201,14 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <Input
                         value={author}
-                        onChange={e => setAuthor(e.target.value)}
+                        onChange={(e) => setAuthor(e.target.value)}
                         placeholder="Your name *"
                         className="rounded-xl"
                       />
                     </div>
                     <Textarea
                       value={quote}
-                      onChange={e => setQuote(e.target.value)}
+                      onChange={(e) => setQuote(e.target.value)}
                       placeholder="Share your experience (optional)..."
                       rows={3}
                       className="resize-none rounded-xl"
@@ -200,7 +219,11 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                         disabled={submitMut.isPending || !rating || !author.trim()}
                         className="rounded-xl px-6"
                       >
-                        {submitMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Post Review"}
+                        {submitMut.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          "Post Review"
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -238,8 +261,11 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                       <div className="flex items-center gap-3 flex-wrap">
                         <span className="font-medium text-sm">{r.author || "Anonymous"}</span>
                         <div className="flex gap-0.5">
-                          {[1,2,3,4,5].map(s => (
-                            <Star key={s} className={`w-3 h-3 ${s <= (r.rating || 5) ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}`} />
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star
+                              key={s}
+                              className={`w-3 h-3 ${s <= (r.rating || 5) ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}`}
+                            />
                           ))}
                         </div>
                         {r._createdAt && (
@@ -249,7 +275,9 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
                         )}
                       </div>
                       {r.quote && (
-                        <p className="mt-2 text-[13px] leading-relaxed text-foreground/80">{r.quote}</p>
+                        <p className="mt-2 text-[13px] leading-relaxed text-foreground/80">
+                          {r.quote}
+                        </p>
                       )}
                     </div>
                   </div>

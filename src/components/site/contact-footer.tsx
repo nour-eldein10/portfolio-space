@@ -56,10 +56,12 @@ export function ContactFooter() {
       <div
         aria-hidden
         className="absolute inset-0 -z-10 opacity-60"
-        style={{
-          background:
-            "radial-gradient(70% 50% at 30% 100%, color-mix(in oklab, var(--amber) 22%, transparent), transparent 70%), radial-gradient(60% 50% at 80% 0%, color-mix(in oklab, var(--neon) 15%, transparent), transparent 70%)",
-        } as React.CSSProperties}
+        style={
+          {
+            background:
+              "radial-gradient(70% 50% at 30% 100%, color-mix(in oklab, var(--amber) 22%, transparent), transparent 70%), radial-gradient(60% 50% at 80% 0%, color-mix(in oklab, var(--neon) 15%, transparent), transparent 70%)",
+          } as React.CSSProperties
+        }
       />
 
       <div className="mx-auto max-w-6xl px-6">
@@ -78,7 +80,10 @@ export function ContactFooter() {
             ))}
           </span>
           <span className="block overflow-visible">
-            <span data-letter className="inline-flex font-serif-italic text-[color:var(--amber)] text-[105px] tracking-wider">
+            <span
+              data-letter
+              className="inline-flex font-serif-italic text-[color:var(--amber)] text-[105px] tracking-wider"
+            >
               something impactful
             </span>
           </span>

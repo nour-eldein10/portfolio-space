@@ -69,18 +69,21 @@ function DesignDetail() {
 
   const cover = d?.cover?.asset ? urlFor(d.cover).width(2000).url() : d?.cover;
   const gallery = Array.isArray(d?.gallery) ? d.gallery : [];
-  
+
   // Combine cover and gallery to show all images
   const allImages = [cover, ...gallery].filter(Boolean);
 
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
       <SiteNav />
-      
+
       <div className="pt-24 pb-20 mx-auto max-w-7xl px-5">
         <div className="flex flex-col md:flex-row gap-10 md:items-end justify-between mb-12">
           <div className="max-w-2xl">
-            <Link to="/" className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-4">
+            <Link
+              to="/"
+              className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-4"
+            >
               ← Back to portfolio
             </Link>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight font-bold mb-4">
@@ -97,7 +100,7 @@ function DesignDetail() {
               </div>
             )}
           </div>
-          
+
           <div className="shrink-0 flex gap-3">
             <button className="px-5 py-2.5 rounded-full text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors">
               Appreciate
@@ -110,9 +113,20 @@ function DesignDetail() {
           {allImages.map((imgUrl, i) => (
             <div key={i} className="w-full">
               {typeof imgUrl === "string" && imgUrl.toLowerCase().endsWith(".mp4") ? (
-                <video src={imgUrl} autoPlay loop muted playsInline className="w-full h-auto object-cover rounded-xl" />
+                <video
+                  src={imgUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto object-cover rounded-xl"
+                />
               ) : (
-                <img src={imgUrl as string} alt={`Design preview ${i + 1}`} className="w-full h-auto object-cover rounded-xl" />
+                <img
+                  src={imgUrl as string}
+                  alt={`Design preview ${i + 1}`}
+                  className="w-full h-auto object-cover rounded-xl"
+                />
               )}
             </div>
           ))}
@@ -123,7 +137,7 @@ function DesignDetail() {
           )}
         </div>
       </div>
-      
+
       <ContactFooter />
     </main>
   );

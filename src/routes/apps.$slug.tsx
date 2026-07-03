@@ -56,7 +56,9 @@ export const Route = createFileRoute("/apps/$slug")({
       <SiteNav />
       <div className="py-40 text-center">
         <h1 className="text-3xl font-display mb-4">App not found</h1>
-        <Link to="/apps" className="underline text-sm">Back to marketplace</Link>
+        <Link to="/apps" className="underline text-sm">
+          Back to marketplace
+        </Link>
       </div>
     </main>
   ),
@@ -97,14 +99,22 @@ function AppDetail() {
   const gallery: any[] = Array.isArray(a?.gallery) ? a.gallery : [];
   const features: string[] = Array.isArray(a?.features) ? a.features : [];
   const technologies: string[] = Array.isArray(a?.technologies) ? a.technologies : [];
-  const otherApps = (allApps ?? []).filter((x: any) => (x.id ?? x.slug?.current) !== currentId).slice(0, 6);
+  const otherApps = (allApps ?? [])
+    .filter((x: any) => (x.id ?? x.slug?.current) !== currentId)
+    .slice(0, 6);
 
   // Dynamic Rating Calculation
   const reviewCount = reviewsData.length;
-  const dynamicRating = reviewCount > 0 
-    ? (reviewsData.reduce((sum: number, r: any) => sum + (r.rating || 5), 0) / reviewCount).toFixed(1)
-    : a?.rating;
-  const displayReviews = reviewCount > 0 ? `${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}` : (a?.reviews || "\u2014");
+  const dynamicRating =
+    reviewCount > 0
+      ? (
+          reviewsData.reduce((sum: number, r: any) => sum + (r.rating || 5), 0) / reviewCount
+        ).toFixed(1)
+      : a?.rating;
+  const displayReviews =
+    reviewCount > 0
+      ? `${reviewCount} ${reviewCount === 1 ? "review" : "reviews"}`
+      : a?.reviews || "\u2014";
 
   const [activeShot, setActiveShot] = useState(0);
 
@@ -115,7 +125,11 @@ function AppDetail() {
       {/* HERO BANNER */}
       <div className="relative h-[40vh] min-h-[240px] max-h-[400px] overflow-hidden">
         {coverUrl ? (
-          <img src={coverUrl} alt={a.name} className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={coverUrl}
+            alt={a.name}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--neon)]/30 to-[color:var(--amber)]/20" />
         )}
@@ -123,7 +137,6 @@ function AppDetail() {
       </div>
 
       <div className="relative -mt-16 mx-auto max-w-5xl px-5 pb-24">
-
         {/* APP IDENTITY */}
         <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end">
           <div className="shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-[1.6rem] overflow-hidden hairline shadow-2xl shadow-black/40 bg-surface ring-4 ring-background">
@@ -131,12 +144,19 @@ function AppDetail() {
           </div>
 
           <div className="flex-1 min-w-0 pb-1">
-            <Link to="/apps" className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-1.5">
+            <Link
+              to="/apps"
+              className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-1.5"
+            >
               &larr; Marketplace
             </Link>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight leading-tight">{a.name}</h1>
+            <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight leading-tight">
+              {a.name}
+            </h1>
             <p className="mt-0.5 text-sm text-[color:var(--neon)] font-medium">Nour Eldein</p>
-            {a.tagline && <p className="mt-0.5 text-[13px] text-muted-foreground line-clamp-1">{a.tagline}</p>}
+            {a.tagline && (
+              <p className="mt-0.5 text-[13px] text-muted-foreground line-clamp-1">{a.tagline}</p>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2 shrink-0">
@@ -195,7 +215,12 @@ function AppDetail() {
               <CollapsibleSection title="Technologies" defaultOpen={false}>
                 <div className="flex flex-wrap gap-2">
                   {technologies.map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">{t}</span>
+                    <span
+                      key={t}
+                      className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
               </CollapsibleSection>
@@ -208,13 +233,17 @@ function AppDetail() {
           {/* Sidebar */}
           <aside className="lg:w-60 shrink-0 space-y-4">
             <div className="p-4 rounded-2xl hairline bg-surface/30 space-y-3">
-              <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">App Info</h3>
+              <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                App Info
+              </h3>
               {[
                 { label: "Category", value: a.category || "\u2014" },
                 ...(a.version ? [{ label: "Version", value: a.version }] : []),
                 ...(a.releaseDate ? [{ label: "Updated", value: a.releaseDate }] : []),
                 ...(a.downloadSize ? [{ label: "Size", value: a.downloadSize }] : []),
-                ...(dynamicRating ? [{ label: "Rating", value: `${dynamicRating} \u2605 (${displayReviews})` }] : []),
+                ...(dynamicRating
+                  ? [{ label: "Rating", value: `${dynamicRating} \u2605 (${displayReviews})` }]
+                  : []),
                 ...(a.downloads ? [{ label: "Installs", value: a.downloads }] : []),
                 ...(a.price ? [{ label: "Price", value: a.price }] : []),
               ].map((row) => (
@@ -259,23 +288,42 @@ function AppDetail() {
             <div className="flex items-center gap-3 mb-4">
               <h2 className="font-display text-base font-medium tracking-tight">More Apps</h2>
               <div className="flex-1 h-px bg-border/50" />
-              <Link to="/apps" className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground">
+              <Link
+                to="/apps"
+                className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground"
+              >
                 View all &rarr;
               </Link>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
               {otherApps.map((app) => (
-                <Link key={app.id} to="/apps/$slug" params={{ slug: app.id }} className="group flex flex-col gap-2">
+                <Link
+                  key={app.id}
+                  to="/apps/$slug"
+                  params={{ slug: app.id }}
+                  className="group flex flex-col gap-2"
+                >
                   <div className="relative aspect-square w-full overflow-hidden rounded-[1.4rem] hairline shadow-sm group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all duration-300 bg-surface">
-                    <img src={app.cover} alt={app.name} loading="lazy" className="h-full w-full object-cover" />
+                    <img
+                      src={app.cover}
+                      alt={app.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-white text-[10px] font-semibold bg-black/60 px-2 py-0.5 rounded-full">View</span>
+                      <span className="text-white text-[10px] font-semibold bg-black/60 px-2 py-0.5 rounded-full">
+                        View
+                      </span>
                     </div>
                   </div>
                   <div className="px-0.5">
-                    <p className="text-[11px] font-medium line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">{app.name}</p>
+                    <p className="text-[11px] font-medium line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">
+                      {app.name}
+                    </p>
                     <div className="flex items-center gap-0.5 mt-0.5">
-                      <span className="text-[10px] text-muted-foreground">{app.rating?.toFixed(1) ?? "5.0"}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {app.rating?.toFixed(1) ?? "5.0"}
+                      </span>
                       <span className="text-[8px] text-[color:var(--amber)]">&#9733;</span>
                     </div>
                   </div>

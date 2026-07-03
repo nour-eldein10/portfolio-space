@@ -31,7 +31,9 @@ function Stars({ rating, size = "md" }: { rating: number; size?: "sm" | "md" | "
   return (
     <span className={`${cls} text-[color:var(--amber)] inline-flex`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < filled ? "" : "opacity-25"}>★</span>
+        <span key={i} className={i < filled ? "" : "opacity-25"}>
+          ★
+        </span>
       ))}
     </span>
   );
@@ -102,13 +104,7 @@ function MediaThumb({ url }: { url: string }) {
       </div>
     );
   }
-  return (
-    <img
-      src={url}
-      alt="Thumbnail"
-      className="h-20 w-32 object-cover rounded-2xl"
-    />
-  );
+  return <img src={url} alt="Thumbnail" className="h-20 w-32 object-cover rounded-2xl" />;
 }
 
 function MediaFull({ url }: { url: string }) {
@@ -131,22 +127,10 @@ function MediaFull({ url }: { url: string }) {
   }
 
   if (isMp4) {
-    return (
-      <video
-        src={url}
-        controls
-        className="w-full max-h-[520px] object-contain bg-black"
-      />
-    );
+    return <video src={url} controls className="w-full max-h-[520px] object-contain bg-black" />;
   }
 
-  return (
-    <img
-      src={url}
-      alt="Gallery"
-      className="w-full max-h-[520px] object-contain"
-    />
-  );
+  return <img src={url} alt="Gallery" className="w-full max-h-[520px] object-contain" />;
 }
 
 export function DetailShell({
@@ -221,7 +205,9 @@ export function DetailShell({
             {/* Right: info */}
             <div className="flex flex-col flex-1 gap-4">
               <div>
-                <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight">{title}</h1>
+                <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight">
+                  {title}
+                </h1>
                 <p className="mt-1 text-base font-medium text-[color:var(--neon)]">{eyebrow}</p>
                 {meta && <p className="mt-1 text-sm text-muted-foreground">{meta}</p>}
               </div>
@@ -231,7 +217,9 @@ export function DetailShell({
                 <div className="flex flex-wrap items-center gap-5">
                   <div className="flex flex-col items-center">
                     <span className="text-sm font-semibold">{ratingVal.toFixed(1)} ★</span>
-                    <span className="text-[11px] text-muted-foreground mt-0.5">{stats?.reviews ?? "0"} reviews</span>
+                    <span className="text-[11px] text-muted-foreground mt-0.5">
+                      {stats?.reviews ?? "0"} reviews
+                    </span>
                   </div>
                   {stats?.downloads && (
                     <>
@@ -246,7 +234,9 @@ export function DetailShell({
                     <>
                       <div className="w-px h-8 bg-border" />
                       <div className="flex flex-col items-center">
-                        <span className="text-sm font-semibold truncate max-w-[100px] text-center">{stats.category}</span>
+                        <span className="text-sm font-semibold truncate max-w-[100px] text-center">
+                          {stats.category}
+                        </span>
                         <span className="text-[11px] text-muted-foreground mt-0.5">Category</span>
                       </div>
                     </>
@@ -284,7 +274,7 @@ export function DetailShell({
                       >
                         {action.label}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
               )}
@@ -302,12 +292,13 @@ export function DetailShell({
           <div className="mt-12 flex flex-col lg:flex-row gap-10">
             {/* Main content column */}
             <div className="flex-1 min-w-0 space-y-10">
-
               {/* About */}
               {body && (
                 <section>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">About this {eyebrow.split("·")[0].trim()}</h2>
+                    <h2 className="text-lg font-semibold">
+                      About this {eyebrow.split("·")[0].trim()}
+                    </h2>
                     <span className="text-muted-foreground text-sm">→</span>
                   </div>
                   <div className="text-[15px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
@@ -316,7 +307,10 @@ export function DetailShell({
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-4">
                       {tags.map((t) => (
-                        <span key={t} className="px-3 py-1 rounded-full text-xs hairline bg-surface text-muted-foreground">
+                        <span
+                          key={t}
+                          className="px-3 py-1 rounded-full text-xs hairline bg-surface text-muted-foreground"
+                        >
                           {t}
                         </span>
                       ))}
@@ -337,9 +331,13 @@ export function DetailShell({
                   <div className="flex flex-col sm:flex-row gap-8">
                     {/* Big score */}
                     <div className="flex flex-col items-center justify-center shrink-0 w-40">
-                      <span className="font-display text-6xl font-bold">{ratingVal.toFixed(1)}</span>
+                      <span className="font-display text-6xl font-bold">
+                        {ratingVal.toFixed(1)}
+                      </span>
                       <Stars rating={ratingVal} size="lg" />
-                      <span className="text-xs text-muted-foreground mt-1">{stats?.reviews ?? "0"} ratings</span>
+                      <span className="text-xs text-muted-foreground mt-1">
+                        {stats?.reviews ?? "0"} ratings
+                      </span>
                     </div>
 
                     {/* Bars */}
@@ -353,10 +351,23 @@ export function DetailShell({
                   {/* Placeholder review cards */}
                   <div className="mt-8 space-y-4">
                     {[
-                      { author: "Ahmed K.", date: "Jun 2026", text: "Excellent work! Really clean and professional output.", rating: 5 },
-                      { author: "Sara M.", date: "May 2026", text: "Loved the design. Would definitely recommend.", rating: 4 },
+                      {
+                        author: "Ahmed K.",
+                        date: "Jun 2026",
+                        text: "Excellent work! Really clean and professional output.",
+                        rating: 5,
+                      },
+                      {
+                        author: "Sara M.",
+                        date: "May 2026",
+                        text: "Loved the design. Would definitely recommend.",
+                        rating: 4,
+                      },
                     ].map((r) => (
-                      <div key={r.author} className="p-5 rounded-2xl bg-surface/40 hairline space-y-2">
+                      <div
+                        key={r.author}
+                        className="p-5 rounded-2xl bg-surface/40 hairline space-y-2"
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-full bg-surface-2 flex items-center justify-center text-[13px] font-medium">
@@ -385,8 +396,8 @@ export function DetailShell({
                       item.type === "Apps"
                         ? `/apps/${item.id}`
                         : item.type === "Graphic Design"
-                        ? `/designs/${item.id}`
-                        : `/projects/${item.id}`;
+                          ? `/designs/${item.id}`
+                          : `/projects/${item.id}`;
                     return (
                       <Link
                         key={item.id}
@@ -394,7 +405,11 @@ export function DetailShell({
                         className="flex items-center gap-3 p-3 rounded-2xl hairline bg-surface/20 hover:bg-surface/50 transition-colors group"
                       >
                         <div className="h-12 w-12 shrink-0 rounded-xl overflow-hidden hairline">
-                          <img src={item.cover} alt={item.name} className="h-full w-full object-cover" />
+                          <img
+                            src={item.cover}
+                            alt={item.name}
+                            className="h-full w-full object-cover"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">
@@ -403,7 +418,9 @@ export function DetailShell({
                           {item.rating && (
                             <div className="flex items-center gap-1 mt-0.5">
                               <Stars rating={item.rating} size="sm" />
-                              <span className="text-[11px] text-muted-foreground">{item.rating.toFixed(1)}</span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {item.rating.toFixed(1)}
+                              </span>
                             </div>
                           )}
                         </div>

@@ -111,7 +111,14 @@ function MarketplacePage() {
     return result;
   }, [allItems, activeCategory, searchQuery, sortBy]);
 
-  const categories: Category[] = ["All", "Apps", "Automation", "Graphic Design", "Products", "Concepts"];
+  const categories: Category[] = [
+    "All",
+    "Apps",
+    "Automation",
+    "Graphic Design",
+    "Products",
+    "Concepts",
+  ];
   const groupOrder: Category[] = ["Apps", "Graphic Design", "Automation", "Products", "Concepts"];
 
   return (
@@ -120,7 +127,8 @@ function MarketplacePage() {
       <section className="relative pt-44 pb-10">
         <div className="mx-auto max-w-6xl px-6">
           <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
-            <span className="text-[color:var(--neon)]">●</span> Marketplace · {allItems.length} items
+            <span className="text-[color:var(--neon)]">●</span> Marketplace · {allItems.length}{" "}
+            items
           </p>
           <h1 className="mt-6 font-display font-medium text-[clamp(2rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.035em] max-w-3xl">
             Everything I've built,{" "}
@@ -152,7 +160,9 @@ function MarketplacePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-surface rounded-xl pl-10 pr-4 py-2 text-sm outline-none border border-transparent focus:border-[color:var(--neon)]/50 transition-colors"
                 />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">🔍</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  🔍
+                </span>
               </div>
               <select
                 aria-label="Sort by"
@@ -181,7 +191,10 @@ function MarketplacePage() {
               >
                 <p className="text-muted-foreground">No items found matching your criteria.</p>
                 <button
-                  onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveCategory("All");
+                  }}
                   className="mt-4 text-[color:var(--neon)] hover:underline"
                 >
                   Clear filters
@@ -190,12 +203,13 @@ function MarketplacePage() {
             ) : (
               <motion.div layout className="space-y-16">
                 {groupOrder.map((groupType) => {
-                  const groupItems = filteredAndSortedItems.filter((i: any) => i.type === groupType);
+                  const groupItems = filteredAndSortedItems.filter(
+                    (i: any) => i.type === groupType,
+                  );
                   if (groupItems.length === 0) return null;
 
                   return (
                     <GroupSection groupType={groupType} count={groupItems.length}>
-
                       {/* Apps: Play Store icon grid */}
                       {groupType === "Apps" ? (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
@@ -210,18 +224,33 @@ function MarketplacePage() {
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 className="group flex flex-col gap-3"
                               >
-                                <Link to="/apps/$slug" params={{ slug: item.id }} className="flex flex-col gap-3">
+                                <Link
+                                  to="/apps/$slug"
+                                  params={{ slug: item.id }}
+                                  className="flex flex-col gap-3"
+                                >
                                   <div className="relative aspect-square w-full overflow-hidden rounded-[2rem] hairline shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300">
-                                    <img src={item.cover} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
+                                    <img
+                                      src={item.cover}
+                                      alt={item.name}
+                                      loading="lazy"
+                                      className="h-full w-full object-cover"
+                                    />
                                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                      <span className="text-white text-xs font-semibold bg-black/60 px-3 py-1 rounded-full">View</span>
+                                      <span className="text-white text-xs font-semibold bg-black/60 px-3 py-1 rounded-full">
+                                        View
+                                      </span>
                                     </div>
                                   </div>
                                   <div className="flex flex-col px-1">
-                                    <h3 className="font-medium text-sm text-foreground line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">{item.name}</h3>
+                                    <h3 className="font-medium text-sm text-foreground line-clamp-1 group-hover:text-[color:var(--neon)] transition-colors">
+                                      {item.name}
+                                    </h3>
                                     <div className="flex items-center text-[12px] text-muted-foreground mt-0.5 gap-1">
                                       <span>{item.rating?.toFixed(1) || "5.0"}</span>
-                                      <span className="text-[10px] text-[color:var(--amber)]">★</span>
+                                      <span className="text-[10px] text-[color:var(--amber)]">
+                                        ★
+                                      </span>
                                     </div>
                                   </div>
                                 </Link>
@@ -258,7 +287,9 @@ function MarketplacePage() {
                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                                   />
                                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm z-20 pointer-events-none">
-                                    <span className="px-6 py-2 bg-foreground text-background rounded-full font-medium text-sm">View</span>
+                                    <span className="px-6 py-2 bg-foreground text-background rounded-full font-medium text-sm">
+                                      View
+                                    </span>
                                   </div>
                                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,color-mix(in_oklab,var(--background)_85%,transparent)_100%)]" />
                                   <div className="absolute top-4 right-4">
@@ -269,12 +300,18 @@ function MarketplacePage() {
                                 </div>
                                 <div className="p-5 flex flex-col gap-3 flex-1">
                                   <div>
-                                    <h3 className="font-display text-xl tracking-tight">{item.name}</h3>
-                                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                                    <h3 className="font-display text-xl tracking-tight">
+                                      {item.name}
+                                    </h3>
+                                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                                      {item.description}
+                                    </p>
                                   </div>
                                   <div className="flex items-center justify-between mt-auto pt-3 border-t hairline">
                                     <Stars rating={item.rating || 5} />
-                                    <span className="font-medium text-sm group-hover:text-[color:var(--neon)] transition-colors">View Details ↗</span>
+                                    <span className="font-medium text-sm group-hover:text-[color:var(--neon)] transition-colors">
+                                      View Details ↗
+                                    </span>
                                   </div>
                                 </div>
                               </motion.article>
@@ -296,18 +333,30 @@ function MarketplacePage() {
   );
 }
 
-function GroupSection({ groupType, count, children }: { groupType: string; count: number; children: React.ReactNode }) {
+function GroupSection({
+  groupType,
+  count,
+  children,
+}: {
+  groupType: string;
+  count: number;
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = useState(true);
   return (
     <motion.section layout key={groupType}>
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center gap-4 mb-6 group cursor-pointer"
       >
-        <h2 className="font-display text-xl font-medium tracking-tight shrink-0 group-hover:text-[color:var(--neon)] transition-colors">{groupType}</h2>
+        <h2 className="font-display text-xl font-medium tracking-tight shrink-0 group-hover:text-[color:var(--neon)] transition-colors">
+          {groupType}
+        </h2>
         <span className="text-xs text-muted-foreground font-mono shrink-0">{count}</span>
         <div className="flex-1 h-px bg-border/50" />
-        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 shrink-0 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`w-4 h-4 text-muted-foreground transition-transform duration-300 shrink-0 ${open ? "rotate-180" : ""}`}
+        />
       </button>
       <AnimatePresence initial={false}>
         {open && (

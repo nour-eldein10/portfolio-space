@@ -33,7 +33,7 @@ export function CustomCursor() {
     const controls = animate(
       pulseRef.current,
       { opacity: [0.5, 0, 0.5], scale: [1, 1.8, 1] },
-      { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
+      { duration: 2.4, repeat: Infinity, ease: "easeInOut" },
     );
     return () => controls.stop();
   }, [hasPointer, isVisible]);
@@ -53,13 +53,24 @@ export function CustomCursor() {
           const tag = el.tagName;
           const style = window.getComputedStyle(el);
           if (
-            tag === "A" || tag === "BUTTON" || tag === "INPUT" ||
-            tag === "SELECT" || tag === "TEXTAREA" ||
+            tag === "A" ||
+            tag === "BUTTON" ||
+            tag === "INPUT" ||
+            tag === "SELECT" ||
+            tag === "TEXTAREA" ||
             el.getAttribute("role") === "button" ||
             el.classList.contains("cursor-pointer") ||
             style.cursor === "pointer"
-          ) return { hover: true, text: false };
-          if (style.cursor === "text" || tag === "P" || tag === "SPAN" || tag === "H1" || tag === "H2" || tag === "H3") {
+          )
+            return { hover: true, text: false };
+          if (
+            style.cursor === "text" ||
+            tag === "P" ||
+            tag === "SPAN" ||
+            tag === "H1" ||
+            tag === "H2" ||
+            tag === "H3"
+          ) {
             return { hover: false, text: true };
           }
           return checkInteractive(el.parentElement);
@@ -138,11 +149,9 @@ export function CustomCursor() {
           borderColor: isHovered
             ? "rgba(209, 160, 84, 0.9)"
             : isText
-            ? "rgba(120, 230, 255, 0.3)"
-            : "rgba(0, 35, 43, 0.8)",
-          backgroundColor: isHovered
-            ? "rgba(209, 160, 84, 0.06)"
-            : "rgba(120, 230, 255, 0.02)",
+              ? "rgba(120, 230, 255, 0.3)"
+              : "rgba(0, 35, 43, 0.8)",
+          backgroundColor: isHovered ? "rgba(209, 160, 84, 0.06)" : "rgba(120, 230, 255, 0.02)",
           borderWidth: isHovered ? 1.5 : 1,
         }}
         transition={{

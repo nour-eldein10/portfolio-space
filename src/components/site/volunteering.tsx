@@ -39,7 +39,11 @@ export function Volunteering() {
               <div className="flex items-start justify-between mb-6">
                 <div className="h-12 w-12 rounded-2xl bg-surface-2 hairline flex items-center justify-center font-display text-xl text-foreground/60 overflow-hidden group-hover:text-[color:var(--neon)] transition-colors">
                   {(vol as any).image ? (
-                    <img src={(vol as any).image} alt={vol.organization} className="h-full w-full object-cover p-0.5" />
+                    <img
+                      src={(vol as any).image}
+                      alt={vol.organization}
+                      className="h-full w-full object-cover p-0.5"
+                    />
                   ) : (
                     vol.organization.charAt(0)
                   )}
