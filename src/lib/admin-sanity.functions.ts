@@ -146,7 +146,7 @@ export const submitReview = createServerFn({ method: "POST" })
       quote: data.quote ?? "",
       rating: data.rating,
       projectId: data.projectId ?? "",
-      status: "pending",
+      status: "approved",
     });
     return { ok: true, id: doc._id };
   });

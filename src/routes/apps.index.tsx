@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
+import { ChevronDown } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { appsQuery, productsQuery, designsQuery } from "@/lib/cms";
@@ -193,13 +194,7 @@ function MarketplacePage() {
                   if (groupItems.length === 0) return null;
 
                   return (
-                    <motion.section key={groupType} layout>
-                      {/* Group header with divider */}
-                      <div className="flex items-center gap-4 mb-6">
-                        <h2 className="font-display text-xl font-medium tracking-tight shrink-0">{groupType}</h2>
-                        <span className="text-xs text-muted-foreground font-mono shrink-0">{groupItems.length}</span>
-                        <div className="flex-1 h-px bg-border/50" />
-                      </div>
+                    <GroupSection groupType={groupType} count={groupItems.length}>
 
                       {/* Apps: Play Store icon grid */}
                       {groupType === "Apps" ? (
@@ -287,7 +282,7 @@ function MarketplacePage() {
                           })}
                         </div>
                       )}
-                    </motion.section>
+                    </GroupSection>
                   );
                 })}
               </motion.div>
@@ -298,5 +293,35 @@ function MarketplacePage() {
 
       <ContactFooter />
     </main>
+  );
+}
+
+function GroupSection({ groupType, count, children }: { groupType: string; count: number; children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <motion.section layout key={groupType}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-4 mb-6 group cursor-pointer"
+      >
+        <h2 className="font-display text-xl font-medium tracking-tight shrink-0 group-hover:text-[color:var(--neon)] transition-colors">{groupType}</h2>
+        <span className="text-xs text-muted-foreground font-mono shrink-0">{count}</span>
+        <div className="flex-1 h-px bg-border/50" />
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 shrink-0 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.section>
   );
 }
