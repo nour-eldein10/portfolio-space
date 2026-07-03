@@ -6,6 +6,7 @@ import { featuredProducts } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ProjectReviews } from "@/components/site/project-reviews";
 import { GalleryViewer } from "@/components/site/gallery-viewer";
+import { CollapsibleSection } from "@/components/site/collapsible-section";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
@@ -127,30 +128,32 @@ function ProductDetail() {
 
             {/* Features */}
             {features.length > 0 && (
-              <div className="w-full space-y-3">
-                <h2 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Features</h2>
-                <ul className="space-y-2">
-                  {features.map((f, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--neon)] shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+              <div className="w-full">
+                <CollapsibleSection title="Features" defaultOpen={false}>
+                  <ul className="space-y-2 mt-1">
+                    {features.map((f, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--neon)] shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </CollapsibleSection>
               </div>
             )}
 
             {/* Technologies */}
             {technologies.length > 0 && (
-              <div className="w-full space-y-3">
-                <h2 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Technologies</h2>
-                <div className="flex flex-wrap gap-2">
-                  {technologies.map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+              <div className="w-full">
+                <CollapsibleSection title="Technologies" defaultOpen={false}>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {technologies.map((t) => (
+                      <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </CollapsibleSection>
               </div>
             )}
 

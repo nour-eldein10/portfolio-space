@@ -7,6 +7,7 @@ import { SiteNav } from "@/components/site/nav";
 import { ProjectReviews } from "@/components/site/project-reviews";
 import { appsQuery } from "@/lib/cms";
 import { GalleryViewer } from "@/components/site/gallery-viewer";
+import { CollapsibleSection } from "@/components/site/collapsible-section";
 
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
@@ -155,17 +156,15 @@ function AppDetail() {
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0 space-y-8">
             {(a.description || a.tagline) && (
-              <section>
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">About this app</h2>
+              <CollapsibleSection title="About this app">
                 <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
                   {a.description ?? a.tagline}
                 </p>
-              </section>
+              </CollapsibleSection>
             )}
 
             {features.length > 0 && (
-              <section>
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">Features</h2>
+              <CollapsibleSection title="Features" defaultOpen={false}>
                 <ul className="space-y-2">
                   {features.map((f, i) => (
                     <li key={i} className="flex items-start gap-3 text-[13px] text-foreground/80">
@@ -174,18 +173,17 @@ function AppDetail() {
                     </li>
                   ))}
                 </ul>
-              </section>
+              </CollapsibleSection>
             )}
 
             {technologies.length > 0 && (
-              <section>
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest font-mono text-muted-foreground mb-3">Technologies</h2>
+              <CollapsibleSection title="Technologies" defaultOpen={false}>
                 <div className="flex flex-wrap gap-2">
                   {technologies.map((t) => (
                     <span key={t} className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40">{t}</span>
                   ))}
                 </div>
-              </section>
+              </CollapsibleSection>
             )}
 
             {/* SCREENSHOT GALLERY */}
