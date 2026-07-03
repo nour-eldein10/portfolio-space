@@ -46,7 +46,7 @@ export default defineType({
       type: 'array',
       of: [
         {type: 'image', options: {hotspot: true}},
-        {type: 'file', title: 'Video File', options: {accept: 'video/*'}},
+        {type: 'file', title: 'Video or PDF File', options: {accept: 'video/*,application/pdf'}},
         {
           type: 'object',
           name: 'externalMedia',

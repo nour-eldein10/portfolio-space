@@ -268,7 +268,11 @@ function getMediaUrl(item: any): string | null {
 }
 
 function isVideo(item: any): boolean {
-  if (item._type === "file" || item._type === "externalMedia") return true;
+  if (item._type === "file" || item._type === "externalMedia") {
+    const url = getMediaUrl(item);
+    if (url && url.toLowerCase().endsWith(".pdf")) return false;
+    return true;
+  }
   if (typeof item === "string")
     return (
       item.toLowerCase().endsWith(".mp4") ||
@@ -276,6 +280,11 @@ function isVideo(item: any): boolean {
       item.includes("vimeo.com")
     );
   return false;
+}
+
+function isPdf(item: any): boolean {
+  const url = getMediaUrl(item);
+  return !!url && url.toLowerCase().endsWith(".pdf");
 }
 
 function GalleryItemRenderer({
@@ -294,10 +303,14 @@ function GalleryItemRenderer({
 
   const video = isVideo(item);
 
+  const isPdfItem = isPdf(item);
+
+  let content = null;
+
   if (video) {
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
       const id = url.includes("v=") ? new URL(url).searchParams.get("v") : url.split("/").pop();
-      return (
+      content = (
         <iframe
           src={`https://www.youtube.com/embed/${id}?autoplay=0&rel=0`}
           title="YouTube video"
@@ -305,10 +318,9 @@ function GalleryItemRenderer({
           allowFullScreen
         />
       );
-    }
-    if (url.includes("vimeo.com")) {
+    } else if (url.includes("vimeo.com")) {
       const id = url.split("/").pop();
-      return (
+      content = (
         <iframe
           src={`https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0`}
           title="Vimeo video"
@@ -316,34 +328,41 @@ function GalleryItemRenderer({
           allowFullScreen
         />
       );
+    } else {
+      content = (
+        <video
+          src={url}
+          controls
+          autoPlay={inLightbox}
+          loop
+          className="w-full h-full object-contain rounded-2xl shadow-2xl bg-black"
+        />
+      );
     }
-    return (
-      <video
-        src={url}
-        controls
-        autoPlay={inLightbox}
-        loop
-        className="w-full h-full object-contain rounded-2xl shadow-2xl bg-black"
-      />
+  } else if (isPdfItem) {
+    content = (
+      <div className="w-full h-full bg-white rounded-2xl overflow-hidden shadow-2xl relative">
+        <iframe src={`${url}#toolbar=0`} className="w-full h-full" title="PDF document" />
+      </div>
+    );
+  } else {
+    content = (
+      <div className="relative w-full h-full flex items-center justify-center">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-surface animate-pulse">
+            <div className="w-8 h-8 rounded-full border-2 border-[color:var(--neon)] border-t-transparent animate-spin" />
+          </div>
+        )}
+        <img
+          src={url}
+          alt="Gallery media"
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
+          className={`w-full h-full transition-opacity duration-500 ${inLightbox ? "object-contain max-h-[85vh] drop-shadow-2xl" : "object-cover"} ${isLoading ? "opacity-0" : "opacity-100"}`}
+        />
+      </div>
     );
   }
-
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-surface animate-pulse">
-          <div className="w-8 h-8 rounded-full border-2 border-[color:var(--neon)] border-t-transparent animate-spin" />
-        </div>
-      )}
-      <img
-        src={url}
-        alt="Gallery media"
-        onLoad={() => setIsLoading(false)}
-        loading="lazy"
-        className={`w-full h-full transition-opacity duration-500 ${inLightbox ? "object-contain max-h-[85vh] drop-shadow-2xl" : "object-cover"} ${isLoading ? "opacity-0" : "opacity-100"}`}
-      />
-    </div>
-  );
 
   if (isMobileMockup && !inLightbox) {
     return (
@@ -375,6 +394,18 @@ function GalleryThumbRenderer({ item }: { item: any }) {
         </div>
         <span className="absolute bottom-1 right-1.5 text-[8px] font-mono text-white/80 bg-black/60 px-1 py-0.5 rounded backdrop-blur-sm">
           VIDEO
+        </span>
+      </div>
+    );
+  }
+
+  const isPdfItem = isPdf(item);
+  if (isPdfItem) {
+    return (
+      <div className="h-full w-full bg-surface flex items-center justify-center relative overflow-hidden group border border-border">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+        <span className="text-xs font-mono font-bold text-muted-foreground group-hover:text-foreground transition-colors">
+          PDF
         </span>
       </div>
     );

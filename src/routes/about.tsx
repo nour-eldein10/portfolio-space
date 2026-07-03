@@ -103,9 +103,9 @@ function AboutPage() {
                 <div className="relative">
                   <span className="absolute -left-[37px] top-1 h-3 w-3 rounded-full bg-[color:var(--neon)] ring-4 ring-background" />
                   <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                    2020 — 2024
+                    2020 — 2026
                   </span>
-                  <h4 className="font-display text-xl mt-1">Bachelor of Computer Science</h4>
+                  <h4 className="font-display text-xl mt-1">Bachelor of Computer Science - Software Engineering major</h4>
                   <p className="text-sm text-foreground/70 mt-1">Mansoura University</p>
                 </div>
               </div>
@@ -118,9 +118,9 @@ function AboutPage() {
               </h3>
               <ul className="space-y-4">
                 {[
-                  "Flutter Advanced UI & Clean Architecture",
-                  "Python Automation & Web Scraping",
-                  "Google UX Design Professional Certificate",
+                  "Flutter Advanced UI & Clean Architecture & Certificated from FCIS",
+                  "Product and startup builder & CEO ",
+                  "Creative Ui/UX Design Professional Certificate",
                   "Advanced Growth Strategy & Product Marketing",
                 ].map((course, i) => (
                   <li

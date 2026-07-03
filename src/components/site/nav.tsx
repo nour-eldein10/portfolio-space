@@ -5,6 +5,35 @@ import { useAuthInfo } from "@/hooks/use-auth-info";
 import { auth as firebaseAuth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { motion, AnimatePresence } from "motion/react";
+import { Sun, Moon } from "lucide-react";
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    return "light";
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  return (
+    <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="h-9 w-9 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-surface-2/60 hairline text-muted-foreground hover:text-foreground transition-colors"
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+    </button>
+  );
+}
 
 const links = [
   { to: "/" as const, label: "Home" },
@@ -118,6 +147,7 @@ export function SiteNav() {
                   Contact
                 </Link>
               </div>
+              <ThemeToggle />
               <button
                 aria-label="Toggle mobile menu"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

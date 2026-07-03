@@ -59,8 +59,12 @@ export function Reviews() {
   }, [qc]);
 
   return (
-    <section id="reviews" className="py-28 sm:py-36 bg-surface/30">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="reviews" className="relative py-28 sm:py-36 bg-surface/30 overflow-hidden">
+      {/* Background Glow Orbs */}
+      <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[color:var(--neon)]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 translate-x-1/2 w-[400px] h-[400px] bg-[color:var(--amber)]/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="relative mx-auto max-w-7xl px-6">
         <SectionHeader
           index="07"
           eyebrow="Trust & numbers"
@@ -102,31 +106,32 @@ export function Reviews() {
         {/* Reviews Carousel */}
         <div className="mt-24 relative">
           <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
-            <div className="flex -ml-5">
+            <div className="flex -ml-6">
               {reviews.map((r, i) => (
                 <div
                   key={i}
-                  className="pl-5 min-w-0 flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+                  className="pl-6 min-w-0 flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
                 >
                   <motion.blockquote
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.5 }}
-                    className="relative p-8 rounded-3xl hairline bg-background h-full flex flex-col justify-between hover:border-[color:var(--neon)]/30 transition-colors"
+                    transition={{ duration: 0.6, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
+                    className="group relative p-8 rounded-3xl bg-background/50 backdrop-blur-xl border border-white/5 dark:border-white/5 shadow-2xl hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:border-white/10 transition-all duration-500 h-full flex flex-col justify-between overflow-hidden"
                   >
-                    <div>
-                      <span className="font-serif-italic text-5xl text-[color:var(--amber)] leading-none absolute top-4 left-6 opacity-30">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="relative z-10">
+                      <span className="font-serif-italic text-6xl text-[color:var(--amber)]/30 leading-none absolute -top-2 -left-2 transition-transform duration-500 group-hover:scale-110">
                         "
                       </span>
-                      <p className="text-[15px] leading-relaxed text-foreground/90 mt-4 relative z-10">
+                      <p className="text-[15px] leading-relaxed text-foreground/90 mt-8 font-medium">
                         {r.quote}
                       </p>
                     </div>
-                    <footer className="mt-8 pt-5 border-t hairline flex items-center justify-between">
+                    <footer className="mt-8 pt-6 border-t border-border/50 flex items-center justify-between relative z-10">
                       <div>
-                        <p className="text-sm font-medium">{r.author}</p>
-                        <p className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground mt-1">
+                        <p className="text-sm font-semibold tracking-tight">{r.author}</p>
+                        <p className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mt-1">
                           {r.role}
                         </p>
                       </div>
@@ -134,10 +139,10 @@ export function Reviews() {
                         <img
                           src={(r as any).avatar}
                           alt={r.author}
-                          className="h-8 w-8 rounded-full object-cover hairline"
+                          className="h-10 w-10 rounded-full object-cover ring-2 ring-background shadow-md transition-transform duration-500 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-surface-2 flex items-center justify-center font-display text-xs text-muted-foreground hairline">
+                        <div className="h-10 w-10 rounded-full bg-surface-2 flex items-center justify-center font-display text-xs font-semibold text-muted-foreground ring-2 ring-background shadow-md transition-transform duration-500 group-hover:scale-110">
                           {r.author?.charAt(0) || "U"}
                         </div>
                       )}
