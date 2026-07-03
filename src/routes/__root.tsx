@@ -14,6 +14,7 @@ import { CustomCursor } from "@/components/site/custom-cursor";
 import { Toaster } from "sonner";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, getRedirectResult } from "firebase/auth";
+import { fetchSiteSettings } from "@/lib/site-settings.functions";
 
 import appCss from "../styles.css?url";
 
@@ -85,6 +86,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => {
+    const settings = await fetchSiteSettings();
+    return { settings };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -124,6 +129,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const { settings } = Route.useLoaderData();
+  const lightThemeClass = settings?.lightTheme || 'theme-soft-cream';
+  const darkThemeClass = settings?.darkTheme || 'theme-dark-original';
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -132,11 +141,19 @@ function RootShell({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark');
+                var isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                var root = document.documentElement;
+                if (isDark) {
+                  root.classList.add('dark');
+                  root.classList.add('${darkThemeClass}');
+                  root.classList.remove('${lightThemeClass}');
                 } else {
-                  document.documentElement.classList.remove('dark');
+                  root.classList.remove('dark');
+                  root.classList.add('${lightThemeClass}');
+                  root.classList.remove('${darkThemeClass}');
                 }
+                window.__ACTIVE_LIGHT_THEME__ = '${lightThemeClass}';
+                window.__ACTIVE_DARK_THEME__ = '${darkThemeClass}';
               } catch (_) {}
             `,
           }}

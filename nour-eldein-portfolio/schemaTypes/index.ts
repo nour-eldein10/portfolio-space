@@ -6,5 +6,6 @@ import app from './app'
 import product from './product'
 import design from './design'
 import review from './review'
+import siteSettings from './siteSettings'
 
-export const schemaTypes = [app, product, design, organization, volunteering, certificate, review]
+export const schemaTypes = [siteSettings, app, product, design, organization, volunteering, certificate, review]

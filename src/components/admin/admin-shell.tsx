@@ -29,6 +29,7 @@ import {
   Users,
   HeartHandshake,
   Award,
+  Settings,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -36,6 +37,7 @@ type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?
 const items: NavItem[] = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/profile", label: "Profile", icon: User },
+  { to: "/admin/settings", label: "Site Settings", icon: Settings },
   { to: "/admin/services", label: "Services", icon: Briefcase },
   { to: "/admin/experience", label: "Experience", icon: GraduationCap },
   { to: "/admin/products", label: "Products", icon: FolderKanban },

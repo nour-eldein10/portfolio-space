@@ -56,6 +56,19 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "portrait", label: "Portrait", kind: "image" },
     ],
   },
+  siteSettings: {
+    type: "siteSettings",
+    label: "Site Settings",
+    singular: "Site Settings",
+    titleField: "title",
+    singleton: true,
+    singletonId: "site-settings-singleton",
+    fields: [
+      { name: "title", label: "Site Title", kind: "text" },
+      { name: "lightTheme", label: "Light Theme", kind: "select", options: ["theme-soft-cream", "theme-cool-porcelain", "theme-warm-parchment", "theme-sage-linen"] },
+      { name: "darkTheme", label: "Dark Theme", kind: "select", options: ["theme-dark-original", "theme-midnight-cyan"] }
+    ],
+  },
   service: {
     type: "service",
     label: "Services",

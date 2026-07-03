@@ -16,10 +16,17 @@ function ThemeToggle() {
   });
 
   useEffect(() => {
+    // @ts-ignore
+    const lightClass = window.__ACTIVE_LIGHT_THEME__ || 'theme-soft-cream';
+    // @ts-ignore
+    const darkClass = window.__ACTIVE_DARK_THEME__ || 'theme-dark-original';
+    
     if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add("dark", darkClass);
+      document.documentElement.classList.remove(lightClass);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove("dark", darkClass);
+      document.documentElement.classList.add(lightClass);
     }
     localStorage.setItem("theme", theme);
   }, [theme]);
