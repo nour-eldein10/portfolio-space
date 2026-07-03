@@ -4,7 +4,13 @@ import useEmblaCarousel from "embla-carousel-react";
 import { urlFor } from "@/lib/sanity";
 import { Play, Maximize2, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-export function GalleryViewer({ gallery }: { gallery: any[] }) {
+export function GalleryViewer({
+  gallery,
+  isMobileMockup,
+}: {
+  gallery: any[];
+  isMobileMockup?: boolean;
+}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -88,7 +94,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
             className="relative w-full aspect-video sm:aspect-[16/10] bg-black/5"
           >
-            <GalleryItemRenderer item={gallery[selectedIndex]} />
+            <GalleryItemRenderer item={gallery[selectedIndex]} isMobileMockup={isMobileMockup} />
           </motion.div>
         </AnimatePresence>
 
@@ -272,7 +278,15 @@ function isVideo(item: any): boolean {
   return false;
 }
 
-function GalleryItemRenderer({ item, inLightbox }: { item: any; inLightbox?: boolean }) {
+function GalleryItemRenderer({
+  item,
+  inLightbox,
+  isMobileMockup,
+}: {
+  item: any;
+  inLightbox?: boolean;
+  isMobileMockup?: boolean;
+}) {
   const url = getMediaUrl(item);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -330,6 +344,20 @@ function GalleryItemRenderer({ item, inLightbox }: { item: any; inLightbox?: boo
       />
     </div>
   );
+
+  if (isMobileMockup && !inLightbox) {
+    return (
+      <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-black/5 to-black/10 p-6">
+        <div className="relative h-full aspect-[9/19.5] max-h-[600px] bg-black rounded-[2.5rem] border-[8px] sm:border-[10px] border-zinc-900 shadow-2xl overflow-hidden shadow-black/40 flex items-center justify-center shrink-0">
+          {/* Notch */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-5 bg-zinc-900 rounded-b-xl z-10" />
+          {content}
+        </div>
+      </div>
+    );
+  }
+
+  return content;
 }
 
 function GalleryThumbRenderer({ item }: { item: any }) {

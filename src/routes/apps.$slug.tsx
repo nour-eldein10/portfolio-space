@@ -227,7 +227,7 @@ function AppDetail() {
             )}
 
             {/* SCREENSHOT GALLERY */}
-            <GalleryViewer gallery={gallery} />
+            <GalleryViewer gallery={gallery} isMobileMockup={true} />
           </div>
 
           {/* Sidebar */}
