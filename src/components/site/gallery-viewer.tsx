@@ -101,6 +101,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
               setDirection(-1);
               setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length);
             }}
+            aria-label="Previous image"
             className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 hover:scale-110 active:scale-95 transition-all pointer-events-auto"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -111,6 +112,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
               setDirection(1);
               setSelectedIndex((p) => (p + 1) % gallery.length);
             }}
+            aria-label="Next image"
             className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 hover:scale-110 active:scale-95 transition-all pointer-events-auto"
           >
             <ChevronRight className="w-6 h-6" />
@@ -118,6 +120,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
 
           <button
             onClick={() => setLightboxOpen(true)}
+            aria-label="Open fullscreen"
             className="absolute bottom-4 right-4 p-2.5 rounded-xl bg-black/40 text-white backdrop-blur-md hover:bg-[color:var(--neon)] hover:text-black hover:scale-105 transition-all pointer-events-auto shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <Maximize2 className="w-5 h-5" />
@@ -134,6 +137,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
                 <button
                   key={i}
                   onClick={() => setSelectedIndex(i)}
+                  aria-label={`View image ${i + 1}`}
                   className={`relative flex-[0_0_35%] sm:flex-[0_0_22%] min-w-0 aspect-video rounded-xl overflow-hidden hairline transition-all duration-300 group ${
                     i === selectedIndex
                       ? "ring-2 ring-[color:var(--neon)] scale-100 opacity-100 shadow-[0_0_15px_color-mix(in_oklab,var(--neon)_30%,transparent)]"
@@ -162,6 +166,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
           >
             <button
               onClick={() => setLightboxOpen(false)}
+              aria-label="Close fullscreen"
               className="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-[110] backdrop-blur-md"
             >
               <X className="w-6 h-6" />
@@ -189,6 +194,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
                     setDirection(-1);
                     setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length);
                   }}
+                  aria-label="Previous image"
                   className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
                 >
                   <ChevronLeft className="w-8 h-8" />
@@ -199,6 +205,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
                     setDirection(1);
                     setSelectedIndex((p) => (p + 1) % gallery.length);
                   }}
+                  aria-label="Next image"
                   className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
                 >
                   <ChevronRight className="w-8 h-8" />
@@ -223,6 +230,7 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
                           setDirection(i > selectedIndex ? 1 : -1);
                           setSelectedIndex(i);
                         }}
+                        aria-label={`View image ${i + 1}`}
                         className={`relative flex-[0_0_80px] sm:flex-[0_0_120px] aspect-video rounded-lg overflow-hidden hairline transition-all duration-300 group ${
                           i === selectedIndex
                             ? "ring-2 ring-white scale-100 opacity-100 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
