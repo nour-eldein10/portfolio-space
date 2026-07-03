@@ -260,3 +260,19 @@ export const seedDefaultData = createServerFn({ method: "POST" })
 
     return { ok: true, created };
   });
+
+export const adminReorderDocs = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: { items: { id: string; order: number }[] }) => data)
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    
+    // Create a transaction to update all orders
+    let tx = client.transaction();
+    for (const item of data.items) {
+      tx = tx.patch(item.id, (p) => p.set({ order: item.order }));
+    }
+    await tx.commit();
+    return { ok: true };
+  });

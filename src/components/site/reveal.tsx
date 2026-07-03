@@ -12,7 +12,7 @@ type AnimVariant =
   | "jump"
   | "rotate";
 
-const variants: Record<AnimVariant, { hidden: object; visible: object }> = {
+const variants: Record<AnimVariant, { hidden: any; visible: any }> = {
   "fade-up": {
     hidden: { opacity: 0, y: 48 },
     visible: { opacity: 1, y: 0 },

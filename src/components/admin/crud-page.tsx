@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {
   adminListDocs,
   adminCreateDoc,
@@ -8,6 +9,7 @@ import {
   adminDeleteDoc,
   adminUploadImage,
   adminUploadFile,
+  adminReorderDocs,
 } from "@/lib/admin-sanity.functions";
 import { urlFor } from "@/lib/sanity";
 import type { TypeDef, FieldDef } from "@/lib/admin-schema";
@@ -43,6 +45,7 @@ import {
   X,
   Play,
   UploadCloud,
+  Search,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
@@ -54,6 +57,7 @@ export function CrudPage({ def }: { def: TypeDef }) {
   const create = useServerFn(adminCreateDoc);
   const update = useServerFn(adminUpdateDoc);
   const del = useServerFn(adminDeleteDoc);
+  const reorder = useServerFn(adminReorderDocs);
 
   const key = ["admin", "sanity", def.type] as const;
   const { data: docs = [], isLoading } = useQuery({
@@ -63,12 +67,26 @@ export function CrudPage({ def }: { def: TypeDef }) {
 
   const [editing, setEditing] = useState<Doc | null>(null);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  
+  // Local state for optimistic drag & drop
+  const [orderedDocs, setOrderedDocs] = useState<Doc[]>([]);
+
+  useEffect(() => {
+    // Sort docs by `order` field if present, else keep original
+    const sorted = [...(docs as Doc[])].sort((a, b) => {
+      const orderA = typeof a.order === 'number' ? a.order : 999999;
+      const orderB = typeof b.order === 'number' ? b.order : 999999;
+      return orderA - orderB;
+    });
+    setOrderedDocs(sorted);
+  }, [docs]);
 
   function openNew() {
     if (def.singleton && docs[0]) {
       setEditing(docs[0] as Doc);
     } else {
-      setEditing({ _id: "" } as Doc);
+      setEditing({ _id: "", order: orderedDocs.length + 1 } as Doc);
     }
     setOpen(true);
   }
@@ -79,13 +97,11 @@ export function CrudPage({ def }: { def: TypeDef }) {
 
   const saveMut = useMutation({
     mutationFn: async (values: Record<string, any>) => {
-      // Always normalize slug to Sanity object format
       const normalized = { ...values };
       if (normalized.slug && typeof normalized.slug === "string") {
         normalized.slug = { _type: "slug", current: normalized.slug };
       }
       if (editing && editing._id) {
-        // existing - patch
         return update({ data: { id: editing._id, set: normalized } });
       }
       const doc: Record<string, any> = { _type: def.type, ...normalized };
@@ -113,28 +129,76 @@ export function CrudPage({ def }: { def: TypeDef }) {
     onError: (e: any) => toast.error(e?.message ?? "Delete failed"),
   });
 
+  const reorderMut = useMutation({
+    mutationFn: (items: { id: string; order: number }[]) => reorder({ data: { items } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: key });
+      qc.invalidateQueries({ queryKey: ["cms"] });
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Reorder failed"),
+  });
+
+  const filteredDocs = orderedDocs.filter((d) => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    const title = String(d[def.titleField] ?? "").toLowerCase();
+    const subtitle = String(def.subtitleField ? d[def.subtitleField] : "").toLowerCase();
+    return title.includes(s) || subtitle.includes(s);
+  });
+
+  function onDragEnd(result: any) {
+    if (!result.destination || search) return; // Disable drop if searching
+    if (result.destination.index === result.source.index) return;
+
+    const newDocs = Array.from(orderedDocs);
+    const [reorderedItem] = newDocs.splice(result.source.index, 1);
+    newDocs.splice(result.destination.index, 0, reorderedItem);
+
+    setOrderedDocs(newDocs);
+
+    // Save new order to backend
+    const updates = newDocs.map((doc, index) => ({
+      id: doc._id,
+      order: index + 1,
+    }));
+    reorderMut.mutate(updates);
+  }
+
   return (
     <div>
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl tracking-tight">{def.label}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {def.singleton ? "Edit the single document." : `Manage all ${def.label.toLowerCase()}.`}
           </p>
         </div>
-        {!def.singleton && (
-          <Button onClick={openNew}>
-            <Plus className="h-4 w-4 mr-1.5" /> New {def.singular.toLowerCase()}
-          </Button>
-        )}
-        {def.singleton && docs.length === 0 && (
-          <Button onClick={openNew}>
-            <Plus className="h-4 w-4 mr-1.5" /> Create
-          </Button>
-        )}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {!def.singleton && (
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 h-9"
+              />
+            </div>
+          )}
+          {!def.singleton && (
+            <Button onClick={openNew} className="shrink-0 h-9">
+              <Plus className="h-4 w-4 mr-1.5" /> New {def.singular.toLowerCase()}
+            </Button>
+          )}
+          {def.singleton && docs.length === 0 && (
+            <Button onClick={openNew} className="h-9">
+              <Plus className="h-4 w-4 mr-1.5" /> Create
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="mt-8 space-y-2">
+      <div className="mt-8">
         {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
         {!isLoading && docs.length === 0 && (
           <div className="hairline rounded-2xl p-8 text-center text-sm text-muted-foreground">
@@ -144,18 +208,64 @@ export function CrudPage({ def }: { def: TypeDef }) {
               : `Add your first ${def.singular.toLowerCase()}.`}
           </div>
         )}
-        {(docs as Doc[]).map((d) => (
-          <DocRow
-            key={d._id}
-            def={def}
-            doc={d}
-            onEdit={() => openEdit(d)}
-            onDelete={() => {
-              if (confirm(`Delete "${d[def.titleField] ?? "this"}"?`)) delMut.mutate(d._id);
-            }}
-            singleton={def.singleton}
-          />
-        ))}
+        
+        {/* Drag and drop context */}
+        {!def.singleton && !isLoading && docs.length > 0 && (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="docs">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
+                  {filteredDocs.map((d, index) => (
+                    <Draggable key={d._id} draggableId={d._id} index={index} isDragDisabled={!!search}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          style={provided.draggableProps.style as React.CSSProperties}
+                          className={`transition-opacity ${snapshot.isDragging ? 'opacity-80' : ''}`}
+                        >
+                          <DocRow
+                            def={def}
+                            doc={d}
+                            onEdit={() => openEdit(d)}
+                            onDelete={() => {
+                              if (confirm(`Delete "${d[def.titleField] ?? "this"}"?`)) delMut.mutate(d._id);
+                            }}
+                            singleton={false}
+                            dragHandleProps={provided.dragHandleProps}
+                            isSearchActive={!!search}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
+
+        {def.singleton && !isLoading && docs.length > 0 && (
+          <div className="space-y-2">
+            {filteredDocs.map((d) => (
+              <DocRow
+                key={d._id}
+                def={def}
+                doc={d}
+                onEdit={() => openEdit(d)}
+                onDelete={() => {}}
+                singleton={true}
+              />
+            ))}
+          </div>
+        )}
+        
+        {!isLoading && docs.length > 0 && filteredDocs.length === 0 && (
+          <div className="hairline rounded-2xl p-8 text-center text-sm text-muted-foreground">
+            No results found for "{search}".
+          </div>
+        )}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -187,12 +297,16 @@ function DocRow({
   onEdit,
   onDelete,
   singleton,
+  dragHandleProps,
+  isSearchActive,
 }: {
   def: TypeDef;
   doc: Doc;
   onEdit: () => void;
   onDelete: () => void;
   singleton?: boolean;
+  dragHandleProps?: any;
+  isSearchActive?: boolean;
 }) {
   const title = doc[def.titleField] ?? "Untitled";
   const subtitle = def.subtitleField ? doc[def.subtitleField] : undefined;
@@ -202,7 +316,15 @@ function DocRow({
       : null;
 
   return (
-    <div className="hairline rounded-2xl p-4 flex items-center gap-4 bg-surface/30">
+    <div className="hairline rounded-2xl p-4 flex items-center gap-4 bg-surface/30 group">
+      {!singleton && (
+        <div 
+          className={`shrink-0 flex items-center justify-center w-6 h-6 rounded-md ${isSearchActive ? 'opacity-30 cursor-not-allowed' : 'text-muted-foreground hover:bg-surface hover:text-foreground cursor-grab active:cursor-grabbing'}`}
+          {...(isSearchActive ? {} : dragHandleProps)}
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+      )}
       {img && <img src={img} alt="" className="h-14 w-14 rounded-lg object-cover" />}
       <div className="min-w-0 flex-1">
         <p className="font-medium truncate">{String(title)}</p>

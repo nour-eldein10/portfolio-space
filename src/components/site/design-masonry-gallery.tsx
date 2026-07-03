@@ -184,7 +184,6 @@ function MediaItem({
           muted
           playsInline
           className={baseClass}
-          loading="lazy"
         />
         {!hero && (
           <div className="absolute top-3 right-3 bg-black/70 text-white text-[10px] font-mono px-2 py-1 rounded-full flex items-center gap-1">
