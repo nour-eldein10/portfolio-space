@@ -6,6 +6,8 @@ import { apps as appsFallback } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ProjectReviews } from "@/components/site/project-reviews";
 import { appsQuery } from "@/lib/cms";
+import { fetchReviews } from "@/lib/admin-sanity.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { GalleryViewer } from "@/components/site/gallery-viewer";
 import { CollapsibleSection } from "@/components/site/collapsible-section";
 
@@ -83,13 +85,26 @@ function AppDetail() {
 
   const { data: allApps } = useQuery(appsQuery);
 
+  const currentId = a?.slug?.current ?? initial.id;
+  const fetchFn = useServerFn(fetchReviews);
+  const { data: reviewsData = [] } = useQuery({
+    queryKey: ["sanity_reviews", currentId],
+    queryFn: () => fetchFn({ data: { projectId: currentId } }),
+  });
+
   const coverUrl = a?.cover?.asset ? urlFor(a.cover).width(1600).url() : initial.cover;
   const iconUrl = a?.cover?.asset ? urlFor(a.cover).width(256).url() : initial.cover;
   const gallery: any[] = Array.isArray(a?.gallery) ? a.gallery : [];
   const features: string[] = Array.isArray(a?.features) ? a.features : [];
   const technologies: string[] = Array.isArray(a?.technologies) ? a.technologies : [];
-  const currentId = a?.slug?.current ?? initial.id;
   const otherApps = (allApps ?? []).filter((x: any) => (x.id ?? x.slug?.current) !== currentId).slice(0, 6);
+
+  // Dynamic Rating Calculation
+  const reviewCount = reviewsData.length;
+  const dynamicRating = reviewCount > 0 
+    ? (reviewsData.reduce((sum: number, r: any) => sum + (r.rating || 5), 0) / reviewCount).toFixed(1)
+    : a?.rating;
+  const displayReviews = reviewCount > 0 ? `${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}` : (a?.reviews || "\u2014");
 
   const [activeShot, setActiveShot] = useState(0);
 
@@ -196,7 +211,10 @@ function AppDetail() {
               <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">App Info</h3>
               {[
                 { label: "Category", value: a.category || "\u2014" },
-                ...(a.rating ? [{ label: "Rating", value: `${a.rating} \u2605 (${a.reviews || "\u2014"})` }] : []),
+                ...(a.version ? [{ label: "Version", value: a.version }] : []),
+                ...(a.releaseDate ? [{ label: "Updated", value: a.releaseDate }] : []),
+                ...(a.downloadSize ? [{ label: "Size", value: a.downloadSize }] : []),
+                ...(dynamicRating ? [{ label: "Rating", value: `${dynamicRating} \u2605 (${displayReviews})` }] : []),
                 ...(a.downloads ? [{ label: "Installs", value: a.downloads }] : []),
                 ...(a.price ? [{ label: "Price", value: a.price }] : []),
               ].map((row) => (

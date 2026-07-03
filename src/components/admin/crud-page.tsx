@@ -31,7 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, ImagePlus, GripVertical, Video, Link2, X, Play } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ImagePlus, GripVertical, Video, Link2, X, Play, UploadCloud } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type Doc = Record<string, any> & { _id: string };
 
@@ -412,16 +413,17 @@ function FieldInput({
 function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => void }) {
   const upload = useServerFn(adminUploadImage);
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const preview = value?.asset?._ref ? urlFor(value).width(400).url() : (value?.asset?.url ?? null);
 
-  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleFile(file: File) {
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image must be under 5 MB");
       return;
     }
     setBusy(true);
+    setProgress(10);
     try {
       const dataUrl: string = await new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -429,14 +431,32 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
         r.onerror = () => reject(r.error);
         r.readAsDataURL(file);
       });
+      setProgress(50);
       const result = await upload({ data: { dataUrl, filename: file.name } });
+      setProgress(100);
       onChange(result);
       toast.success("Image uploaded");
     } catch (err: any) {
       toast.error(err?.message ?? "Upload failed");
     } finally {
-      setBusy(false);
+      setTimeout(() => {
+        setBusy(false);
+        setProgress(0);
+      }, 500);
     }
+  }
+
+  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+    e.target.value = "";
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) handleFile(file);
   }
 
   return (
@@ -444,13 +464,31 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
       {preview && (
         <img src={preview} alt="" className="h-24 w-24 rounded-lg object-cover hairline" />
       )}
-      <label className="cursor-pointer">
-        <input type="file" accept="image/*" className="hidden" onChange={onPick} disabled={busy} />
-        <span className="inline-flex items-center gap-2 px-3 py-2 hairline rounded-md text-sm hover:bg-surface/50">
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-          {preview ? "Replace image" : "Upload image"}
-        </span>
-      </label>
+      <div className="flex-1 max-w-[300px]">
+        <label
+          className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
+            isDragging ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10" : "border-border hover:bg-surface/50"
+          }`}
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={onDrop}
+        >
+          <input type="file" accept="image/*" className="hidden" onChange={onPick} disabled={busy} />
+          {busy ? (
+            <div className="flex flex-col items-center gap-2 w-full">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Progress value={progress} className="h-1.5 w-full" />
+              <span className="text-xs text-muted-foreground font-mono">Uploading...</span>
+            </div>
+          ) : (
+            <>
+              <UploadCloud className="h-6 w-6 mb-2 text-muted-foreground" />
+              <span className="text-sm font-medium">Click or drag image here</span>
+              <span className="text-xs text-muted-foreground mt-1">Max 5MB</span>
+            </>
+          )}
+        </label>
+      </div>
     </div>
   );
 }
@@ -459,28 +497,35 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
   const uploadImg = useServerFn(adminUploadImage);
   const uploadFile = useServerFn(adminUploadFile);
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const [external, setExternal] = useState("");
 
   const items = Array.isArray(value) ? value : [];
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, type: "image" | "video") {
-    const files = Array.from(e.target.files || []);
+  async function handleFiles(files: File[]) {
     if (files.length === 0) return;
 
     setBusy(true);
+    setProgress(10);
     let uploadedItems: any[] = [];
     try {
-      for (const file of files) {
-        if (type === "video" && file.size > 50 * 1024 * 1024) {
+      const step = 90 / files.length;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const isVideo = file.type.startsWith("video/");
+        const isImage = file.type.startsWith("image/");
+        
+        if (isVideo && file.size > 50 * 1024 * 1024) {
           toast.error(`Video ${file.name} must be under 50 MB`);
           continue;
         }
-        if (type === "image" && file.size > 5 * 1024 * 1024) {
+        if (isImage && file.size > 5 * 1024 * 1024) {
           toast.error(`Image ${file.name} must be under 5 MB`);
           continue;
         }
 
-        if (type === "image") {
+        if (isImage) {
           const dataUrl: string = await new Promise((resolve, reject) => {
             const r = new FileReader();
             r.onload = () => resolve(r.result as string);
@@ -489,12 +534,13 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
           });
           const result = await uploadImg({ data: { dataUrl, filename: file.name } });
           uploadedItems.push(result);
-        } else {
+        } else if (isVideo) {
           const formData = new FormData();
           formData.append("file", file);
           const result = await uploadFile({ data: formData });
           uploadedItems.push(result);
         }
+        setProgress(10 + step * (i + 1));
       }
       onChange([...items, ...uploadedItems]);
       if (uploadedItems.length > 0) {
@@ -503,9 +549,24 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
     } catch (err: any) {
       toast.error(err?.message ?? "Upload failed");
     } finally {
-      setBusy(false);
-      e.target.value = ""; // reset input
+      setTimeout(() => {
+        setBusy(false);
+        setProgress(0);
+      }, 500);
     }
+  }
+
+  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    handleFiles(files);
+    e.target.value = ""; // reset input
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    handleFiles(files);
   }
 
   function addExternal() {
@@ -583,29 +644,37 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 items-center bg-surface/30 p-3 rounded-lg hairline">
-        <label className="cursor-pointer">
-          <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleUpload(e, "image")} disabled={busy} />
-          <div className="inline-flex items-center gap-2 px-3 py-2 bg-surface hairline rounded-md text-sm hover:bg-surface-2 transition-colors">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-            Image
-          </div>
-        </label>
-        
-        <label className="cursor-pointer">
-          <input type="file" accept="video/*" className="hidden" onChange={(e) => handleUpload(e, "video")} disabled={busy} />
-          <div className="inline-flex items-center gap-2 px-3 py-2 bg-surface hairline rounded-md text-sm hover:bg-surface-2 transition-colors">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4" />}
-            Video
-          </div>
+      <div className="space-y-3">
+        <label
+          className={`relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
+            isDragging ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10" : "border-border hover:bg-surface/50"
+          }`}
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={onDrop}
+        >
+          <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={onPick} disabled={busy} />
+          {busy ? (
+            <div className="flex flex-col items-center gap-3 w-full max-w-xs">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <Progress value={progress} className="h-2 w-full" />
+              <span className="text-sm text-muted-foreground font-mono">Uploading media...</span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center text-center">
+              <UploadCloud className="h-8 w-8 mb-3 text-muted-foreground" />
+              <span className="text-sm font-medium">Click to upload or drag and drop</span>
+              <span className="text-xs text-muted-foreground mt-1">Images (max 5MB) or Videos (max 50MB)</span>
+            </div>
+          )}
         </label>
 
-        <div className="flex-1 min-w-[200px] flex items-center gap-2">
+        <div className="flex items-center gap-2 pt-2 border-t border-border/30">
           <Input 
-            placeholder="Paste external video URL" 
+            placeholder="Or paste external video URL (YouTube, Vimeo...)" 
             value={external}
             onChange={e => setExternal(e.target.value)}
-            className="h-9 text-xs font-mono"
+            className="h-9 text-xs font-mono bg-surface/30"
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addExternal(); } }}
           />
           <Button type="button" onClick={addExternal} size="sm" variant="secondary" className="h-9 shrink-0">
