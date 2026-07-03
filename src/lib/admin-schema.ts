@@ -212,4 +212,19 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "order", label: "Order", kind: "number" },
     ],
   },
+  review: {
+    type: "review",
+    label: "Reviews",
+    singular: "Review",
+    titleField: "author",
+    subtitleField: "quote",
+    fields: [
+      { name: "author", label: "Author name", kind: "text", required: true },
+      { name: "quote", label: "Comment", kind: "textarea" },
+      { name: "rating", label: "Rating (1–5)", kind: "number" },
+      { name: "projectId", label: "Project ID (slug)", kind: "text", helper: "Leave empty for global portfolio reviews. Or enter the app/product slug e.g. 'my-app'" },
+      { name: "status", label: "Status", kind: "select", options: ["pending", "approved", "rejected"] },
+      { name: "order", label: "Order", kind: "number" },
+    ],
+  },
 };

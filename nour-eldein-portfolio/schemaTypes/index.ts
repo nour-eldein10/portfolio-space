@@ -5,13 +5,14 @@ import certificate from './certificate'
 import app from './app'
 import product from './product'
 import design from './design'
+import review from './review'
 
 export const schemaTypes = [
-    // ... your other schemas
     app,
     product,
     design,
     organization,
     volunteering,
     certificate,
+    review,
 ]

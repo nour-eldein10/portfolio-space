@@ -131,3 +131,37 @@ export const getContentCounts = createServerFn({ method: "GET" }).handler(async 
   }`);
   return result;
 });
+
+/** Public: submit a review (no auth required). Saved as pending. */
+export const submitReview = createServerFn({ method: "POST" })
+  .validator((data: { author: string; quote?: string; rating: number; projectId?: string }) => data)
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    const doc = await client.create({
+      _type: "review",
+      author: data.author,
+      quote: data.quote ?? "",
+      rating: data.rating,
+      projectId: data.projectId ?? "",
+      status: "pending",
+    });
+    return { ok: true, id: doc._id };
+  });
+
+/** Public: fetch approved reviews, optionally filtered by projectId. */
+export const fetchReviews = createServerFn({ method: "POST" })
+  .validator((data: { projectId?: string }) => data)
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    const filter = data.projectId
+      ? `_type=="review" && status=="approved" && projectId==$projectId`
+      : `_type=="review" && status=="approved"`;
+    const reviews = await client.fetch(
+      `*[${filter}] | order(_createdAt desc)`,
+      { projectId: data.projectId ?? "" }
+    );
+    return reviews as any[];
+  });
+
