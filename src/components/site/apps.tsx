@@ -48,10 +48,10 @@ export function Apps() {
           {apps.map((a, i) => (
             <motion.div
               key={a.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -60 : 60, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.05 }}
             >
               <Link
                 to="/apps/$slug"

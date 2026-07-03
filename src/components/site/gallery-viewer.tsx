@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { urlFor } from "@/lib/sanity";
 import { Play, Maximize2, ChevronLeft, ChevronRight, X } from "lucide-react";
 
@@ -143,56 +142,60 @@ export function GalleryViewer({ gallery }: { gallery: any[] }) {
       )}
 
       {/* LIGHTBOX */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-full p-0 bg-black/95 border-none shadow-2xl backdrop-blur-3xl overflow-hidden flex flex-col items-center justify-center">
-          <DialogTitle className="sr-only">Image Gallery Fullscreen</DialogTitle>
-          <DialogDescription className="sr-only">View images in fullscreen mode.</DialogDescription>
-          
-          <button
-            onClick={() => setLightboxOpen(false)}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-50 backdrop-blur-md"
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-3xl"
           >
-            <X className="w-6 h-6" />
-          </button>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedIndex}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="w-full h-full p-4 md:p-12 flex items-center justify-center relative"
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-[110] backdrop-blur-md"
             >
-              <GalleryItemRenderer item={gallery[selectedIndex]} inLightbox />
-            </motion.div>
-          </AnimatePresence>
+              <X className="w-6 h-6" />
+            </button>
 
-          {/* Lightbox Controls */}
-          {gallery.length > 1 && (
-            <>
-              <button
-                onClick={() => setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length)}
-                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md"
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedIndex}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="w-full h-full p-4 md:p-12 flex items-center justify-center relative"
               >
-                <ChevronLeft className="w-8 h-8" />
-              </button>
-              
-              <button
-                onClick={() => setSelectedIndex((p) => (p + 1) % gallery.length)}
-                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md"
-              >
-                <ChevronRight className="w-8 h-8" />
-              </button>
-            </>
-          )}
+                <GalleryItemRenderer item={gallery[selectedIndex]} inLightbox />
+              </motion.div>
+            </AnimatePresence>
 
-          {/* Lightbox Counter */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs tracking-widest">
-            {selectedIndex + 1} / {gallery.length}
-          </div>
-        </DialogContent>
-      </Dialog>
+            {/* Lightbox Controls */}
+            {gallery.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedIndex((p) => (p - 1 + gallery.length) % gallery.length)}
+                  className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+                
+                <button
+                  onClick={() => setSelectedIndex((p) => (p + 1) % gallery.length)}
+                  className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/5 text-white hover:bg-white/20 hover:scale-110 active:scale-95 transition-all backdrop-blur-md z-[110]"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+              </>
+            )}
+
+            {/* Lightbox Counter */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs tracking-widest z-[110]">
+              {selectedIndex + 1} / {gallery.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
