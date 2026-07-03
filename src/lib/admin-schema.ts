@@ -13,6 +13,7 @@ export type FieldKind =
   | "select"
   | "medialist"
   | "gallery"
+  | "file"
   | "tags";
 
 export interface FieldDef {
@@ -165,7 +166,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "category", label: "Category", kind: "text" },
       { name: "version", label: "Version (e.g. 1.2.0)", kind: "text" },
       { name: "releaseDate", label: "Release Date", kind: "text" },
-      { name: "downloadSize", label: "Download Size", kind: "text" },
+      { name: "apkFile", label: "APK/AAB File", kind: "file", helper: "Upload app package. Size is auto-detected." },
       { name: "accent", label: "Accent", kind: "select", options: ["neon", "amber"] },
       { name: "cover", label: "Cover image", kind: "image" },
       {

@@ -12,7 +12,7 @@ import { Certificates } from "@/components/site/certificates";
 import { Volunteering } from "@/components/site/volunteering";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { ScrollProgress } from "@/components/site/scroll-progress";
-import { SectionReveal } from "@/components/site/section-reveal";
+import { Reveal } from "@/components/site/reveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,14 +23,10 @@ export const Route = createFileRoute("/")({
         content:
           "Portfolio of Nour Eldein Ahmed — Software Studio, Personal Brand, App Marketplace, Design Showcase, Service Platform.",
       },
-      {
-        property: "og:title",
-        content: "Nour Eldein Ahmed — Premium Personal Brand Platform",
-      },
+      { property: "og:title", content: "Nour Eldein Ahmed — Premium Personal Brand Platform" },
       {
         property: "og:description",
-        content:
-          "Software Studio, Personal Brand, App Marketplace, Design Showcase, Service Platform.",
+        content: "Software Studio, Personal Brand, App Marketplace, Design Showcase, Service Platform.",
       },
     ],
   }),
@@ -51,31 +47,41 @@ function Index() {
       <ScrollProgress />
       <SiteNav />
       <Hero />
-      <Marquee />
+      <Reveal variant="fade-up" margin="-20px">
+        <Marquee />
+      </Reveal>
       <Divider />
-      <SectionReveal>
+      <Reveal variant="blur" duration={0.7}>
         <Products />
-      </SectionReveal>
+      </Reveal>
       <Divider />
-      <SectionReveal>
+      <Reveal variant="scale" duration={0.6}>
         <Apps />
-      </SectionReveal>
+      </Reveal>
       <Divider />
-      <Organizations />
+      <Reveal variant="fade-up">
+        <Organizations />
+      </Reveal>
       <Divider />
-      <SectionReveal>
+      <Reveal variant="fade-left" duration={0.65}>
         <Experience />
-      </SectionReveal>
+      </Reveal>
       <Divider />
-      <Skills />
+      <Reveal variant="blur" duration={0.55}>
+        <Skills />
+      </Reveal>
       <Divider />
-      <Reviews />
+      <Reveal variant="jump" duration={0.7}>
+        <Reviews />
+      </Reveal>
       <Divider />
-      <Certificates />
+      <Reveal variant="scale" duration={0.6}>
+        <Certificates />
+      </Reveal>
       <Divider />
-      <SectionReveal>
+      <Reveal variant="fade-right" duration={0.65}>
         <Volunteering />
-      </SectionReveal>
+      </Reveal>
       <ContactFooter />
     </main>
   );

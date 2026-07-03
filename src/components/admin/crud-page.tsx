@@ -440,6 +440,7 @@ function FieldInput({
         </Select>
       )}
       {f.kind === "image" && <ImageInput value={value} onChange={onChange} />}
+      {f.kind === "file" && <FileInput value={value} onChange={onChange} accept={f.options?.join(",") || "*"} />}
       {f.kind === "gallery" && <GalleryInput value={value} onChange={onChange} />}
       {f.helper && <p className="text-xs text-muted-foreground">{f.helper}</p>}
     </div>
@@ -536,6 +537,94 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
           )}
         </label>
       </div>
+    </div>
+  );
+}
+
+function FileInput({ value, onChange, accept }: { value: any; onChange: (v: any) => void, accept?: string }) {
+  const uploadFile = useServerFn(adminUploadFile);
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  async function handleFile(file: File) {
+    if (file.size > 200 * 1024 * 1024) {
+      toast.error("File must be under 200 MB");
+      return;
+    }
+    setBusy(true);
+    setProgress(10);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await uploadFile({ data: formData });
+      setProgress(100);
+      onChange(result);
+      toast.success("File uploaded successfully");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setTimeout(() => {
+        setBusy(false);
+        setProgress(0);
+      }, 500);
+    }
+  }
+
+  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+    e.target.value = "";
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {value?.asset?._ref && (
+        <div className="text-sm p-3 hairline bg-surface/50 rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <UploadCloud className="w-4 h-4 text-primary" />
+            <span className="font-mono truncate max-w-[200px]">{value.asset._ref}</span>
+          </div>
+          <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)}>
+            <X className="w-4 h-4 text-destructive" />
+          </Button>
+        </div>
+      )}
+      <label
+        className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
+          isDragging
+            ? "border-[color:var(--neon)] bg-[color:var(--neon)]/10"
+            : "border-border hover:bg-surface/50"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={onDrop}
+      >
+        <input type="file" accept={accept} className="hidden" onChange={onPick} disabled={busy} />
+        {busy ? (
+          <div className="flex flex-col items-center gap-2 w-full">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <Progress value={progress} className="h-1.5 w-full max-w-[200px]" />
+            <span className="text-xs text-muted-foreground font-mono">Uploading file...</span>
+          </div>
+        ) : (
+          <>
+            <UploadCloud className="h-6 w-6 mb-2 text-muted-foreground" />
+            <span className="text-sm font-medium">Click or drag file here</span>
+            <span className="text-xs text-muted-foreground mt-1 text-center">Max 200MB</span>
+          </>
+        )}
+      </label>
     </div>
   );
 }

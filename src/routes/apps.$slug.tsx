@@ -240,7 +240,17 @@ function AppDetail() {
                 { label: "Category", value: a.category || "\u2014" },
                 ...(a.version ? [{ label: "Version", value: a.version }] : []),
                 ...(a.releaseDate ? [{ label: "Updated", value: a.releaseDate }] : []),
-                ...(a.downloadSize ? [{ label: "Size", value: a.downloadSize }] : []),
+                {
+                  label: "Size",
+                  value: (() => {
+                    const bytes = a?.apkFile?.asset?.size;
+                    if (!bytes) return "Not found";
+                    if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+                    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+                    if (bytes >= 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+                    return `${bytes} B`;
+                  })(),
+                },
                 ...(dynamicRating
                   ? [{ label: "Rating", value: `${dynamicRating} \u2605 (${displayReviews})` }]
                   : []),
