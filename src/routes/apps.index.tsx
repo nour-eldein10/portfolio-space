@@ -242,7 +242,7 @@ function MarketplacePage() {
                             const routeProps =
                               item.type === "Graphic Design"
                                 ? { to: "/designs/$slug" as const, params: { slug: item.id } }
-                                : { to: "/projects/$slug" as const, params: { slug: item.id } };
+                                : { to: "/products/$slug" as const, params: { slug: item.id } };
                             return (
                               <motion.article
                                 layout

@@ -534,10 +534,10 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
           {items.map((item, i) => (
             <div key={item._key || i} className="flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30">
               <div className="flex flex-col gap-1">
-                <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                <button type="button" aria-label="Move up" onClick={() => move(i, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
                   <GripVertical className="h-3 w-3" />
                 </button>
-                <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                <button type="button" aria-label="Move down" onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
                   <GripVertical className="h-3 w-3" />
                 </button>
               </div>

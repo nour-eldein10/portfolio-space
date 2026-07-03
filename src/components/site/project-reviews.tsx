@@ -115,7 +115,7 @@ export function ProjectReviews({ projectId }: { projectId: string }) {
             <div className="p-5 rounded-2xl bg-surface/30 hairline space-y-4">
               <div className="flex items-center gap-1 mb-2">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <button key={s} type="button" onClick={() => setRating(s)} className={`p-1 hover:scale-110 transition-transform ${s <= rating ? "text-amber-500" : "text-muted-foreground"}`}>
+                  <button key={s} type="button" aria-label={`Rate ${s} star${s > 1 ? 's' : ''}`} onClick={() => setRating(s)} className={`p-1 hover:scale-110 transition-transform ${s <= rating ? "text-amber-500" : "text-muted-foreground"}`}>
                     <Star className={`w-6 h-6 ${s <= rating ? "fill-current" : ""}`} />
                   </button>
                 ))}

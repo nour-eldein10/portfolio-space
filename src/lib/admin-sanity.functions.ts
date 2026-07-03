@@ -121,11 +121,13 @@ export const getContentCounts = createServerFn({ method: "GET" }).handler(async 
   const result = await client.fetch<{
     apps: number;
     projects: number;
+    products: number;
     designs: number;
     experiences: number;
   }>(`{
     "apps": count(*[_type=="app"]),
     "projects": count(*[_type=="project"]),
+    "products": count(*[_type=="product"]),
     "designs": count(*[_type=="design"]),
     "experiences": count(*[_type=="experience"])
   }`);

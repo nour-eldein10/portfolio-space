@@ -12,7 +12,8 @@ export type FieldKind =
   | "highlights"
   | "select"
   | "medialist"
-  | "gallery";
+  | "gallery"
+  | "tags";
 
 export interface FieldDef {
   name: string;
