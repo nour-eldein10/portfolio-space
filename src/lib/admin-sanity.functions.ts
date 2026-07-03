@@ -165,3 +165,98 @@ export const fetchReviews = createServerFn({ method: "POST" })
     });
     return reviews as any[];
   });
+
+/** Seed default organizations + volunteering into Sanity (skips existing by name). */
+export const seedDefaultData = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: { types: string[] }) => data)
+  .handler(async ({ data }) => {
+    const { getSanityWriteClient } = await import("./sanity-write.server");
+    const client = getSanityWriteClient();
+    let created = 0;
+
+    if (data.types.includes("organization")) {
+      const existing = await client.fetch(`*[_type=="organization"].name`);
+      const orgs = [
+        { name: "Zoomin", type: "Company" },
+        { name: "Mostaqal", type: "Platform" },
+        { name: "Growfet", type: "Startup" },
+        { name: "Refqaa", type: "Volunteer" },
+        { name: "Bionic Team", type: "Team" },
+        { name: "Mega Team", type: "Team" },
+        { name: "Matrix Team", type: "Team" },
+        { name: "Sonaa IT", type: "Company" },
+        { name: "NASA Space Apps", type: "Competition" },
+        { name: "Rowad", type: "Organization" },
+      ];
+      for (let i = 0; i < orgs.length; i++) {
+        if (!existing.includes(orgs[i].name)) {
+          await client.create({
+            _type: "organization",
+            name: orgs[i].name,
+            type: orgs[i].type,
+            order: i + 1,
+          });
+          created++;
+        }
+      }
+    }
+
+    if (data.types.includes("volunteering")) {
+      const existing = await client.fetch(`*[_type=="volunteering"].organization`);
+      const vols = [
+        {
+          organization: "Refqaa",
+          role: "Technical Lead",
+          period: "2023 — Present",
+          description: "Community-driven organization focused on youth empowerment and tech education.",
+          achievements: ["Led a team of 8 developers", "Built internal tools for 500+ members", "Organized 10+ tech workshops"],
+          responsibilities: ["Technical strategy", "Team recruitment", "Workshop planning"],
+        },
+        {
+          organization: "Bionic Team",
+          role: "Design Lead",
+          period: "2022 — 2023",
+          description: "Student engineering team building competitive robots and automation systems.",
+          achievements: ["Designed complete brand identity", "Created team website", "Won regional design award"],
+          responsibilities: ["Brand design", "Social media", "Graphic design"],
+        },
+        {
+          organization: "Mega Team",
+          role: "Team Lead",
+          period: "2023 — Present",
+          description: "Cross-functional technology team working on innovative software projects.",
+          achievements: ["Delivered 4 successful projects", "Grew team from 5 to 12", "Established agile workflow"],
+          responsibilities: ["Sprint management", "Code review", "Architecture decisions"],
+        },
+        {
+          organization: "Matrix Team",
+          role: "Co-Founder",
+          period: "2022 — 2023",
+          description: "Competitive programming community focused on algorithms and problem-solving.",
+          achievements: ["Grew community to 50+ members", "Organized 3 hackathons", "Members placed in ICPC"],
+          responsibilities: ["Community building", "Event planning", "Problem setting"],
+        },
+        {
+          organization: "Sonaa IT",
+          role: "Volunteer Developer",
+          period: "2022",
+          description: "IT company providing pro-bono development for non-profit organizations.",
+          achievements: ["Built 2 charity apps", "Trained 5 junior developers", "Improved deployment pipeline"],
+          responsibilities: ["Mobile development", "Code mentoring", "QA testing"],
+        },
+      ];
+      for (let i = 0; i < vols.length; i++) {
+        if (!existing.includes(vols[i].organization)) {
+          await client.create({
+            _type: "volunteering",
+            ...vols[i],
+            order: i + 1,
+          });
+          created++;
+        }
+      }
+    }
+
+    return { ok: true, created };
+  });
