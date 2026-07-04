@@ -25,9 +25,9 @@ export const Route = createFileRoute("/designs/$slug")({
         { property: "og:description", content: desc },
         ...(og
           ? [
-              { property: "og:image", content: og },
-              { name: "twitter:image", content: og },
-            ]
+            { property: "og:image", content: og },
+            { name: "twitter:image", content: og },
+          ]
           : []),
       ],
     };
@@ -101,7 +101,7 @@ function DesignDetail() {
     if (navigator.share) {
       try {
         await navigator.share({ title: d?.title, url });
-      } catch {}
+      } catch { }
     } else {
       await navigator.clipboard.writeText(url);
       setCopied(true);
