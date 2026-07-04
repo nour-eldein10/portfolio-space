@@ -7,8 +7,8 @@ import { designs } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
 import { GalleryViewer } from "@/components/site/gallery-viewer";
-import { CollapsibleSection } from "@/components/site/collapsible-section";
 import { motion } from "motion/react";
+import { Share2, ArrowLeft, ExternalLink, ChevronDown } from "lucide-react";
 
 export const Route = createFileRoute("/designs/$slug")({
   head: ({ loaderData }) => {
@@ -70,146 +70,313 @@ function DesignDetail() {
     initialData: initial,
   });
 
-  const coverUrl = d?.cover?.asset ? urlFor(d.cover).width(1600).url() : initial.cover;
+  /*
+   * ─── COVER IMAGE URL ───────────────────────────────────────────────────
+   * Adjust .width(N) to change the resolution of the hero image.
+   * Higher = sharper but slower. 2400 is good for full-width heroes.
+   */
+  const coverUrl = d?.cover?.asset ? urlFor(d.cover).width(2400).url() : initial.cover;
   const gallery: any[] = Array.isArray(d?.gallery) ? d.gallery : [];
   const tools: string[] = Array.isArray(d?.tools) ? d.tools : [];
 
+  const [copied, setCopied] = useState(false);
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
-    <main className="relative bg-background min-h-screen">
+    <main className="relative bg-background min-h-screen overflow-x-hidden">
       <SiteNav />
 
-      {/* HERO BANNER */}
-      <div className="relative h-[40vh] min-h-[240px] max-h-[400px] overflow-hidden">
-        {coverUrl ? (
-          <img
-            src={coverUrl}
-            alt={d.title}
-            className="absolute inset-0 h-full w-full object-cover"
+      {/* ──────────────────────────────────────────────────────────────────
+          HERO SECTION
+          ── HOW TO ADJUST ─────────────────────────────────────────────────
+          Hero height:  Change min-h-[75vh] below. E.g. min-h-[60vh] = shorter.
+          Gradient:     Change the from-black/X values in the overlay div.
+          Title size:   Change text-5xl/text-7xl in the h1 below.
+      ────────────────────────────────────────────────────────────────── */}
+      <div className="relative w-full min-h-[75vh] flex items-end overflow-hidden">
+        {/* Background layer — blurred version of cover for non-cropped display */}
+        {coverUrl && (
+          <div
+            className="absolute inset-0 scale-110"
+            aria-hidden="true"
+            style={{
+              backgroundImage: `url(${coverUrl})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(40px) brightness(0.4) saturate(1.2)",
+            }}
           />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--neon)]/30 to-[color:var(--amber)]/20" />
         )}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_0%,color-mix(in_oklab,var(--background)_92%,transparent)_100%)]" />
-      </div>
 
-      <div className="relative -mt-16 mx-auto max-w-5xl px-5 pb-24">
-        {/* IDENTITY */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col sm:flex-row gap-5 items-start sm:items-end"
-        >
-          <div className="flex-1 min-w-0 pb-1">
+        {/* Actual cover image — contained, not cropped */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={d?.title ?? "Project cover"}
+              /*
+               * IMAGE FIT in hero:
+               *   object-contain → full image visible, no crop (default)
+               *   object-cover   → fills frame, may crop edges
+               * Max dimensions below (max-w-5xl max-h-[70vh]) prevent
+               * the image from being too large. Adjust freely.
+               */
+              className="max-w-5xl max-h-[70vh] w-full object-contain drop-shadow-2xl"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--neon)]/30 to-[color:var(--amber)]/20" />
+          )}
+        </div>
+
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+
+        {/* Hero content */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pb-16 pt-32">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
             <Link
               to="/"
-              className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 mb-1.5"
+              className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-white/60 hover:text-white transition-colors mb-6"
             >
-              &larr; Back to portfolio
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Portfolio
             </Link>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight leading-tight">
-              {d.title}
-            </h1>
-            <p className="mt-0.5 text-sm text-[color:var(--neon)] font-medium">Nour Eldein</p>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              {d.category && (
-                <span className="px-3 py-1 rounded-full hairline bg-surface/60 text-foreground text-xs font-medium">
+
+            {/* Badges */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="flex flex-wrap gap-2 mb-5"
+            >
+              {d?.category && (
+                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-medium bg-white/10 text-white backdrop-blur-sm border border-white/10">
                   {d.category}
                 </span>
               )}
-              {d.client && (
-                <span className="px-3 py-1 rounded-full hairline bg-surface/60 text-foreground text-xs font-medium">
+              {d?.client && (
+                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-medium bg-[color:var(--neon)]/20 text-[color:var(--neon)] backdrop-blur-sm border border-[color:var(--neon)]/20">
                   {d.client}
                 </span>
               )}
-              {d.year && (
-                <span className="px-3 py-1 rounded-full hairline bg-surface/60 text-foreground text-xs font-medium">
+              {d?.year && (
+                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-medium bg-white/10 text-white backdrop-blur-sm border border-white/10">
                   {d.year}
                 </span>
               )}
-            </div>
-          </div>
+            </motion.div>
 
-          {d.projectUrl && (
-            <div className="shrink-0 flex gap-3">
-              <a
-                href={d.projectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-full text-sm font-medium bg-foreground text-background hover:bg-[color:var(--amber)] transition-colors"
+            {/*
+              TITLE SIZE: Change text-4xl sm:text-5xl lg:text-7xl below.
+              e.g. text-5xl lg:text-8xl for bigger, text-3xl lg:text-5xl for smaller.
+            */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="font-display font-bold text-4xl sm:text-5xl lg:text-7xl tracking-tight leading-[1.05] text-white mb-3"
+            >
+              {d?.title}
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
+              className="text-white/50 font-mono text-sm tracking-wider"
+            >
+              by <span className="text-[color:var(--neon)]">Nour Eldein</span>
+            </motion.p>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/30 z-10"
+          aria-hidden="true"
+        >
+          <span className="text-[9px] font-mono uppercase tracking-widest">Scroll</span>
+          <ChevronDown className="w-4 h-4 animate-bounce" />
+        </motion.div>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────────────
+          BODY
+      ────────────────────────────────────────────────────────────────── */}
+      <div className="relative max-w-6xl mx-auto px-6 pb-32">
+        {/* ── OVERVIEW CARDS ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+        >
+          {[
+            { label: "Category", value: d?.category },
+            { label: "Client", value: d?.client },
+            { label: "Year", value: d?.year ? String(d.year) : undefined },
+            { label: "Tools", value: tools.length > 0 ? tools.slice(0, 3).join(", ") : undefined },
+          ]
+            .filter((r) => r.value)
+            .map((row, i) => (
+              <motion.div
+                key={row.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="p-5 rounded-2xl hairline bg-surface/50 backdrop-blur-sm space-y-1.5"
               >
-                View project ↗
-              </a>
-            </div>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                  {row.label}
+                </p>
+                <p className="font-display font-semibold text-sm text-foreground leading-snug">
+                  {row.value}
+                </p>
+              </motion.div>
+            ))}
+
+          {d?.projectUrl && (
+            <motion.a
+              href={d.projectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.32 }}
+              className="p-5 rounded-2xl bg-[color:var(--neon)] text-black space-y-1.5 group hover:opacity-90 transition-all"
+            >
+              <p className="text-[10px] font-mono uppercase tracking-widest opacity-60">
+                Live project
+              </p>
+              <p className="font-display font-semibold text-sm flex items-center gap-1.5">
+                View ↗
+              </p>
+            </motion.a>
           )}
         </motion.div>
 
-        {/* BODY + SIDEBAR */}
-        <div className="mt-8 flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 min-w-0 space-y-8">
-            {d.description && (
-              <CollapsibleSection title="About this design">
-                <p className="text-[13px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                  {d.description}
-                </p>
-              </CollapsibleSection>
-            )}
+        {/* ── DESCRIPTION ── */}
+        {d?.description && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-20 max-w-3xl"
+          >
+            <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">
+              About this project
+            </p>
+            {/*
+              DESCRIPTION TEXT SIZE: Change text-lg below.
+              e.g. text-xl for bigger, text-base for smaller.
+              LINE HEIGHT: Change leading-relaxed (1.625) to leading-loose (2) etc.
+            */}
+            <p className="text-lg leading-relaxed text-foreground/80 whitespace-pre-wrap">
+              {d.description}
+            </p>
+          </motion.div>
+        )}
 
-            {tools.length > 0 && (
-              <CollapsibleSection title="Tools used" defaultOpen={false}>
-                <div className="flex flex-wrap gap-2">
-                  {tools.map((t) => (
-                    <span
-                      key={t}
-                      className="px-3 py-1 rounded-full hairline text-xs font-mono bg-surface/40"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </CollapsibleSection>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <GalleryViewer gallery={gallery} isMobileMockup={false} />
-            </motion.div>
-          </div>
-
-          {/* Sidebar */}
-          <aside className="lg:w-60 shrink-0 space-y-4">
-            <div className="p-4 rounded-2xl hairline bg-surface/30 space-y-3">
-              <h3 className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Project Info
-              </h3>
-              {[
-                { label: "Category", value: d.category || "\u2014" },
-                ...(d.client ? [{ label: "Client", value: d.client }] : []),
-                ...(d.year ? [{ label: "Year", value: String(d.year) }] : []),
-                ...(tools.length ? [{ label: "Tools", value: `${tools.length}` }] : []),
-              ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between text-[13px]">
-                  <span className="text-muted-foreground">{row.label}</span>
-                  <span className="font-medium text-right max-w-[110px] truncate">{row.value}</span>
-                </div>
+        {/* ── TOOLS TAGS ── */}
+        {tools.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-12"
+          >
+            <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">
+              Tools used
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {tools.map((t) => (
+                <span
+                  key={t}
+                  className="px-4 py-2 rounded-xl hairline text-sm font-mono bg-surface/50 text-foreground/70"
+                >
+                  {t}
+                </span>
               ))}
             </div>
-            {d.projectUrl && (
-              <a
-                href={d.projectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center block"
-              >
-                View project ↗
-              </a>
-            )}
-          </aside>
-        </div>
+          </motion.div>
+        )}
+
+        {/* ── GALLERY ── */}
+        {gallery.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="mt-20"
+          >
+            <GalleryViewer gallery={gallery} isMobileMockup={false} />
+          </motion.div>
+        )}
       </div>
+
+      {/* ──────────────────────────────────────────────────────────────────
+          STICKY FLOATING ACTIONS (desktop only)
+          ── HOW TO ADJUST ─────────────────────────────────────────────────
+          Position: Change right-6 bottom-8 below to move the panel.
+          Show/hide on mobile: it's hidden on mobile via hidden lg:flex.
+      ────────────────────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="fixed right-6 bottom-8 z-50 hidden lg:flex flex-col gap-3"
+        aria-label="Quick actions"
+      >
+        {d?.projectUrl && (
+          <a
+            href={d.projectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View live project"
+            title="View live project"
+            className="flex items-center gap-2 px-5 py-3 rounded-full bg-[color:var(--neon)] text-black text-sm font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
+          >
+            <ExternalLink className="w-4 h-4" />
+            View Project
+          </a>
+        )}
+        <button
+          onClick={handleShare}
+          aria-label="Copy link to share"
+          title="Copy link to share"
+          className="flex items-center gap-2 px-5 py-3 rounded-full bg-surface hairline text-sm font-medium shadow-lg hover:bg-surface/80 transition-all"
+        >
+          <Share2 className="w-4 h-4" />
+          {copied ? "Copied!" : "Share"}
+        </button>
+        <Link
+          to="/"
+          aria-label="Back to portfolio"
+          title="Back to portfolio"
+          className="flex items-center gap-2 px-5 py-3 rounded-full bg-surface hairline text-sm font-medium shadow-lg hover:bg-surface/80 transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Portfolio
+        </Link>
+      </motion.div>
 
       <ContactFooter />
     </main>
