@@ -6,7 +6,7 @@ import { DetailShell } from "@/components/site/detail-shell";
 import { designs } from "@/lib/portfolio-data";
 import { SiteNav } from "@/components/site/nav";
 import { ContactFooter } from "@/components/site/contact-footer";
-import { GalleryViewer } from "@/components/site/gallery-viewer";
+import { MasonryGallery } from "@/components/site/masonry-gallery";
 import { motion } from "motion/react";
 import { Share2, ArrowLeft, ExternalLink, ChevronDown } from "lucide-react";
 
@@ -32,15 +32,17 @@ export const Route = createFileRoute("/designs/$slug")({
     };
   },
   loader: async ({ params }) => {
-    const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
-      slug: params.slug,
-    });
-    if (!doc) {
-      const fallbackDoc = designs.find((d) => d.id === params.slug);
-      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
-      throw notFound();
+    try {
+      const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+        slug: params.slug,
+      });
+      if (doc) return doc;
+    } catch {
+      // Sanity unreachable
     }
-    return doc;
+    const fallbackDoc = designs.find((d) => d.id === params.slug);
+    if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+    throw notFound();
   },
   errorComponent: () => <DetailShell eyebrow="Error" title="Could not load this design" />,
   notFoundComponent: () => (
@@ -58,14 +60,17 @@ function DesignDetail() {
   const { data: d } = useQuery({
     queryKey: ["cms", "design", initial.slug?.current],
     queryFn: async () => {
-      const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
-        slug: initial.slug?.current,
-      });
-      if (!doc) {
-        const fallbackDoc = designs.find((f) => f.id === initial.slug?.current);
-        if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      try {
+        const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+          slug: initial.slug?.current,
+        });
+        if (doc) return doc;
+      } catch {
+        // Fallback
       }
-      return doc;
+      const fallbackDoc = designs.find((f) => f.id === initial.slug?.current);
+      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      return initial;
     },
     initialData: initial,
   });
@@ -327,7 +332,7 @@ function DesignDetail() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="mt-20"
           >
-            <GalleryViewer gallery={gallery} isMobileMockup={false} />
+            <MasonryGallery gallery={gallery} isMobileMockup={false} />
           </motion.div>
         )}
       </div>
