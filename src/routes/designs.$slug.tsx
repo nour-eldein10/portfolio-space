@@ -10,6 +10,10 @@ import { MasonryGallery } from "@/components/site/masonry-gallery";
 import { motion } from "motion/react";
 import { Share2, ArrowLeft, ExternalLink, ChevronDown } from "lucide-react";
 
+function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 export const Route = createFileRoute("/designs/$slug")({
   head: ({ loaderData }) => {
     const d: any = loaderData;
@@ -33,15 +37,15 @@ export const Route = createFileRoute("/designs/$slug")({
   },
   loader: async ({ params }) => {
     try {
-      const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+      const doc = await sanityClient.fetch(`*[_type=="design" && (slug.current==$slug || slug==$slug)][0]`, {
         slug: params.slug,
       });
       if (doc) return doc;
     } catch {
       // Sanity unreachable
     }
-    const fallbackDoc = designs.find((d) => d.id === params.slug);
-    if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+    const fallbackDoc = designs.find((d) => d.id === params.slug || slugify(d.title) === params.slug);
+    if (fallbackDoc) return { ...fallbackDoc, slug: { current: params.slug } };
     throw notFound();
   },
   errorComponent: () => <DetailShell eyebrow="Error" title="Could not load this design" />,
@@ -61,15 +65,15 @@ function DesignDetail() {
     queryKey: ["cms", "design", initial.slug?.current],
     queryFn: async () => {
       try {
-        const doc = await sanityClient.fetch(`*[_type=="design" && slug.current==$slug][0]`, {
+        const doc = await sanityClient.fetch(`*[_type=="design" && (slug.current==$slug || slug==$slug)][0]`, {
           slug: initial.slug?.current,
         });
         if (doc) return doc;
       } catch {
         // Fallback
       }
-      const fallbackDoc = designs.find((f) => f.id === initial.slug?.current);
-      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      const fallbackDoc = designs.find((f) => f.id === initial.slug?.current || slugify(f.title) === initial.slug?.current);
+      if (fallbackDoc) return { ...fallbackDoc, slug: { current: initial.slug?.current } };
       return initial;
     },
     initialData: initial,

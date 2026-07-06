@@ -255,6 +255,7 @@ export const designsQuery = queryOptions({
     const docs = await sanityClient.fetch<
       {
         title: string;
+        slug?: string | { current?: string };
         category?: string;
         description?: string;
         rating?: number;
@@ -265,11 +266,11 @@ export const designsQuery = queryOptions({
         order?: number;
       }[]
     >(
-      `*[_type=="design"] | order(order asc){ title, category, description, rating, reviews, downloads, cover, gallery, order }`,
+      `*[_type=="design"] | order(order asc){ title, slug, category, description, rating, reviews, downloads, cover, gallery, order }`,
     );
     if (!docs?.length) return designsFallback;
     return docs.map((d, i) => {
-      const id = slugify(d.title);
+      const id = (typeof d.slug === 'string' ? d.slug : d.slug?.current) ?? slugify(d.title);
       return {
         id,
         title: d.title,

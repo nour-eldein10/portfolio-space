@@ -11,6 +11,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { GalleryViewer } from "@/components/site/gallery-viewer";
 import { CollapsibleSection } from "@/components/site/collapsible-section";
 
+function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 export const Route = createFileRoute("/apps/$slug")({
   head: ({ loaderData }) => {
     const a: any = loaderData;
@@ -34,15 +38,15 @@ export const Route = createFileRoute("/apps/$slug")({
   },
   loader: async ({ params }) => {
     try {
-      const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
+      const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]`, {
         slug: params.slug,
       });
       if (doc) return doc;
     } catch {
       // Sanity unreachable
     }
-    const fallbackDoc = appsFallback.find((a) => a.id === params.slug);
-    if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+    const fallbackDoc = appsFallback.find((a) => a.id === params.slug || slugify(a.name) === params.slug);
+    if (fallbackDoc) return { ...fallbackDoc, slug: { current: params.slug } };
     throw notFound();
   },
   errorComponent: () => (
@@ -71,15 +75,15 @@ function AppDetail() {
     queryKey: ["cms", "app", initial.slug?.current],
     queryFn: async () => {
       try {
-        const doc = await sanityClient.fetch(`*[_type=="app" && slug.current==$slug][0]`, {
+        const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]`, {
           slug: initial.slug?.current,
         });
         if (doc) return doc;
       } catch {
         // Sanity unreachable
       }
-      const fallbackDoc = appsFallback.find((f) => f.id === initial.slug?.current);
-      if (fallbackDoc) return { ...fallbackDoc, slug: { current: fallbackDoc.id } };
+      const fallbackDoc = appsFallback.find((f) => f.id === initial.slug?.current || slugify(f.name) === initial.slug?.current);
+      if (fallbackDoc) return { ...fallbackDoc, slug: { current: initial.slug?.current } };
       return initial;
     },
     initialData: initial,

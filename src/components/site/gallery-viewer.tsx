@@ -100,6 +100,7 @@ export function GalleryViewer({
         {/* Fullscreen toggle */}
         <button
           onClick={() => setIsFullscreen(true)}
+          aria-label="Fullscreen"
           className="absolute top-4 right-4 p-2.5 rounded-full bg-black/40 text-white hover:bg-black/60 transition-all opacity-0 group-hover:opacity-100 z-10 backdrop-blur-md"
         >
           <Maximize2 className="w-4 h-4" />
@@ -110,12 +111,14 @@ export function GalleryViewer({
           <>
             <button
               onClick={prev}
+              aria-label="Previous image"
               className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-all opacity-0 group-hover:opacity-100 z-10 backdrop-blur-md"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={next}
+              aria-label="Next image"
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-all opacity-0 group-hover:opacity-100 z-10 backdrop-blur-md"
             >
               <ChevronRight className="w-5 h-5" />
@@ -135,6 +138,8 @@ export function GalleryViewer({
                   setDirection(i > selectedIndex ? 1 : -1);
                   setSelectedIndex(i);
                 }}
+                 aria-label="Close fullscreen"
+
                 className={`relative flex-[0_0_80px] sm:flex-[0_0_120px] aspect-video rounded-lg overflow-hidden hairline transition-all duration-300 group ${
                   i === selectedIndex
                     ? "ring-2 ring-[color:var(--neon)] scale-100 opacity-100"
@@ -161,6 +166,7 @@ export function GalleryViewer({
             {/* Lightbox Close */}
             <button
               onClick={() => setIsFullscreen(false)}
+              aria-label="Close fullscreen"
               className="absolute top-6 right-6 md:top-8 md:right-8 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all z-[110]"
             >
               <X className="w-6 h-6" />
