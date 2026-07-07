@@ -104,7 +104,7 @@ export function CustomCursor() {
   if (!hasPointer || !isVisible) return null;
 
   const outerSize = isClicked ? 22 : isHovered ? 52 : isText ? 4 : 30;
-  const innerSize = isText ? 10 : 5;
+  const innerSize = isText ? 1 : 2;
 
   return (
     <>

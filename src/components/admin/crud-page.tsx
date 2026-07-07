@@ -791,11 +791,13 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
             r.readAsDataURL(file);
           });
           const result = await uploadImg({ data: { dataUrl, filename: file.name } });
+          result._key = Math.random().toString(36).substring(7);
           uploadedItems.push(result);
         } else if (isVideo) {
           const formData = new FormData();
           formData.append("file", file);
           const result = await uploadFile({ data: formData });
+          result._key = Math.random().toString(36).substring(7);
           uploadedItems.push(result);
         }
         setProgress(10 + step * (i + 1));
@@ -829,7 +831,7 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
 
   function addExternal() {
     if (!external) return;
-    onChange([...items, { _type: "externalMedia", url: external }]);
+    onChange([...items, { _type: "externalMedia", url: external, _key: Math.random().toString(36).substring(7) }]);
     setExternal("");
   }
 
@@ -849,46 +851,51 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
   return (
     <div className="space-y-4">
       {items.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {items.map((item, i) => (
-            <div
-              key={item._key || i}
-              className="flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30"
-            >
-              <div className="flex flex-col gap-1">
-                <button
-                  type="button"
-                  aria-label="Move up"
-                  onClick={() => move(i, -1)}
-                  disabled={i === 0}
-                  className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                >
-                  <GripVertical className="h-3 w-3" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Move down"
-                  onClick={() => move(i, 1)}
-                  disabled={i === items.length - 1}
-                  className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                >
-                  <GripVertical className="h-3 w-3" />
-                </button>
-              </div>
+        <DragDropContext onDragEnd={(result) => {
+          if (!result.destination) return;
+          const newItems = Array.from(items);
+          const [reorderedItem] = newItems.splice(result.source.index, 1);
+          newItems.splice(result.destination.index, 0, reorderedItem);
+          onChange(newItems);
+        }}>
+          <Droppable droppableId="gallery-items">
+            {(provided) => (
+              <div 
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="flex flex-col gap-2"
+              >
+                {items.map((item, i) => {
+                  const keyId = item._key || `item-${i}`;
+                  return (
+                    <Draggable key={keyId} draggableId={keyId} index={i}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          style={provided.draggableProps.style as React.CSSProperties}
+                          className={`flex items-center gap-3 p-2 hairline rounded-lg bg-surface/30 transition-opacity ${snapshot.isDragging ? 'opacity-80' : ''}`}
+                        >
+                          <div 
+                            {...provided.dragHandleProps}
+                            className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing px-1"
+                          >
+                            <GripVertical className="h-4 w-4" />
+                          </div>
 
-              {item._type === "image" && (
-                <div className="h-12 w-16 bg-surface shrink-0 rounded overflow-hidden relative flex items-center justify-center">
-                  {item.asset?._ref ? (
-                    <img
-                      src={urlFor(item).width(200).url()}
-                      alt=""
-                      className="object-cover h-full w-full"
-                    />
-                  ) : item.asset?.url ? (
-                    <img src={item.asset.url} alt="" className="object-cover h-full w-full" />
-                  ) : (
-                    <ImagePlus className="h-4 w-4 text-muted-foreground" />
-                  )}
+                          {item._type === "image" && (
+                            <div className="h-12 w-16 bg-surface shrink-0 rounded overflow-hidden relative flex items-center justify-center">
+                              {item.asset?._ref ? (
+                                <img
+                                  src={urlFor(item).width(200).url()}
+                                  alt=""
+                                  className="object-cover h-full w-full"
+                                />
+                              ) : item.asset?.url ? (
+                                <img src={item.asset.url} alt="" className="object-cover h-full w-full" />
+                              ) : (
+                                <ImagePlus className="h-4 w-4 text-muted-foreground" />
+                              )}
                   <span className="absolute bottom-0 right-0 bg-black/60 text-[8px] font-mono px-1 py-0.5">
                     IMG
                   </span>
@@ -919,18 +926,25 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
                 </p>
               </div>
 
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => remove(i)}
-                className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => remove(i)}
+                    className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
 
       <div className="space-y-3">

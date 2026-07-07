@@ -265,7 +265,9 @@ function isVideo(item: any): boolean {
     return (
       item.toLowerCase().endsWith(".mp4") ||
       item.includes("youtube.com") ||
-      item.includes("vimeo.com")
+      item.includes("youtu.be") ||
+      item.includes("vimeo.com") ||
+      item.includes("drive.google.com")
     );
   return false;
 }
@@ -301,7 +303,7 @@ function GalleryItemRenderer({
         <iframe
           src={`https://www.youtube.com/embed/${id}?autoplay=0&rel=0`}
           title="YouTube video"
-          className="w-full h-full rounded-2xl shadow-2xl"
+          className="w-full h-full rounded-2xl shadow-2xl border-none"
           allowFullScreen
         />
       );
@@ -311,7 +313,17 @@ function GalleryItemRenderer({
         <iframe
           src={`https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0`}
           title="Vimeo video"
-          className="w-full h-full rounded-2xl shadow-2xl"
+          className="w-full h-full rounded-2xl shadow-2xl border-none"
+          allowFullScreen
+        />
+      );
+    } else if (url.includes("drive.google.com")) {
+      const embedUrl = url.replace(/\/view.*/, "/preview");
+      content = (
+        <iframe
+          src={embedUrl}
+          title="Google Drive video"
+          className="w-full h-full rounded-2xl shadow-2xl border-none"
           allowFullScreen
         />
       );
