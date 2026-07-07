@@ -791,14 +791,12 @@ function GalleryInput({ value, onChange }: { value: any[]; onChange: (v: any[]) 
             r.readAsDataURL(file);
           });
           const result = await uploadImg({ data: { dataUrl, filename: file.name } });
-          result._key = Math.random().toString(36).substring(7);
-          uploadedItems.push(result);
+          uploadedItems.push({ ...result, _key: Math.random().toString(36).substring(7) });
         } else if (isVideo) {
           const formData = new FormData();
           formData.append("file", file);
           const result = await uploadFile({ data: formData });
-          result._key = Math.random().toString(36).substring(7);
-          uploadedItems.push(result);
+          uploadedItems.push({ ...result, _key: Math.random().toString(36).substring(7) });
         }
         setProgress(10 + step * (i + 1));
       }
