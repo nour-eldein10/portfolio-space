@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { reviewsQuery, liveStatsQuery } from "@/lib/cms";
-import { supabase } from "@/integrations/supabase/client";
 import { SectionHeader } from "./section-header";
 import { ReviewForm } from "./review-form";
 import useEmblaCarousel from "embla-carousel-react";
@@ -29,8 +28,14 @@ function AnimatedCounter({ value, duration = 2 }: { value: number; duration?: nu
 }
 
 export function Reviews() {
-  const { data: reviews } = useQuery(reviewsQuery);
-  const { data: stats } = useQuery(liveStatsQuery);
+  const { data: reviews } = useQuery({
+    ...reviewsQuery,
+    refetchInterval: 10000,
+  });
+  const { data: stats } = useQuery({
+    ...liveStatsQuery,
+    refetchInterval: 15000,
+  });
   const qc = useQueryClient();
 
   // For the reviews carousel
@@ -46,17 +51,6 @@ export function Reviews() {
     };
   }, [emblaApi]);
 
-  useEffect(() => {
-    const ch = supabase
-      .channel("public-reviews")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reviews" }, () => {
-        qc.invalidateQueries({ queryKey: ["public", "reviews"] });
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, [qc]);
 
   return (
     <section id="reviews" className="relative py-28 sm:py-36 bg-surface/30 overflow-hidden">

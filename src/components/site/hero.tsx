@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Particles } from "./particles";
+import { GalaxyButton } from "./galaxy-button";
 import { profileQuery } from "@/lib/cms";
 import logo from "@/assets/logo.webp";
 
@@ -141,6 +142,9 @@ export function Hero() {
                 →
               </span>
             </Link>
+            <GalaxyButton href="/Nour_Eldein_Complete_Portfolio_Profile.pdf">
+              Download CV
+            </GalaxyButton>
             <Link
               to="/services"
               className="group relative p-[2px] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(120,230,255,0.35)]"
