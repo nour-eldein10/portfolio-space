@@ -14,7 +14,8 @@ export type FieldKind =
   | "medialist"
   | "gallery"
   | "file"
-  | "tags";
+  | "tags"
+  | "date";
 
 export interface FieldDef {
   name: string;
@@ -166,7 +167,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "downloads", label: "Downloads label", kind: "text", helper: "e.g. 120k+" },
       { name: "category", label: "Category", kind: "text" },
       { name: "version", label: "Version (e.g. 1.2.0)", kind: "text" },
-      { name: "releaseDate", label: "Release Date", kind: "text" },
+      { name: "releaseDate", label: "Release Date", kind: "date" },
       { name: "apkFile", label: "APK/AAB File", kind: "file", helper: "Upload app package. Size is auto-detected." },
       { name: "accent", label: "Accent", kind: "select", options: ["neon", "amber"] },
       { name: "cover", label: "Cover image", kind: "image" },
@@ -273,7 +274,7 @@ export const TYPES: Record<string, TypeDef> = {
     fields: [
       { name: "title", label: "Title", kind: "text" },
       { name: "issuer", label: "Issuer", kind: "text" },
-      { name: "date", label: "Date", kind: "text" },
+      { name: "date", label: "Date", kind: "date" },
       { name: "image", label: "Image", kind: "image" },
       { name: "order", label: "Order", kind: "number" },
     ],

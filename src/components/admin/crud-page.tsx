@@ -520,6 +520,9 @@ function FieldInput({
       {f.kind === "number" && (
         <Input type="number" value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
       )}
+      {f.kind === "date" && (
+        <Input type="date" value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
+      )}
       {f.kind === "textarea" && (
         <Textarea
           rows={4}
