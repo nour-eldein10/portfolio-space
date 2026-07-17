@@ -38,7 +38,15 @@ export const Route = createFileRoute("/apps/$slug")({
   },
   loader: async ({ params }) => {
     try {
-      const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]`, {
+      const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]{
+        ...,
+        apkFile{
+          ...,
+          asset->{
+            ...
+          }
+        }
+      }`, {
         slug: params.slug,
       });
       if (doc) return doc;
@@ -75,7 +83,15 @@ function AppDetail() {
     queryKey: ["cms", "app", initial.slug?.current],
     queryFn: async () => {
       try {
-        const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]`, {
+        const doc = await sanityClient.fetch(`*[_type=="app" && (slug.current==$slug || slug==$slug)][0]{
+          ...,
+          apkFile{
+            ...,
+            asset->{
+              ...
+            }
+          }
+        }`, {
           slug: initial.slug?.current,
         });
         if (doc) return doc;
@@ -163,32 +179,6 @@ function AppDetail() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2 shrink-0">
-            {a.purchaseUrl ? (
-              <a
-                href={a.purchaseUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]"
-              >
-                {a.price ? `Get \u2014 ${a.price}` : "Install"}
-              </a>
-            ) : (
-              <button className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all shadow-[0_0_16px_color-mix(in_oklab,var(--neon)_30%,transparent)]">
-                Install
-              </button>
-            )}
-            {a.demoUrl && (
-              <a
-                href={a.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-2 rounded-xl text-[13px] font-semibold bg-surface-2 text-foreground border border-border hover:bg-surface hover:border-foreground/30 transition-all"
-              >
-                Live Demo
-              </a>
-            )}
-          </div>
         </div>
 
         {/* BODY + SIDEBAR */}
@@ -268,19 +258,32 @@ function AppDetail() {
               ))}
             </div>
             <div className="flex flex-col gap-2">
-              {a.purchaseUrl ? (
+              {a.price && a.price !== "Free" && a.price !== "0" && a.price.toLowerCase() !== "free" ? (
                 <a
-                  href={a.purchaseUrl}
+                  href={a.purchaseUrl || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center"
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center inline-block"
                 >
-                  {a.price ? `Get \u2014 ${a.price}` : "Install Now"}
+                  {`Get \u2014 ${a.price}`}
+                </a>
+              ) : a.apkFile?.asset?.url ? (
+                <a
+                  href={`${a.apkFile.asset.url}?dl=`}
+                  download
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center inline-block"
+                >
+                  Install Now
                 </a>
               ) : (
-                <button className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all">
+                <a
+                  href={a.purchaseUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[color:var(--neon)] text-black hover:opacity-90 transition-all text-center inline-block"
+                >
                   Install Now
-                </button>
+                </a>
               )}
               {a.demoUrl && (
                 <a
