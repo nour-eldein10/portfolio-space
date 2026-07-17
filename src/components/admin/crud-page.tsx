@@ -671,8 +671,8 @@ function uploadDirectToSanity(
   onProgress: (pct: number) => void,
 ): Promise<{ _type: "file"; asset: { _type: "reference"; _ref: string } }> {
   return new Promise((resolve, reject) => {
-    // Use project-specific API host (required for CORS + correct region routing)
-    const url = `https://${creds.projectId}.api.sanity.io/v${creds.apiVersion}/assets/files/${creds.projectId}?dataset=${creds.dataset}&filename=${encodeURIComponent(file.name)}`;
+    // Correct Sanity Assets API URL: /v{apiVersion}/assets/files/{dataset}?filename=...
+    const url = `https://${creds.projectId}.api.sanity.io/v${creds.apiVersion}/assets/files/${creds.dataset}?filename=${encodeURIComponent(file.name)}`;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);
     xhr.setRequestHeader("Authorization", `Bearer ${creds.token}`);
