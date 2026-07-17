@@ -55,6 +55,7 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "bio", label: "Bio", kind: "textarea" },
       { name: "available", label: "Available for work", kind: "boolean" },
       { name: "portrait", label: "Portrait", kind: "image" },
+      { name: "cv", label: "CV Document (PDF)", kind: "file", helper: "Upload your CV/Resume as a PDF. Will be linked in the hero button." },
     ],
   },
   siteSettings: {

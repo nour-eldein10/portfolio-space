@@ -67,7 +67,11 @@ export const profileQuery = queryOptions({
       bio?: string;
       available?: boolean;
       portrait?: unknown;
-    } | null>(`*[_type=="profile"][0]`);
+      cv?: { asset?: { url?: string } };
+    } | null>(`*[_type=="profile"][0]{
+      ...,
+      cv { asset-> { url } }
+    }`);
     if (!doc) return profileFallback;
     return {
       ...profileFallback,
@@ -83,6 +87,7 @@ export const profileQuery = queryOptions({
       bio: doc.bio ?? profileFallback.bio,
       available: doc.available ?? profileFallback.available,
       portrait: resolveImage(doc.portrait, "portrait", portrait),
+      cvUrl: doc.cv?.asset?.url ?? null,
     };
   },
   initialData: profileFallback,

@@ -113,6 +113,25 @@ export const adminUploadFile = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Returns Sanity credentials so the browser can upload large files (APK/AAB)
+ * directly to Sanity's Assets API — bypassing the server-function payload limit.
+ * The write token is deliberately exposed here because this endpoint is
+ * already protected by requireSupabaseAuth.
+ */
+export const adminGetSanityUploadCreds = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const token = process.env.SANITY_WRITE_TOKEN;
+    if (!token) throw new Error("SANITY_WRITE_TOKEN is not configured");
+    return {
+      token,
+      projectId: "9sivjnx4",
+      dataset: "production",
+      apiVersion: "2024-06-01",
+    };
+  });
+
 /** Counts of each content type, for the homepage stats strip. Public. */
 export const getContentCounts = createServerFn({ method: "GET" }).handler(async () => {
   // Read via server-only write client (uses token but only reads) to avoid CDN cache for fresh counts.

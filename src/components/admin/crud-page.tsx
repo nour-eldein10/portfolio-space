@@ -9,6 +9,7 @@ import {
   adminDeleteDoc,
   adminUploadImage,
   adminUploadFile,
+  adminGetSanityUploadCreds,
   adminReorderDocs,
 } from "@/lib/admin-sanity.functions";
 import { urlFor } from "@/lib/sanity";
@@ -663,8 +664,44 @@ function ImageInput({ value, onChange }: { value: any; onChange: (v: any) => voi
   );
 }
 
+/** Upload a file directly from the browser to Sanity's Assets API (bypasses CF payload limits). */
+function uploadDirectToSanity(
+  file: File,
+  creds: { token: string; projectId: string; dataset: string; apiVersion: string },
+  onProgress: (pct: number) => void,
+): Promise<{ _type: "file"; asset: { _type: "reference"; _ref: string } }> {
+  return new Promise((resolve, reject) => {
+    const url = `https://api.sanity.io/v${creds.apiVersion}/assets/files/${creds.projectId}?dataset=${creds.dataset}&filename=${encodeURIComponent(file.name)}`;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Authorization", `Bearer ${creds.token}`);
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 95));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const res = JSON.parse(xhr.responseText);
+          const assetId = res.document?._id ?? res._id;
+          if (!assetId) throw new Error("No asset ID returned");
+          onProgress(100);
+          resolve({ _type: "file", asset: { _type: "reference", _ref: assetId } });
+        } catch (e) {
+          reject(new Error("Failed to parse Sanity response"));
+        }
+      } else {
+        reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+      }
+    };
+    xhr.onerror = () => reject(new Error("Network error during upload"));
+    xhr.send(file);
+  });
+}
+
 function FileInput({ value, onChange, accept }: { value: any; onChange: (v: any) => void, accept?: string }) {
   const uploadFile = useServerFn(adminUploadFile);
+  const getUploadCreds = useServerFn(adminGetSanityUploadCreds);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -675,13 +712,21 @@ function FileInput({ value, onChange, accept }: { value: any; onChange: (v: any)
       return;
     }
     setBusy(true);
-    setProgress(10);
+    setProgress(5);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const result = await uploadFile({ data: formData });
-      setProgress(100);
-      onChange(result);
+      // For large files (>5 MB) upload directly from browser to Sanity
+      // to bypass the server-function / CF payload limit.
+      if (file.size > 5 * 1024 * 1024) {
+        const creds = await getUploadCreds({});
+        const ref = await uploadDirectToSanity(file, creds, setProgress);
+        onChange(ref);
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+        const result = await uploadFile({ data: formData });
+        setProgress(100);
+        onChange(result);
+      }
       toast.success("File uploaded successfully");
     } catch (err: any) {
       toast.error(err?.message ?? "Upload failed");

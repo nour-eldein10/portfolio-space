@@ -142,7 +142,7 @@ export function Hero() {
                 →
               </span>
             </Link>
-            <GalaxyButton href="/Nour_Eldein_Complete_Portfolio_Profile.pdf">
+            <GalaxyButton href={(profile as any).cvUrl || "/Nour_Eldein_Complete_Portfolio_Profile.pdf"}>
               Download CV
             </GalaxyButton>
             <Link
