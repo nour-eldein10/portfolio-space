@@ -35,6 +35,8 @@ export function ReviewForm() {
     reader.readAsDataURL(file);
   }
 
+  const [submitted, setSubmitted] = useState(false);
+
   const mut = useMutation({
     mutationFn: () =>
       submit({
@@ -52,10 +54,30 @@ export function ReviewForm() {
       setQuote("");
       setAvatarDataUrl(null);
       setAvatarPreview(null);
+      setSubmitted(true);
       qc.invalidateQueries({ queryKey: ["public", "reviews"] });
     },
     onError: (e: any) => toast.error(e?.message ?? "Could not submit"),
   });
+
+  if (submitted) {
+    return (
+      <div className="mt-12 hairline rounded-3xl p-8 sm:p-12 bg-surface/30 text-center space-y-4 flex flex-col items-center justify-center">
+        <div className="h-16 w-16 bg-[color:var(--neon)]/10 text-[color:var(--neon)] rounded-full flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 className="font-display text-2xl sm:text-3xl tracking-tight text-foreground">Review Sent!</h3>
+        <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+          Thank you for your feedback. Your review has been successfully submitted and is currently in our queue. It will appear on the site once approved.
+        </p>
+        <Button variant="outline" className="mt-4" onClick={() => setSubmitted(false)}>
+          Submit another review
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <form
