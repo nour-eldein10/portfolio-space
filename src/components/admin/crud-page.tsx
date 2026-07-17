@@ -671,7 +671,8 @@ function uploadDirectToSanity(
   onProgress: (pct: number) => void,
 ): Promise<{ _type: "file"; asset: { _type: "reference"; _ref: string } }> {
   return new Promise((resolve, reject) => {
-    const url = `https://api.sanity.io/v${creds.apiVersion}/assets/files/${creds.projectId}?dataset=${creds.dataset}&filename=${encodeURIComponent(file.name)}`;
+    // Use project-specific API host (required for CORS + correct region routing)
+    const url = `https://${creds.projectId}.api.sanity.io/v${creds.apiVersion}/assets/files/${creds.projectId}?dataset=${creds.dataset}&filename=${encodeURIComponent(file.name)}`;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);
     xhr.setRequestHeader("Authorization", `Bearer ${creds.token}`);
@@ -691,10 +692,12 @@ function uploadDirectToSanity(
           reject(new Error("Failed to parse Sanity response"));
         }
       } else {
-        reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+        let msg = `Upload failed (${xhr.status})`;
+        try { msg += `: ${JSON.parse(xhr.responseText)?.message ?? xhr.statusText}`; } catch {}
+        reject(new Error(msg));
       }
     };
-    xhr.onerror = () => reject(new Error("Network error during upload"));
+    xhr.onerror = () => reject(new Error(`Network error during upload — check browser console for CORS details`));
     xhr.send(file);
   });
 }
