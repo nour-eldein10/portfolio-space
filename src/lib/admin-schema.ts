@@ -305,4 +305,31 @@ export const TYPES: Record<string, TypeDef> = {
       { name: "order", label: "Order", kind: "number" },
     ],
   },
+  contactEnquiry: {
+    type: "contactEnquiry",
+    label: "Contact Enquiries",
+    singular: "Enquiry",
+    titleField: "name",
+    subtitleField: "email",
+    fields: [
+      { name: "name", label: "Name", kind: "text", required: true },
+      { name: "email", label: "Email", kind: "text", required: true },
+      { name: "phone", label: "Phone", kind: "text" },
+      {
+        name: "budget",
+        label: "Budget",
+        kind: "select",
+        options: ["<1k", "1k-5k", "5k-10k", "10k+"],
+      },
+      { name: "productType", label: "Product Type", kind: "text" },
+      { name: "message", label: "Message", kind: "textarea", required: true },
+      {
+        name: "status",
+        label: "Status",
+        kind: "select",
+        options: ["new", "read", "replied", "archived"],
+      },
+      { name: "submittedAt", label: "Submitted At", kind: "date" },
+    ],
+  },
 };

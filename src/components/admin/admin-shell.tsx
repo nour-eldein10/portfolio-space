@@ -30,6 +30,7 @@ import {
   HeartHandshake,
   Award,
   Settings,
+  Mail,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -47,6 +48,7 @@ const items: NavItem[] = [
   { to: "/admin/volunteering", label: "Volunteering", icon: HeartHandshake },
   { to: "/admin/certificates", label: "Certificates", icon: Award },
   { to: "/admin/reviews", label: "Reviews", icon: MessageSquare },
+  { to: "/admin/contact-enquiries", label: "Contact Enquiries", icon: Mail },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {

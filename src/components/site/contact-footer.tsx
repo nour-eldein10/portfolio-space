@@ -1,11 +1,52 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation } from "@tanstack/react-query";
 import { profileQuery } from "@/lib/cms";
+import { submitContact } from "@/lib/contact.functions";
+import { Loader2 } from "lucide-react";
 
 export function ContactFooter() {
   const { data: profile } = useQuery(profileQuery);
   const ref = useRef<HTMLElement>(null);
+
+  // Form state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [budget, setBudget] = useState("");
+  const [productType, setProductType] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const submit = useServerFn(submitContact);
+
+  const mut = useMutation({
+    mutationFn: () =>
+      submit({
+        data: {
+          name,
+          email,
+          phone: phone || undefined,
+          budget: budget || undefined,
+          productType: productType || undefined,
+          message,
+        },
+      }),
+    onSuccess: () => {
+      setName("");
+      setEmail("");
+      setPhone("");
+      setBudget("");
+      setProductType("");
+      setMessage("");
+      setSubmitted(true);
+    },
+    onError: (e: any) => {
+      alert(e?.message ?? "Failed to send. Please try again.");
+    },
+  });
 
   useEffect(() => {
     if (!ref.current) return;
@@ -18,11 +59,10 @@ export function ContactFooter() {
         duration: 1,
         ease: "expo.out",
         stagger: 0.04,
-        scrollTrigger: undefined, // no ScrollTrigger plugin; trigger on intersection below
+        scrollTrigger: undefined,
       });
     }, ref);
 
-    // Simple IntersectionObserver-driven replay
     const obs = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -51,6 +91,10 @@ export function ContactFooter() {
   }, []);
 
   const big = "LET'S MAKE";
+
+  const inputCls =
+    "w-full bg-transparent border-b hairline py-2 px-2 focus:border-[color:var(--neon)] outline-none text-sm transition-colors placeholder:text-muted-foreground/60";
+
   return (
     <footer id="contact" ref={ref} className="relative overflow-hidden pt-14 pb-6 bg-background">
       <div
@@ -90,84 +134,152 @@ export function ContactFooter() {
         </h3>
 
         <div className="mt-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="rounded-3xl hairline p-6 sm:p-8 bg-surface/40 backdrop-blur-sm flex flex-col gap-4"
-          >
-            <div className="grid sm:grid-cols-2 gap-4">
-              <label className="flex flex-col gap-1.5">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                  Name
-                </span>
-                <input
-                  className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm"
-                  placeholder="Your name"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                  Email
-                </span>
-                <input
-                  type="email"
-                  className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm"
-                  placeholder="you@domain.com"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                  Phone (Optional)
-                </span>
-                <input
-                  type="tel"
-                  className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm"
-                  placeholder="+1 (555) 000-0000"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                  Budget
-                </span>
-                <select
-                  defaultValue=""
-                  className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm text-foreground/70 appearance-none"
+          {/* ── FORM ── */}
+          {submitted ? (
+            <div className="rounded-3xl hairline p-8 sm:p-12 bg-surface/40 backdrop-blur-sm flex flex-col items-center justify-center text-center gap-5">
+              <div className="h-16 w-16 rounded-full bg-[color:var(--neon)]/10 text-[color:var(--neon)] flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  <option value="" disabled>
-                    Select a range
-                  </option>
-                  <option value="<1k">&lt; $1,000</option>
-                  <option value="1k-5k">$1,000 - $5,000</option>
-                  <option value="5k-10k">$5,000 - $10,000</option>
-                  <option value="10k+">$10,000+</option>
-                </select>
-              </label>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h4 className="font-display text-2xl tracking-tight">Brief sent!</h4>
+              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                Thanks for reaching out — I'll review your brief and get back to you within 24 hours.
+              </p>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="mt-2 rounded-full hairline px-5 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-[color:var(--neon)] transition-colors"
+              >
+                Send another message
+              </button>
             </div>
-            <label className="flex flex-col gap-1.5">
-              <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                Product Type
-              </span>
-              <input
-                className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm"
-                placeholder="Mobile App, Automation, Design..."
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
-                Message
-              </span>
-              <textarea
-                rows={4}
-                className="bg-transparent border-b hairline py-2 focus:border-[color:var(--neon)] outline-none text-sm resize-none"
-                placeholder="Tell me about your vision..."
-              />
-            </label>
-            <button className="mt-2 self-start group inline-flex items-center gap-3 rounded-full bg-foreground text-background pl-5 pr-2 py-2 text-sm font-medium hover:bg-[color:var(--amber)] transition-colors">
-              Send brief
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background text-foreground group-hover:rotate-45 transition-transform">
-                →
-              </span>
-            </button>
-          </form>
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (name && email && message) mut.mutate();
+              }}
+              className="rounded-3xl hairline p-6 sm:p-8 bg-surface/40 backdrop-blur-sm flex flex-col gap-4"
+            >
+              <div className="grid sm:grid-cols-2 gap-4">
+                <label className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                    Name *
+                  </span>
+                  <input
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={inputCls}
+                    placeholder="Your name"
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                    Email *
+                  </span>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputCls}
+                    placeholder="you@domain.com"
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                    Phone (Optional)
+                  </span>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className={inputCls}
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                    Budget
+                  </span>
+                  <select
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="w-full bg-transparent border-b hairline py-2 px-2 focus:border-[color:var(--neon)] outline-none text-sm text-foreground/70 appearance-none transition-colors"
+                  >
+                    <option value="" disabled>
+                      Select a range
+                    </option>
+                    <option value="<1k">&lt; $1,000</option>
+                    <option value="1k-5k">$1,000 - $5,000</option>
+                    <option value="5k-10k">$5,000 - $10,000</option>
+                    <option value="10k+">$10,000+</option>
+                  </select>
+                </label>
+              </div>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                  Product Type
+                </span>
+                <input
+                  value={productType}
+                  onChange={(e) => setProductType(e.target.value)}
+                  className={inputCls}
+                  placeholder="Mobile App, Automation, Design..."
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                  Message *
+                </span>
+                <textarea
+                  rows={4}
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className={`${inputCls} resize-none`}
+                  placeholder="Tell me about your vision..."
+                />
+              </label>
+
+              {mut.isError && (
+                <p className="text-xs text-destructive">
+                  {(mut.error as any)?.message ?? "Something went wrong. Please try again."}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={mut.isPending}
+                className="mt-2 self-start group inline-flex items-center gap-3 rounded-full bg-foreground text-background pl-5 pr-2 py-2 text-sm font-medium hover:bg-[color:var(--amber)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {mut.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    Send brief
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background text-foreground group-hover:rotate-45 transition-transform">
+                      →
+                    </span>
+                  </>
+                )}
+              </button>
+            </form>
+          )}
 
           <div className="flex flex-col justify-between gap-10">
             <div className="grid grid-cols-2 gap-8">
@@ -213,7 +325,7 @@ export function ContactFooter() {
 
         <div className="mt-20 pt-8 border-t hairline flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
           <br />
-          <span> flutter,automation ?Just call me ! I will grant your wish! </span>
+          <span>flutter,automation ?Just call me ! I will grant your wish! </span>
           <span> Nour Eldein © All Rights Reserved -2026 </span>
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--neon)] animate-pulse" />
