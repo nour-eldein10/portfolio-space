@@ -14,6 +14,7 @@ export function ReviewForm() {
   const submit = useServerFn(submitReview);
 
   const [author, setAuthor] = useState("");
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [quote, setQuote] = useState("");
   const [avatarDataUrl, setAvatarDataUrl] = useState<string | null>(null);
@@ -42,6 +43,7 @@ export function ReviewForm() {
       submit({
         data: {
           author,
+          email: email || undefined,
           role: role || undefined,
           quote,
           avatarDataUrl: avatarDataUrl || undefined,
@@ -50,6 +52,7 @@ export function ReviewForm() {
     onSuccess: () => {
       toast.success("Thanks — your review is pending approval.");
       setAuthor("");
+      setEmail("");
       setRole("");
       setQuote("");
       setAvatarDataUrl(null);
@@ -100,6 +103,17 @@ export function ReviewForm() {
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
             maxLength={100}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="r-email">Email (optional — for approval notification)</Label>
+          <Input
+            id="r-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={200}
+            placeholder="you@example.com"
           />
         </div>
         <div className="space-y-1.5">

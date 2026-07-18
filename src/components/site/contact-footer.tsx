@@ -232,12 +232,20 @@ export function ContactFooter() {
                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                   Product Type
                 </span>
-                <input
+                <select
                   value={productType}
                   onChange={(e) => setProductType(e.target.value)}
-                  className={inputCls}
-                  placeholder="Mobile App, Automation, Design..."
-                />
+                  className="w-full bg-transparent border-b hairline py-2 px-2 focus:border-[color:var(--neon)] outline-none text-sm text-foreground/70 appearance-none transition-colors"
+                >
+                  <option value="">Select a type…</option>
+                  <option value="Mobile App">Mobile App</option>
+                  <option value="Web App">Web App</option>
+                  <option value="UI/UX Design">UI / UX Design</option>
+                  <option value="Automation">Automation</option>
+                  <option value="Branding">Branding</option>
+                  <option value="Consulting">Consulting</option>
+                  <option value="Other">Other</option>
+                </select>
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
