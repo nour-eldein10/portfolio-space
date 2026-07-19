@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, animate } from "motion/react";
+import { useLocation } from "@tanstack/react-router";
 
 export function CustomCursor() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+
   const [hasPointer, setHasPointer] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -39,7 +43,7 @@ export function CustomCursor() {
   }, [hasPointer, isVisible]);
 
   useEffect(() => {
-    if (!hasPointer) return;
+    if (!hasPointer || isAdmin) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -99,9 +103,9 @@ export function CustomCursor() {
       document.removeEventListener("mouseleave", handleMouseLeave);
       document.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [hasPointer, isVisible, mouseX, mouseY]);
+  }, [hasPointer, isVisible, mouseX, mouseY, isAdmin]);
 
-  if (!hasPointer || !isVisible) return null;
+  if (!hasPointer || !isVisible || isAdmin) return null;
 
   const outerSize = isClicked ? 22 : isHovered ? 52 : isText ? 4 : 30;
   const innerSize = isText ? 1 : 2;

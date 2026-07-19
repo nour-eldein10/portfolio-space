@@ -432,7 +432,7 @@ export const reviewsQuery = queryOptions({
     const docs = await sanityClient.fetch<
       { quote: string; author: string; role?: string | null; avatar?: unknown }[]
     >(
-      `*[_type == "review" && status == "approved"] | order(createdAt desc)[0...12]{
+      `*[_type == "review" && status == "approved" && (!defined(projectId) || projectId == "")] | order(createdAt desc)[0...12]{
         quote, author, role, avatar
       }`,
     );
